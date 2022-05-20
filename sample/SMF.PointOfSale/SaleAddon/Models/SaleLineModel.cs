@@ -8,6 +8,9 @@ namespace SMF.PointOfSale.SaleAddon.Models;
 /// </summary>
 public partial class SaleLineModel
 {
+    public SMFields.Binary? Description { get; } = new() { };
+    public SMFields.Binary? ProductName { get; } = new() { };
+
     //private readonly ModelKind parentModel = ModelKind.Sale_Sale;
     //private readonly ModelImplementationKind[] modelImplementations = new[] {
     //ModelImplementationKind.IPurchaseLineModel,                   
