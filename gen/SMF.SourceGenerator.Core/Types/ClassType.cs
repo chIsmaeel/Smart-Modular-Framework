@@ -10,7 +10,7 @@ public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, Co
     private INamedTypeSymbol? _symbol;
     private string? _identifierName;
     private IEnumerable<TypeField?>? _fields;
-    private IEnumerable<TypeProperty>? _properties;
+    private readonly List<TypeProperty?> _properties = new();
     private IEnumerable<TypeMethod?>? _methods;
     private IEnumerable<TypeConstructor?>? _constructors;
     private IEnumerable<string>? _inheritTypes;
@@ -138,20 +138,30 @@ public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, Co
     /// <summary>
     /// Gets the properties.
     /// </summary>
-    public IEnumerable<TypeProperty>? Properties
+    public List<TypeProperty?> Properties
     {
         get
         {
+            var idProperty =
+     SyntaxFactory.PropertyDeclaration(
+         SyntaxFactory.ParseTypeName("Guid"),
+         "Id"
+     )
+     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+     .AddAccessorListAccessors(
+         SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+         SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+     );
+
+
             if (_properties is not null) return _properties;
-            ImmutableArray<TypeProperty?>.Builder? properties = ImmutableArray.CreateBuilder<TypeProperty?>();
             foreach (ClassDeclarationSyntax? cds in ClassDSs!)
                 foreach (PropertyDeclarationSyntax? pds in cds!.ChildNodes().OfType<PropertyDeclarationSyntax>())
                 {
                     TypeProperty? propertyClass = new(pds);
-                    properties.Add(propertyClass);
+                    _properties!.Add(propertyClass);
                 }
-            _properties = properties.ToImmutable();
-            return _properties;
+            return _properties!;
         }
     }
 
