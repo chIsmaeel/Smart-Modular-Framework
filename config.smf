@@ -1,0 +1,5 @@
+SOLUTION_NAME = PointOfSale
+
+# Entity Framework Core Configurations
+EF_PROJECT_NAME = Saad.Data
+EF_PROJECT_PATH = 
