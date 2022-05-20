@@ -1,7 +1,6 @@
 ﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
 
 using SMF.SourceGenerator.Core;
-using System.CodeDom.Compiler;
 
 /// <summary>
 /// The model entity configuration generator.
@@ -9,7 +8,7 @@ using System.CodeDom.Compiler;
 
 [Generator]
 
-internal class CreateAsyncCommandGenerator : CommonIncrementalGenerator
+internal class DeleteAsyncCommandGenerator : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
@@ -33,24 +32,13 @@ internal class CreateAsyncCommandGenerator : CommonIncrementalGenerator
 
         SMFProductionContext context = new(c);
         FileScopedNamespaceTemplate fileScopedNamespace = new($"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Application.{s.ContainingModuleName}.Commands");
-        ClassTypeTemplate classTypeTemplate = new($"Create{s.IdentifierNameWithoutPostFix}Command")
+        ClassTypeTemplate classTypeTemplate = new($"Delete{s.IdentifierNameWithoutPostFix}Command")
         {
             Modifiers = "public partial",
             Interfaces = new() { $"MediatR.IRequest<IEnumerable<{s.NewQualifiedName}>>" },
         };
 
-        foreach (var property in s.Properties!)
-        {
-            AutoPropertyTemplate p;
-            if (property.IdentifierName is "Id")
-                continue;
-            p = new(ModelPropertyTypes.GetPropertyType(property.Type), property.IdentifierName)
-            {
-                Comment = property.Comment,
-                SecondAccessor = "set"
-            };
-            classTypeTemplate.Members.Add(p);
-        }
+        classTypeTemplate.Members.Add(new AutoPropertyTemplate("int", "Id"));
 
         ClassTypeTemplate handlerClass = new(classTypeTemplate.IdentifierName + "Handler")
         {
@@ -84,38 +72,12 @@ internal class CreateAsyncCommandGenerator : CommonIncrementalGenerator
             Body = (w, p, gp, _) =>
             {
                 var objName = s.IdentifierNameWithoutPostFix.FirstCharToLowerCase();
-                w.WriteLine($"var {objName} = new {s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.{s.ContainingModuleName}.Models.{s.IdentifierNameWithoutPostFix}(); ");
-                var tempModelCT = s;
-
-                while (tempModelCT.ParentClassType is not null)
-                {
-                    AddProperties((ModelCT)tempModelCT.ParentClassType, w, objName);
-                    tempModelCT = (ModelCT)tempModelCT.ParentClassType;
-                }
-                AddProperties(s, w, objName);
-                w.WriteLine($"_uow.{s.IdentifierNameWithoutPostFix}Repository.InsertAsync({objName});");
+                w.WriteLine($" await _uow.{s.IdentifierNameWithoutPostFix}Repository.DeleteAsync(command.Id);");
                 w.WriteLine($"return {objName}.Id;");
             }
         });
         classTypeTemplate.Members.Add(handlerClass);
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);
         context.AddSource(fileScopedNamespace);
-    }
-
-    /// <summary>
-    /// Adds the properties.
-    /// </summary>
-    /// <param name="s">The s.</param>
-    /// <param name="w">The w.</param>
-    /// <param name="objName">The obj name.</param>
-    private static void AddProperties(ModelCT s, IndentedTextWriter w, string? objName)
-    {
-        w.WriteLine($"{objName}.CreatedOn = System.DateTime.Now;");
-        foreach (var property in s.Properties!)
-        {
-            if (property.IdentifierName is "Id" or "UpdatedOn")
-                continue;
-            w.WriteLine($"{objName}.{property.IdentifierName} = command.{property.IdentifierName};");
-        }
     }
 }

@@ -114,10 +114,17 @@ internal class ModelRepositoryGenerator : CommonIncrementalGenerator
                 _writer.WriteLine("{");
                 _writer.Indent++;
                 _writer.WriteLine("var tempEntity = _context." + s.IdentifierNameWithoutPostFix.Pluralize() + ".FirstOrDefault(e=>e.Id==entity.Id);");
-                foreach (var property in s.Properties!)
+                var tempModelCT = s;
+
+                _writer.WriteLine($"tempEntity.LastModifiedOn = entity.LastModifiedOn;");
+
+                while (tempModelCT.ParentClassType is not null)
                 {
-                    _writer.WriteLine($"tempEntity.{property.IdentifierName} = entity.{property.IdentifierName};");
+                    AddProperties((ModelCT)tempModelCT.ParentClassType, _writer);
+                    tempModelCT = (ModelCT)tempModelCT.ParentClassType;
                 }
+                AddProperties(s, _writer);
+
                 //_writer.WriteLine("_context.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;");
                 _writer.WriteLine("await _context.SaveChangesAsync();");
                 _writer.Indent--;
@@ -153,5 +160,21 @@ internal class ModelRepositoryGenerator : CommonIncrementalGenerator
                 _writer.WriteLine("}");
             }
         });
+    }
+
+    /// <summary>
+    /// Adds the properties.
+    /// </summary>
+    /// <param name="s">The s.</param>
+    /// <param name="w">The w.</param>
+    /// <param name="objName">The obj name.</param>
+    private static void AddProperties(ModelCT s, IndentedTextWriter w)
+    {
+        foreach (var property in s.Properties!)
+        {
+            if (property.IdentifierName is "Id" or "CreatedOn" or "UpdatedOn")
+                continue;
+            w.WriteLine($"tempEntity.{property.IdentifierName} = entity.{property.IdentifierName};");
+        }
     }
 }
