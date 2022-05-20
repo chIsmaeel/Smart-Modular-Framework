@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>preview</LangVersion>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<EditorConfigFiles Remove="..\dependencies\SMF.ORM\.editorconfig" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\libraries\SMF.ORM\.editorconfig" />
+	</ItemGroup>
+
+</Project>
