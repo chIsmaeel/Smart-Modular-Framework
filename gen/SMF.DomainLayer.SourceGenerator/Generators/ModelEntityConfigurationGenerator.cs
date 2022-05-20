@@ -39,16 +39,16 @@ internal class ModelEntityConfigurationGenerator : CommonIncrementalGenerator
             Body = (writer, parameters, genericParameters, fields) =>
             {
                 var indexList = new List<string>();
-                if (s.Properties.Any(_ => _.IdentifierName == s.IdentifierNameWithoutPostFix + "Id"))
+                if (s.Properties.Any(_ => _!.IdentifierName == s.IdentifierNameWithoutPostFix + "Id"))
                     indexList.Add("e." + s.IdentifierNameWithoutPostFix + "Id");
 
                 foreach (var property in s.Properties!)
                 {
-                    SMField? field = new(property);
+                    SMField? field = new(property!);
                     if (field.SMFField is null) return;
-                    WritePropertyFluentAPIs(writer, field, property);
+                    WritePropertyFluentAPIs(writer, field, property!);
                     if (field.SMFField.Index == true)
-                        indexList.Add("e." + property.IdentifierName);
+                        indexList.Add("e." + property!.IdentifierName);
                 }
                 WriteIfHasIndex(writer, indexList);
 

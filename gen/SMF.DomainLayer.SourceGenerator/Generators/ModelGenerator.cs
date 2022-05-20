@@ -36,7 +36,7 @@ internal class ModelGenerator : CommonIncrementalGenerator
             AddDefaultProperties(classTypeTemplate);
         foreach (var property in s.Properties!)
         {
-            AutoPropertyTemplate p = new(ModelPropertyTypes.GetPropertyType(property.Type), property.IdentifierName)
+            AutoPropertyTemplate p = new(ModelPropertyTypes.GetPropertyType(property!.Type), property.IdentifierName)
             {
                 Comment = property.Comment,
                 SecondAccessor = "set"

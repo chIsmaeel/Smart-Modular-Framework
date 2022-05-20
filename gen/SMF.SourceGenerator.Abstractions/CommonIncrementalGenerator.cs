@@ -152,7 +152,7 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
 
         foreach (var modelCT in modelCTs)
         {
-            foreach (var property in modelCT.Properties.Where(_ => _.Type is "SMFields.O2O" or "SMFields.O2M" or "SMFields.M2O" or "SMFields.M2M"))
+            foreach (var property in modelCT.Properties.Where(_ => _!.Type is "SMFields.O2O" or "SMFields.O2M" or "SMFields.M2O" or "SMFields.M2M"))
             {
                 var relationalModelName = (property!.PDS.DescendantNodes().OfType<ImplicitObjectCreationExpressionSyntax>().FirstOrDefault().ArgumentList.Arguments[0].Expression as MemberAccessExpressionSyntax)?.Name.Identifier.ValueText;
                 var relationModelWithModuleName = relationalModelName?.Split('_');

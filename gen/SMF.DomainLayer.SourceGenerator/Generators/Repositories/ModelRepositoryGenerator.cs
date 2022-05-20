@@ -172,7 +172,7 @@ internal class ModelRepositoryGenerator : CommonIncrementalGenerator
     {
         foreach (var property in s.Properties!)
         {
-            if (property.IdentifierName is "Id" or "CreatedOn" or "UpdatedOn")
+            if (property!.IdentifierName is "Id" or "CreatedOn" or "UpdatedOn")
                 continue;
             w.WriteLine($"tempEntity.{property.IdentifierName} = entity.{property.IdentifierName};");
         }
