@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+        <EnablePreviewFeatures>true</EnablePreviewFeatures>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>preview</LangVersion>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis" Version="4.1.0" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\libraries\SMF.ORM\SMF.ORM.csproj" />
+        <ProjectReference Include="..\SMF.SourceGenerator.Core\SMF.SourceGenerator.Core.csproj" GeneratePathProperty="true" PrivateAssets="all" />
+    </ItemGroup>
+
+
+    <PropertyGroup>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+    </PropertyGroup>
+
+    <Target Name="GetDependencyTargetPaths">
+        <ItemGroup>
+            <TargetPathWithTargetPlatformMoniker Include="..\..\gen\SMF.SourceGenerator.Core\bin\Debug\netstandard2.0\SMF.SourceGenerator.Core.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="..\..\libraries\SMF.ORM\bin\Debug\netstandard2.0\SMF.ORM.dll" IncludeRuntimeDependency="false" />
+        </ItemGroup>
+    </Target>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SMF.SourceGenerator.Core\SMF.SourceGenerator.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EditorConfigFiles Remove="..\gen\SMF.Common.SourceGenerator.Abstractions\.editorconfig" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\gen\SMF.Common.SourceGenerator.Abstractions\.editorconfig" />
+    </ItemGroup>
+
+</Project>
