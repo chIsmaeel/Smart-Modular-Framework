@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>preview</LangVersion>
+
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+
+		<NoWarn>$(NoWarn);CS8669;CS0169;IDE0051;CS0414;ClassDocumentationHeader;IDE0052</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MediatR" Version="10.0.1" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.5">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\gen\SMF.Addons.SourceGenerator\SMF.Addons.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
+		<ProjectReference Include="..\..\gen\SMF.ApplicationLayer.SourceGenerator\SMF.ApplicationLayer.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
+		<ProjectReference Include="..\..\gen\SMF.DomainLayer.SourceGenerator\SMF.DomainLayer.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+		<AdditionalFiles Include="..\..\config.smf" />
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+		<EditorConfigFiles Remove="..\sample\SMF.PointOfSale\.editorconfig" />
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+		<None Include="..\sample\SMF.PointOfSale\.editorconfig" />
+	</ItemGroup>
+
+</Project>

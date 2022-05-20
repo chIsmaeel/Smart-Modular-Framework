@@ -1,14 +1,83 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32505.426
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{6874AD06-A00A-43EA-A894-70D4C284C0F9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.PointOfSale", "sample\SMF.PointOfSale\SMF.PointOfSale.csproj", "{A149E60B-B34B-4A7A-86D7-4F0CDE15B33E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libraries", "libraries", "{F824C46A-ED8E-4A9D-89E7-F3FF74C88AF3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.ORM", "libraries\SMF.ORM\SMF.ORM.csproj", "{48D69120-4353-4A36-BB18-8D8780FA7894}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.FileTransmitter", "libraries\SMF.FileTransmitter\SMF.FileTransmitter.csproj", "{AEA9B40A-C412-4597-A727-8FEFC841FB88}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gen", "gen", "{721EA9CD-FCA0-4484-9226-F4CD3833959F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.SourceGenerator.Core", "gen\SMF.SourceGenerator.Core\SMF.SourceGenerator.Core.csproj", "{F7D1739E-5A30-4F4B-A642-51CB6F047430}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.SourceGenerator.Abstractions", "gen\SMF.SourceGenerator.Abstractions\SMF.SourceGenerator.Abstractions.csproj", "{DA76E0D0-D29C-40A4-AEBA-1A69BC378E58}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.Addons.SourceGenerator", "gen\SMF.Addons.SourceGenerator\SMF.Addons.SourceGenerator.csproj", "{70CF49CC-BBB0-4EFA-9229-DE64FF31ACF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.DomainLayer.SourceGenerator", "gen\SMF.DomainLayer.SourceGenerator\SMF.DomainLayer.SourceGenerator.csproj", "{1376C80B-63AE-430F-9411-00552BAB22B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.ApplicationLayer.SourceGenerator", "gen\SMF.ApplicationLayer.SourceGenerator\SMF.ApplicationLayer.SourceGenerator.csproj", "{2D47175B-BAE7-4E05-9324-D747894ABFF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A149E60B-B34B-4A7A-86D7-4F0CDE15B33E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A149E60B-B34B-4A7A-86D7-4F0CDE15B33E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A149E60B-B34B-4A7A-86D7-4F0CDE15B33E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A149E60B-B34B-4A7A-86D7-4F0CDE15B33E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48D69120-4353-4A36-BB18-8D8780FA7894}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48D69120-4353-4A36-BB18-8D8780FA7894}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48D69120-4353-4A36-BB18-8D8780FA7894}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48D69120-4353-4A36-BB18-8D8780FA7894}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEA9B40A-C412-4597-A727-8FEFC841FB88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEA9B40A-C412-4597-A727-8FEFC841FB88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEA9B40A-C412-4597-A727-8FEFC841FB88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEA9B40A-C412-4597-A727-8FEFC841FB88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7D1739E-5A30-4F4B-A642-51CB6F047430}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7D1739E-5A30-4F4B-A642-51CB6F047430}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7D1739E-5A30-4F4B-A642-51CB6F047430}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7D1739E-5A30-4F4B-A642-51CB6F047430}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA76E0D0-D29C-40A4-AEBA-1A69BC378E58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA76E0D0-D29C-40A4-AEBA-1A69BC378E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA76E0D0-D29C-40A4-AEBA-1A69BC378E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA76E0D0-D29C-40A4-AEBA-1A69BC378E58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70CF49CC-BBB0-4EFA-9229-DE64FF31ACF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70CF49CC-BBB0-4EFA-9229-DE64FF31ACF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70CF49CC-BBB0-4EFA-9229-DE64FF31ACF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70CF49CC-BBB0-4EFA-9229-DE64FF31ACF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1376C80B-63AE-430F-9411-00552BAB22B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1376C80B-63AE-430F-9411-00552BAB22B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1376C80B-63AE-430F-9411-00552BAB22B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1376C80B-63AE-430F-9411-00552BAB22B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D47175B-BAE7-4E05-9324-D747894ABFF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D47175B-BAE7-4E05-9324-D747894ABFF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D47175B-BAE7-4E05-9324-D747894ABFF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D47175B-BAE7-4E05-9324-D747894ABFF2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A149E60B-B34B-4A7A-86D7-4F0CDE15B33E} = {6874AD06-A00A-43EA-A894-70D4C284C0F9}
+		{48D69120-4353-4A36-BB18-8D8780FA7894} = {F824C46A-ED8E-4A9D-89E7-F3FF74C88AF3}
+		{AEA9B40A-C412-4597-A727-8FEFC841FB88} = {F824C46A-ED8E-4A9D-89E7-F3FF74C88AF3}
+		{F7D1739E-5A30-4F4B-A642-51CB6F047430} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
+		{DA76E0D0-D29C-40A4-AEBA-1A69BC378E58} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
+		{70CF49CC-BBB0-4EFA-9229-DE64FF31ACF1} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
+		{1376C80B-63AE-430F-9411-00552BAB22B1} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
+		{2D47175B-BAE7-4E05-9324-D747894ABFF2} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4A8507FA-B0E0-4282-81FA-6A3A33A041B2}
 	EndGlobalSection
 EndGlobal
