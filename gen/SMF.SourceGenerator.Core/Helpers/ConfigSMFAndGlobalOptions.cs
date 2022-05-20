@@ -1,6 +1,7 @@
-﻿namespace SMF.Common.SourceGenerator.Abstractions;
+﻿namespace SMF.SourceGenerator.Core.Helpers;
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using SMF.SourceGenerator.Core;
 
 public record ConfigSMFAndGlobalOptions(ConfigSMF? ConfigSMF, AnalyzerConfigOptionsProvider OptionsProvider)
 {

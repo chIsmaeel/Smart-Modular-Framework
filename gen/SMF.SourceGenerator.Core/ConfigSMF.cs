@@ -1,4 +1,4 @@
-﻿namespace SMF.Common.SourceGenerator.Abstractions;
+﻿namespace SMF.SourceGenerator.Core;
 /// <summary>
 /// The config s m f file.
 /// </summary>
@@ -29,7 +29,6 @@ public class ConfigSMF
     private void AddValuesInDictionary()
     {
         foreach (var keyValue in _configFileLines!)
-        {
             if (keyValue.Contains('='))
             {
                 var r = keyValue.Split('=');
@@ -38,7 +37,6 @@ public class ConfigSMF
                 if (!string.IsNullOrEmpty(value))
                     KeyValues[r[0].Trim()] = value;
             }
-        }
     }
 
     /// <summary>

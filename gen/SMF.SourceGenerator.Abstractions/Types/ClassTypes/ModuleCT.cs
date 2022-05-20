@@ -5,7 +5,7 @@ using SMF.SourceGenerator.Core.Diagnostics;
 using SMF.SourceGenerator.Core.Types.TypeMembers;
 using System.Collections.Immutable;
 
-public partial record ModuleCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, CancellationToken CancellationToken) : ClassType(ClassDSs, CancellationToken)
+public partial record ModuleCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, ConfigSMFAndGlobalOptions ConfigSMFAndGlobalOptions, CancellationToken CancellationToken) : ClassType(ClassDSs, ConfigSMFAndGlobalOptions, CancellationToken)
 {
     private IEnumerable<ModelCT?>? _registeredModelCTs;
     private IEnumerable<string?>? _registeredModelNames;

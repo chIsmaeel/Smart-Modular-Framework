@@ -13,14 +13,14 @@ using System.Text;
 /// </summary>
 /// <param name="ClassDSs"></param>
 /// <param name="CancellationToken"></param>
-public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, CancellationToken CancellationToken) : ClassType(ClassDSs, CancellationToken)
+public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, ConfigSMFAndGlobalOptions ConfigSMFAndGlobalOptions, CancellationToken CancellationToken) : ClassType(ClassDSs, ConfigSMFAndGlobalOptions, CancellationToken)
 {
     private IEnumerable<ModuleCT>? _registeringModuleCTs;
     private TypeConstructor? _defaultConstructorDSs;
-    private string? _parentType;
+    private string? _stringParentType;
     private bool _hasParameterlessConstructor = false;
     private string? _qualifiedParentName;
-    private string? _identifierNameWithoutModelPostFix;
+    private string? _identifierNameWithoutPostFix;
     private string? _qualifiedNameWithoutPostFix;
     private readonly List<(string fieldName, Order order)>? _orderBy = new();
     private string? _orderByString;
@@ -75,24 +75,24 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Canc
     /// <summary>
     /// Gets the parent type.                   
     /// </summary>
-    public override string? ParentType
+    public override string? StringParentType
     {
         get
         {
-            if (_parentType is not null) return _parentType;
+            if (_stringParentType is not null) return _stringParentType;
             if (ParameterlessConstructor?.SimpleAssignmentStatments is IEnumerable<AssignmentExpressionSyntax> simpleMemeberAccessExpression && simpleMemeberAccessExpression.Count() > 0)
             {
                 var expression = simpleMemeberAccessExpression.FirstOrDefault(_ => _.Left.ToString() is "InheritModel" or "this.InheritModel");
                 if (expression is not null && expression.Right.ToString().Split('.') is var pType && pType?.Length == 2 && pType[1].EndsWith("Model"))
                 {
-                    _parentType = pType.LastOrDefault();
-                    if (_parentType != "" && _parentType.Contains('_'))
+                    _stringParentType = pType.LastOrDefault();
+                    if (_stringParentType != "" && _stringParentType.Contains('_'))
                     {
-                        return _parentType = _parentType?.Substring(_parentType.LastIndexOf('_') + 1);
+                        return _stringParentType = _stringParentType?.Substring(_stringParentType.LastIndexOf('_') + 1);
                     }
                 }
             }
-            return _parentType = "ModelBase";
+            return _stringParentType = "ModelBase";
         }
     }
 
@@ -154,12 +154,12 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Canc
     /// <summary>
     /// Gets the identifier name without model post fix.
     /// </summary>
-    public string IdentifierNameWithoutModelPostFix
+    public string IdentifierNameWithoutPostFix
     {
         get
         {
-            if (_identifierNameWithoutModelPostFix is not null) return _identifierNameWithoutModelPostFix;
-            return _identifierNameWithoutModelPostFix = IdentifierName.Substring(0, IdentifierName.Length - "Model".Length);
+            if (_identifierNameWithoutPostFix is not null) return _identifierNameWithoutPostFix;
+            return _identifierNameWithoutPostFix = IdentifierName.Substring(0, IdentifierName.Length - "Model".Length);
         }
     }
 
@@ -195,7 +195,7 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Canc
                     var parentType = pType.LastOrDefault();
                     if (parentType != "" && parentType.Contains('_'))
                     {
-                        return _qualifiedParentName = parentType?.Substring(0, parentType.IndexOf('_'))! + "Addon.Models." + parentType?.Substring(parentType.LastIndexOf('_') + 1)!;
+                        return _qualifiedParentName = ConfigSMFAndGlobalOptions?.RootNamespace + parentType?.Substring(0, parentType.IndexOf('_'))! + "Addon.Models." + parentType?.Substring(parentType.LastIndexOf('_') + 1)!;
                     }
                 }
             }

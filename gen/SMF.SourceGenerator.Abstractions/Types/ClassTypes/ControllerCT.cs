@@ -5,4 +5,4 @@
 /// </summary>
 
 public partial record ControllerCT(
-    IEnumerable<ClassDeclarationSyntax> ClassDSs, CancellationToken CancellationToken) : ClassType(ClassDSs, CancellationToken);
+    IEnumerable<ClassDeclarationSyntax> ClassDSs, ConfigSMFAndGlobalOptions ConfigSMFAndGlobalOptions, CancellationToken CancellationToken) : ClassType(ClassDSs, ConfigSMFAndGlobalOptions, CancellationToken);

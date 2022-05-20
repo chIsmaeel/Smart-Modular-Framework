@@ -3,6 +3,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using SMF.Common.SourceGenerator.Abstractions.Types.ClassTypes;
+using SMF.SourceGenerator.Core;
+using SMF.SourceGenerator.Core.Helpers;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -54,29 +56,16 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
     /// <summary>
     /// Gets or sets the module c ts.
     /// </summary>
-    protected virtual IncrementalValuesProvider<ModuleCT> ModuleCTs =>
-        ModuleCDSCollection
-            .SelectMany(static (r, _) => r.Distinct(new CDSComparer()))
-            .Combine(ModuleCDSCollection)
-            .Select(static (r, _) => new ModuleCT(r.Right.GetAllPartialClasses(r.Left)!, _));
-
+    protected virtual IncrementalValuesProvider<ModuleCT> ModuleCTs { get; private set; }
     /// <summary>
     /// Gets or sets the model c ts.
     /// </summary>
-    protected virtual IncrementalValuesProvider<ModelCT> ModelCTs =>
-        ModelCDSCollection
-            .SelectMany(static (r, _) => r.Distinct(new CDSComparer()))
-            .Combine(ModelCDSCollection)
-            .Select(static (r, _) => new ModelCT(r.Right.GetAllPartialClasses(r.Left)!, _));
+    protected virtual IncrementalValuesProvider<ModelCT> ModelCTs { get; private set; }
 
     /// <summary>
     /// Gets or sets the controller c ts.
     /// </summary>
-    protected virtual IncrementalValuesProvider<ControllerCT> ControllerCTs =>
-        ControllerCDSCollection
-           .SelectMany(static (r, _) => r.Distinct(new CDSComparer()))
-           .Combine(ControllerCDSCollection)
-           .Select(static (r, _) => new ControllerCT(r.Right.GetAllPartialClasses(r.Left)!, _));
+    protected virtual IncrementalValuesProvider<ControllerCT> ControllerCTs { get; private set; }
 
 
     /// <summary>
@@ -175,30 +164,32 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
     {
         ConfigSMFAndGlobalOptions = ConfigSMF.Combine(analyzerConfigOptionsProvider).Select(static (s, a) => new ConfigSMFAndGlobalOptions(s.Left, s.Right));
 
+        ModuleCTs =
+        ModuleCDSCollection
+            .SelectMany(static (r, _) => r.Distinct(new CDSComparer()))
+            .Combine(ModuleCDSCollection).Combine(ConfigSMFAndGlobalOptions)
+            .Select(static (r, _) => new ModuleCT(r.Left.Right.GetAllPartialClasses(r.Left.Left)!, r.Right, _));
 
-        RegisteredModelCTsWithConfigSMFAndGlobalOptions = RegisteredModelCTs.Combine(ConfigSMFAndGlobalOptions).SelectMany(static (s, _) =>
+
+        ModelCTs = ModelCDSCollection
+            .SelectMany(static (r, _) => r.Distinct(new CDSComparer()))
+            .Combine(ModelCDSCollection).Combine(ConfigSMFAndGlobalOptions)
+            .Select(static (r, _) => new ModelCT(r.Left.Right.GetAllPartialClasses(r.Left.Left)!, r.Right, _));
+
+
+
+        ControllerCTs = ControllerCDSCollection
+           .SelectMany(static (r, _) => r.Distinct(new CDSComparer()))
+           .Combine(ControllerCDSCollection).Combine(ConfigSMFAndGlobalOptions)
+           .Select(static (r, _) => new ControllerCT(r.Left.Right.GetAllPartialClasses(r.Left.Left)!, r.Right, _));
+
+
+        ModelCTs = ModelCTs.Combine(ModelCTCollection).Select(static (r, _) =>
         {
-            List<ICSTypeWithConfigSMFAndGlobalOptions<ModelCT>> modelCTs = new();
-            if (s.Left is null) return modelCTs;
-            modelCTs.Add(new ICSTypeWithConfigSMFAndGlobalOptions<ModelCT>(s.Left!, s.Right.ConfigSMF, s.Right.OptionsProvider));
-            return modelCTs;
-        });
-
-        RegisteredModelCTCollectionWithConfigSMFAndGlobalOptions = RegisteredModelCTs.Collect().Combine(ConfigSMFAndGlobalOptions).Select((r, _) =>
-        {
-            return new WithConfigSMFAndGlobalOptions<ImmutableArray<ModelCT>>(r.Left, r.Right.ConfigSMF, r.Right.OptionsProvider);
-
+            r.Left.SetParentClassType(r.Right.FirstOrDefault(_ => _.QualifiedName == r.Left.QualifiedParentName)!);
+            return r.Left;
         });
     }
-    /// <summary>
-    /// Gets or sets the registered models with config s m f and global options.
-    /// </summary>                                                     
-    public IncrementalValueProvider<WithConfigSMFAndGlobalOptions<ImmutableArray<ModelCT>>> RegisteredModelCTCollectionWithConfigSMFAndGlobalOptions { get; set; }
-
-    /// <summary>
-    /// Gets or sets the model c ts with config s m f and global options.
-    /// </summary>
-    public IncrementalValuesProvider<ICSTypeWithConfigSMFAndGlobalOptions<ModelCT>> RegisteredModelCTsWithConfigSMFAndGlobalOptions { get; set; }
 
     /// <summary>
     /// Additionals the texts provider.

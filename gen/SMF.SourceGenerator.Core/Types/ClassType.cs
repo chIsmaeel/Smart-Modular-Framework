@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 /// This class represents a class type.
 /// </summary>
 /// <param name="CDSs"></param>
-public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, CancellationToken CancellationToken) : ICSType
+public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, ConfigSMFAndGlobalOptions ConfigSMFAndGlobalOptions, CancellationToken CancellationToken) : ICSType
 {
     private INamedTypeSymbol? _symbol;
     private string? _identifierName;
@@ -20,12 +20,28 @@ public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, Ca
     private string? _parentType;
     private IEnumerable<string>? _interfaces;
     private IEnumerable<string>? _usings;
+    private string _newContainingNamespace = string.Empty;
+    private string _newQualifiedName = string.Empty;
 
     /// <summary>
     /// Gets the identifier name.
     /// </summary>                            
     public string IdentifierName => _identifierName ??= ClassDSs?.FirstOrDefault()?.Identifier.ValueText!;
 
+    /// <summary>
+    /// Gets or sets the parent class type.
+    /// </summary>
+    public ClassType? ParentClassType { get; set; }
+
+    /// <summary>
+    /// Sets the parent class type.
+    /// </summary>
+    /// <param name="classType">The class type.</param>
+    public void SetParentClassType(ClassType? classType)
+    {
+        if (classType is not null)
+            ParentClassType = classType;
+    }
     /// <summary>
     /// Gets the qualified name.                                      
     /// </summary>
@@ -34,6 +50,11 @@ public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, Ca
         get => _qualifiedName ??= ClassDSs.FirstOrDefault()!.GetQualifiedName();
         set => _qualifiedName = value;
     }
+
+    /// <summary>
+    /// Gets the qualified name.                                      
+    /// </summary>
+    public string? NewQualifiedName => _newQualifiedName ??= QualifiedName!.Replace(ConfigSMFAndGlobalOptions.RootNamespace, ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME);
 
     /// <summary>
     /// Gets the containing namespace.
@@ -50,6 +71,22 @@ public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, Ca
         }
         set => _containingNamespace = value;
     }
+
+    /// <summary>
+    /// Gets or sets the new containing namespace.
+    /// </summary>
+    public virtual string NewContainingNamespace
+    {
+        get
+        {
+            if (_newContainingNamespace != "") return _newContainingNamespace;
+            if (ConfigSMFAndGlobalOptions is null) return ContainingNamespace;
+            _newContainingNamespace = ContainingNamespace.Replace(ConfigSMFAndGlobalOptions!.RootNamespace, ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME);
+            return _newContainingNamespace;
+        }
+    }
+
+
 
     /// <summary>
     /// Gets the usings.
@@ -161,7 +198,7 @@ public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, Ca
     /// <summary>
     /// Gets the parent type.
     /// </summary>
-    public virtual string? ParentType
+    public virtual string? StringParentType
     {
         get
         {

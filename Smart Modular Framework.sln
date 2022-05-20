@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.SourceGenerator.Core", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.SourceGenerator.Abstractions", "gen\SMF.SourceGenerator.Abstractions\SMF.SourceGenerator.Abstractions.csproj", "{DA76E0D0-D29C-40A4-AEBA-1A69BC378E58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.Addons.SourceGenrator", "gen\SMF.Addons.SourceGenrator\SMF.Addons.SourceGenrator.csproj", "{841D5B91-598C-40A4-BC4F-1A1F8BA02A4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{DA76E0D0-D29C-40A4-AEBA-1A69BC378E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA76E0D0-D29C-40A4-AEBA-1A69BC378E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA76E0D0-D29C-40A4-AEBA-1A69BC378E58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{841D5B91-598C-40A4-BC4F-1A1F8BA02A4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{841D5B91-598C-40A4-BC4F-1A1F8BA02A4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{841D5B91-598C-40A4-BC4F-1A1F8BA02A4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{841D5B91-598C-40A4-BC4F-1A1F8BA02A4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A149E60B-B34B-4A7A-86D7-4F0CDE15B33E} = {6874AD06-A00A-43EA-A894-70D4C284C0F9}
@@ -55,5 +61,6 @@ Global
 		{AEA9B40A-C412-4597-A727-8FEFC841FB88} = {F824C46A-ED8E-4A9D-89E7-F3FF74C88AF3}
 		{F7D1739E-5A30-4F4B-A642-51CB6F047430} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
 		{DA76E0D0-D29C-40A4-AEBA-1A69BC378E58} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
+		{841D5B91-598C-40A4-BC4F-1A1F8BA02A4F} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
 	EndGlobalSection
 EndGlobal
