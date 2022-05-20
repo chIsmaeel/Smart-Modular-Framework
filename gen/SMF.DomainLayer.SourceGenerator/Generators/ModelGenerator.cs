@@ -11,7 +11,7 @@ internal class ModelGenerator : CommonIncrementalGenerator
     /// <param name="context">The context.</param>
     protected override void Execute(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterSourceOutput(ModelCTs, AddModelClasses);
+        context.RegisterSourceOutput(RegisteredModelCTs, AddModelClasses);
     }
 
     /// <summary>
