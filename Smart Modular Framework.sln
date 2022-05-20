@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.SourceGenerator.Abstrac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.Addons.SourceGenerator", "gen\SMF.Addons.SourceGenerator\SMF.Addons.SourceGenerator.csproj", "{70CF49CC-BBB0-4EFA-9229-DE64FF31ACF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.DomainLayer.SourceGenerator", "gen\SMF.DomainLayer.SourceGenerator\SMF.DomainLayer.SourceGenerator.csproj", "{1376C80B-63AE-430F-9411-00552BAB22B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{70CF49CC-BBB0-4EFA-9229-DE64FF31ACF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70CF49CC-BBB0-4EFA-9229-DE64FF31ACF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70CF49CC-BBB0-4EFA-9229-DE64FF31ACF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1376C80B-63AE-430F-9411-00552BAB22B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1376C80B-63AE-430F-9411-00552BAB22B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1376C80B-63AE-430F-9411-00552BAB22B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1376C80B-63AE-430F-9411-00552BAB22B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{F7D1739E-5A30-4F4B-A642-51CB6F047430} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
 		{DA76E0D0-D29C-40A4-AEBA-1A69BC378E58} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
 		{70CF49CC-BBB0-4EFA-9229-DE64FF31ACF1} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
+		{1376C80B-63AE-430F-9411-00552BAB22B1} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4A8507FA-B0E0-4282-81FA-6A3A33A041B2}

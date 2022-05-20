@@ -23,7 +23,9 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Conf
     private string? _identifierNameWithoutPostFix;
     private string? _qualifiedNameWithoutPostFix;
     private readonly List<(string fieldName, Order order)>? _orderBy = new();
+    private string? _newContainingNamespace;
     private string? _orderByString;
+    private string? _newQualifiedName;
 
     /// <summary>
     /// Gets or sets the registering module c ts.
@@ -175,6 +177,22 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Conf
             if (_qualifiedNameWithoutPostFix is not null) return _qualifiedNameWithoutPostFix;
             return _qualifiedNameWithoutPostFix = QualifiedName!.Substring(0, QualifiedName.Length - "Model".Length);
         }
+    }
+
+    private string? _containingModuleName;
+
+    /// <summary>
+    /// Gets the containing module name.
+    /// </summary>
+    public string? ContainingModuleName
+    {
+        get
+        {
+            if (_containingModuleName is not null) return _containingModuleName;
+            _containingModuleName = ContainingNamespace.Substring(ConfigSMFAndGlobalOptions.RootNamespace!.Length + 1, ContainingNamespace.IndexOf("Addon.") - ConfigSMFAndGlobalOptions.RootNamespace!.Length + 4);
+            if (_containingModuleName is null) return null;
+            return _containingModuleName;
+        }
 
     }
 
@@ -200,6 +218,31 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Conf
                 }
             }
             return "SMF.ORM.Models.ModelBase";
+        }
+    }
+
+    /// <summary>
+    /// Gets the new containing namespace.
+    /// </summary>
+    public override string NewContainingNamespace
+    {
+        get
+        {
+            if (_newContainingNamespace is not null) return _newContainingNamespace;
+            _newContainingNamespace = $"{ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.{ContainingModuleName}.Models";
+            return _newContainingNamespace;
+        }
+    }
+
+    /// <summary>
+    /// Gets the new qualified name.
+    /// </summary>
+    public override string? NewQualifiedName
+    {
+        get
+        {
+            if (_newQualifiedName is not null) return _newQualifiedName;
+            return _newQualifiedName = $"{ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.{ContainingModuleName}.Models.{IdentifierNameWithoutPostFix}";
         }
     }
 }

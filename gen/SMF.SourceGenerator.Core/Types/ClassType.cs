@@ -54,7 +54,7 @@ public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, Co
     /// <summary>
     /// Gets the qualified name.                                      
     /// </summary>
-    public string? NewQualifiedName => _newQualifiedName ??= QualifiedName!.Replace(ConfigSMFAndGlobalOptions.RootNamespace, ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME);
+    public virtual string? NewQualifiedName => _newQualifiedName ??= QualifiedName!.Replace(ConfigSMFAndGlobalOptions.RootNamespace, ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME);
 
     /// <summary>
     /// Gets the containing namespace.

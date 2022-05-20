@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+        <EnablePreviewFeatures>true</EnablePreviewFeatures>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>preview</LangVersion>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Humanizer.Core" Version="2.14.1" />
+        <PackageReference Include="Microsoft.CodeAnalysis" Version="4.1.0" PrivateAssets="all" GeneratePathProperty="true" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" PrivateAssets="all" GeneratePathProperty="true" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.1.0" />
+        <!--<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.1.0" GeneratePathProperty="true" />-->
+    </ItemGroup>
+
+    <!--<ItemGroup>
+        <ProjectReference Include="..\..\libraries\SMF.ORM\SMF.ORM.csproj" GeneratePathProperty="true" PrivateAssets="all" />
+    </ItemGroup>-->
+
+    <ItemGroup>
+        <ProjectReference Include="..\SMF.SourceGenerator.Abstractions\SMF.SourceGenerator.Abstractions.csproj" GeneratePathProperty="true" PrivateAssets="all" />
+    </ItemGroup>
+
+
+    <PropertyGroup>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+    </PropertyGroup>
+
+    <Target Name="GetDependencyTargetPaths">
+        <ItemGroup>
+            <TargetPathWithTargetPlatformMoniker Include="..\..\gen\SMF.SourceGenerator.Core\bin\Debug\netstandard2.0\SMF.SourceGenerator.Core.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="..\..\gen\SMF.SourceGenerator.Abstractions\bin\Debug\netstandard2.0\SMF.SourceGenerator.Abstractions.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="..\..\libraries\SMF.ORM\bin\Debug\netstandard2.0\SMF.ORM.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="C:\Users\micro\.nuget\packages\microsoft.codeanalysis.csharp.scripting\4.1.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.Scripting.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="C:\Users\micro\.nuget\packages\microsoft.codeanalysis.scripting.common\4.1.0\lib\netstandard2.0\Microsoft.CodeAnalysis.Scripting.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="C:\Users\micro\.nuget\packages\humanizer.core\2.14.1\lib\netstandard2.0\Humanizer.dll" IncludeRuntimeDependency="false" />
+
+        </ItemGroup>
+    </Target>
+
+    <ItemGroup>
+        <EditorConfigFiles Remove="..\gen\SMF.DomainLayer.SourceGenerator\.editorconfig" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\gen\SMF.DomainLayer.SourceGenerator\.editorconfig" />
+    </ItemGroup>
+
+</Project>
