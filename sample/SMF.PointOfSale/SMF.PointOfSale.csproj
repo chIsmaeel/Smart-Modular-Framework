@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!--<ProjectReference Include="..\..\gen\SMF.Addons.SourceGenerator\SMF.Addons.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />-->
+        <ProjectReference Include="..\..\gen\SMF.Addons.SourceGenerator\SMF.Addons.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
         <!--<ProjectReference Include="..\..\gen\SMF.ApplicationLayer.SourceGenerator\SMF.ApplicationLayer.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />-->
         <!--<ProjectReference Include="..\..\gen\SMF.DomainLayer.SourceGenerator\SMF.DomainLayer.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />-->
     </ItemGroup>
