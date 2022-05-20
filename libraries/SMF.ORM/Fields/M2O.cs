@@ -1,6 +1,8 @@
 ﻿namespace SMF.ORM.Fields;
 
-public partial class M2O<T>
+using SMF.ORM.Models;
+
+public partial record M2O(RegisteredModel RelationshipWith) : RelationshipField
 {
     protected override FieldKind FieldKind => FieldKind.Many2one;
 }

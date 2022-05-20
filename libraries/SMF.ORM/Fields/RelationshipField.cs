@@ -3,10 +3,10 @@
 /// The relationship field.
 /// </summary>
 
-public abstract class RelationshipField : Field
+public abstract record RelationshipField : Field
 {
     /// <summary>
     /// Gets or sets the on cancade.
     /// </summary>
-    public string? OnCancade { get; set; }
+    //public string? OnCancade { get; set; }
 }

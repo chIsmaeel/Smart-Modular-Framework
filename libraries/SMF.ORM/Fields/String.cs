@@ -1,6 +1,6 @@
 ﻿namespace SMF.ORM.Fields;
 
-public partial class String
+public partial record String : Field
 {
     //private readonly string? _value;
 

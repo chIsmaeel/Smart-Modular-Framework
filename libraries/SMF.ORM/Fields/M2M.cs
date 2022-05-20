@@ -1,6 +1,11 @@
 ﻿namespace SMF.ORM.Fields;
 
-public partial class M2M<T>
+using SMF.ORM.Models;
+
+public partial record M2M(RegisteredModel RelationshipWith) : RelationshipField
 {
+    /// <summary>
+    /// Gets the field kind.
+    /// </summary>
     protected override FieldKind FieldKind => FieldKind.Many2many;
 }

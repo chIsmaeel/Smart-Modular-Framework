@@ -1,15 +1,14 @@
 ﻿
 namespace SMF.ORM.Fields;
+
+using SMF.ORM.Models;
+
 /// <summary>
 /// The o2 m.
 /// </summary>
 
-public partial class O2M<T>
+public partial record O2M(RegisteredModel RelationshipWith) : RelationshipField
 {
-    /// <summary>
-    /// Gets the relational model.
-    /// </summary>
-    public T? RelationalModel { get; init; }
     /// <summary>
     /// Gets the field kind.
     /// </summary>

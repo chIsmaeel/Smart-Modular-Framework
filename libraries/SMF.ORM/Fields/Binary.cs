@@ -1,6 +1,6 @@
 ﻿namespace SMF.ORM.Fields;
 
-public partial class Binary
+public partial record Binary : Field
 {
     public Func<byte[]>? DefaultValue { get; init; }
     protected override FieldKind FieldKind => FieldKind.Binary;

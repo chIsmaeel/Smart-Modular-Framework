@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 /// </summary>
 /// <param name="PDS">The Property Declaration Syntax.</param>
 /// <param name="Compilation">The Compilation.</param>
-public partial record TypeProperty(PropertyDeclarationSyntax PDS)
+public partial record TypeProperty(PropertyDeclarationSyntax PDS, ClassType ClassType, bool HasRelationship = false)
 {
     private IPropertySymbol? _symbol;
     private bool _hasObjectInitialization = false;
@@ -16,7 +16,7 @@ public partial record TypeProperty(PropertyDeclarationSyntax PDS)
     private string? _identiferName;
     private string? _comment;
 
-    /// <summary>
+    /// <summary>                              
     /// Gets the symbol.
     /// </summary>
     public IPropertySymbol? GetSymbol(Compilation compilation)

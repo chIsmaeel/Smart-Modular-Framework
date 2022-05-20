@@ -1,5 +1,5 @@
 ﻿namespace SMF.ORM.Fields;
-public partial class Boolean
+public partial record Boolean : Field
 {
     public bool DefaultValue { get; init; } = false;
 

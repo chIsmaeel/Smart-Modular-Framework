@@ -142,27 +142,30 @@ public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, Co
     {
         get
         {
-            var idProperty =
-     SyntaxFactory.PropertyDeclaration(
-         SyntaxFactory.ParseTypeName("Guid"),
-         "Id"
-     )
-     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
-     .AddAccessorListAccessors(
-         SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-         SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
-     );
-
 
             if (_properties is not null) return _properties;
             foreach (ClassDeclarationSyntax? cds in ClassDSs!)
                 foreach (PropertyDeclarationSyntax? pds in cds!.ChildNodes().OfType<PropertyDeclarationSyntax>())
                 {
-                    TypeProperty? propertyClass = new(pds);
+                    TypeProperty? propertyClass = new(pds, this);
                     _properties!.Add(propertyClass);
                 }
             return _properties!;
         }
+    }
+
+    /// <summary>
+    /// Creates the property.
+    /// </summary>
+    /// <param name="typeName">The type name.</param>
+    /// <param name="identiferName">The identifer name.</param>
+    public static PropertyDeclarationSyntax CreateProperty(string typeName, string identiferName)
+    {
+        return SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(typeName), identiferName)
+        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+        .AddAccessorListAccessors(
+         SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+         SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
     }
 
     /// <summary>

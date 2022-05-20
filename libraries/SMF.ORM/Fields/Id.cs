@@ -7,7 +7,7 @@ namespace SMF.ORM.Fields;
 /// <summary>
 /// Id.
 /// </summary>
-public class Id : Field
+public record Id : Field
 {
     protected override FieldKind FieldKind => FieldKind.Id;
 }

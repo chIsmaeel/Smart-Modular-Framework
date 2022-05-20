@@ -6,7 +6,7 @@ namespace SMF.ORM.Fields;
 /// <summary>
 /// Fields.
 /// </summary>
-public abstract class Field
+public abstract record Field
 {
     public bool IsReadOnly { get; init; }
     public bool IsRequired { get; init; }
