@@ -32,7 +32,7 @@ internal class GetByIdAsyncQueryGenerator : CommonIncrementalGenerator
         ClassTypeTemplate classTypeTemplate = new($"Get{s.IdentifierNameWithoutPostFix}ByIdQuery")
         {
             Modifiers = "public partial",
-            Interfaces = new() { $"MediatR.IRequest<IEnumerable<{s.NewQualifiedName}>>" },
+            Interfaces = new() { $"MediatR.IRequest<{s.NewQualifiedName}>" },
         };
 
         classTypeTemplate.Members.Add(new AutoPropertyTemplate("int", "Id") { SecondAccessor = "set" });
@@ -67,7 +67,7 @@ internal class GetByIdAsyncQueryGenerator : CommonIncrementalGenerator
             Parameters = new() { (classTypeTemplate.IdentifierName, "query"), ("System.Threading.CancellationToken", "cancellationToken") },
             Body = (w, p, gp, _) =>
             {
-                w.WriteLine($"var response = await _uow.{s.IdentifierNameWithoutPostFix}Repository.GetById(query.Id);");
+                w.WriteLine($"var response = await _uow.{s.IdentifierNameWithoutPostFix}Repository.GetByIdAsync(query.Id);");
                 w.WriteLine($"if(response is null) return null;");
                 w.WriteLine("return response;");
             }

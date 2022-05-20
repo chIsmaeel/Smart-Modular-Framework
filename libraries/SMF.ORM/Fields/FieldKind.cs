@@ -45,6 +45,11 @@ public enum FieldKind
     Id,
 
     /// <summary>
+    ///   One2one
+    /// </summary>
+    One2one,
+
+    /// <summary>
     /// Many2one.
     /// </summary>
     Many2one,

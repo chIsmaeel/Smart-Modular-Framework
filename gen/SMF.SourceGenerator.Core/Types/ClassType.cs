@@ -143,7 +143,7 @@ public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, Co
         get
         {
 
-            if (_properties is not null) return _properties;
+            if (_properties?.Count > 0) return _properties;
             foreach (ClassDeclarationSyntax? cds in ClassDSs!)
                 foreach (PropertyDeclarationSyntax? pds in cds!.ChildNodes().OfType<PropertyDeclarationSyntax>())
                 {

@@ -21,7 +21,7 @@ public class ModelPropertyTypes
         {
             "SMFields.String" => "string",
             "SMFields.Id" => "int",
-            "SMFields.Integer" => "int",
+            "SMFields.Int" => "int",
             "SMFields.Decimal" => "decimal",
             "SMFields.DateTime" => "DateTime",
             "SMFields.Binary" => "byte[]",

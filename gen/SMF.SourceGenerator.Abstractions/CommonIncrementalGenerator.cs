@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using SMF.Common.SourceGenerator.Abstractions.Types.ClassTypes;
 using SMF.SourceGenerator.Core;
 using SMF.SourceGenerator.Core.Helpers;
+using SMF.SourceGenerator.Core.Types.TypeMembers;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -142,11 +143,28 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
     /// </summary>                                        
     public IncrementalValuesProvider<ModelCT> RegisteredModelCTs => ModuleWithRegisteredModelCTs.SelectMany(static (s, _) =>
     {
+
         List<ModelCT> modelCTs = new();
         if (s.RegisteredModelCTs?.Count() == 0) return modelCTs;
 
         foreach (var registeredModelCT in s.RegisteredModelCTs!)
             modelCTs.Add(registeredModelCT!);
+
+        foreach (var modelCT in modelCTs)
+        {
+            foreach (var property in modelCT.Properties.Where(_ => _.Type is "SMFields.O2O" or "SMFields.O2M" or "SMFields.M2O" or "SMFields.M2M"))
+            {
+                var relationalModelName = (property!.PDS.DescendantNodes().OfType<ImplicitObjectCreationExpressionSyntax>().FirstOrDefault().ArgumentList.Arguments[0].Expression as MemberAccessExpressionSyntax)?.Name.Identifier.ValueText;
+                var relationModelWithModuleName = relationalModelName?.Split('_');
+                var relationModelQualifiedName = $"{modelCT.ConfigSMFAndGlobalOptions.RootNamespace}.{relationModelWithModuleName?[0]}Addon.Models.{relationModelWithModuleName?[1]}";
+                var relationalModelCT = modelCTs.FirstOrDefault(_ => _.QualifiedName == relationModelQualifiedName);
+                var forignkey = new TypeProperty(ClassType.CreateProperty("int", relationalModelName!.Substring(0, relationalModelName.Length - "Model".Length)), relationalModelCT!);
+                var relationProperty = new TypeProperty(ClassType.CreateProperty(property.ClassType.NewQualifiedName!, (property.ClassType as ModelCT)!.IdentifierNameWithoutPostFix!), relationalModelCT);
+                relationalModelCT.Properties.Add(forignkey);
+                relationalModelCT.Properties.Add(relationProperty);
+                property.SetRelationshipWith(new RelationshipWith(property, relationProperty, forignkey, RelationshipType.O2M));
+            }
+        }
         return modelCTs;
     }
     );

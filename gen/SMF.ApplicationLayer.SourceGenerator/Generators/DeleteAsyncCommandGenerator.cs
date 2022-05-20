@@ -35,7 +35,7 @@ internal class DeleteAsyncCommandGenerator : CommonIncrementalGenerator
         ClassTypeTemplate classTypeTemplate = new($"Delete{s.IdentifierNameWithoutPostFix}Command")
         {
             Modifiers = "public partial",
-            Interfaces = new() { $"MediatR.IRequest<IEnumerable<{s.NewQualifiedName}>>" },
+            Interfaces = new() { $"MediatR.IRequest<int>" },
         };
 
         classTypeTemplate.Members.Add(new AutoPropertyTemplate("int", "Id"));
@@ -73,7 +73,7 @@ internal class DeleteAsyncCommandGenerator : CommonIncrementalGenerator
             {
                 var objName = s.IdentifierNameWithoutPostFix.FirstCharToLowerCase();
                 w.WriteLine($" await _uow.{s.IdentifierNameWithoutPostFix}Repository.DeleteAsync(command.Id);");
-                w.WriteLine($"return {objName}.Id;");
+                w.WriteLine($"return command.Id;");
             }
         });
         classTypeTemplate.Members.Add(handlerClass);

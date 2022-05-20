@@ -15,6 +15,8 @@ public partial class SaleModel
     {
     }
 
+    public SMFields.O2M Products => new(RegisteredModels.Purchase_PriceModel);
+
     /// <summary>
     /// Used for calculate Age of Personadfasdfasdfa
     /// </summary>

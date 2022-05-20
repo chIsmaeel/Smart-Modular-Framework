@@ -7,7 +7,7 @@ public class ModelBase
     /// <summary>
     /// Gets or sets the inherit model.
     /// </summary>
-    public InheritModel? InheritModel { get; init; }
+    public RegisteredModel? InheritModel { get; init; }
 
     public OrderBy? OrderBy { get; init; }
 

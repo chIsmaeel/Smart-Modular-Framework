@@ -36,22 +36,17 @@ internal class UpdateAsyncCommandGenerator : CommonIncrementalGenerator
         ClassTypeTemplate classTypeTemplate = new($"Update{s.IdentifierNameWithoutPostFix}Command")
         {
             Modifiers = "public partial",
-            Interfaces = new() { $"MediatR.IRequest<IEnumerable<{s.NewQualifiedName}>>" },
+            Interfaces = new() { $"MediatR.IRequest<int>" },
         };
 
         classTypeTemplate.Members.Add(new AutoPropertyTemplate("int", "Id"));
-
-        foreach (var property in s.Properties!)
+        var tempModelCT = s;
+        while (tempModelCT.ParentClassType is not null)
         {
-            AutoPropertyTemplate p;
-
-            p = new(ModelPropertyTypes.GetPropertyType(property.Type), property.IdentifierName)
-            {
-                Comment = property.Comment,
-                SecondAccessor = "set"
-            };
-            classTypeTemplate.Members.Add(p);
+            AddProperties((ModelCT)tempModelCT.ParentClassType, classTypeTemplate);
+            tempModelCT = (ModelCT)tempModelCT.ParentClassType;
         }
+        AddProperties(s, classTypeTemplate);
 
         ClassTypeTemplate handlerClass = new(classTypeTemplate.IdentifierName + "Handler")
         {
@@ -109,13 +104,31 @@ internal class UpdateAsyncCommandGenerator : CommonIncrementalGenerator
     /// Adds the properties.
     /// </summary>
     /// <param name="s">The s.</param>
+    /// <param name="classTypeTemplate">The class type template.</param>
+    private static void AddProperties(ModelCT s, ClassTypeTemplate classTypeTemplate)
+    {
+        foreach (var property in s.Properties!)
+        {
+            classTypeTemplate.Members.Add(new AutoPropertyTemplate(ModelPropertyTypes.GetPropertyType(property!.Type), property.IdentifierName)
+            {
+                Comment = property.Comment,
+                SecondAccessor = "set"
+            });
+
+        }
+    }
+
+    /// <summary>
+    /// Adds the properties.
+    /// </summary>
+    /// <param name="s">The s.</param>
     /// <param name="w">The w.</param>
     /// <param name="objName">The obj name.</param>
     private static void AddProperties(ModelCT s, IndentedTextWriter w, string? objName)
     {
         foreach (var property in s.Properties!)
         {
-            w.WriteLine($"{objName}.{property.IdentifierName} = command.{property.IdentifierName};");
+            w.WriteLine($"{objName}.{property!.IdentifierName} = command.{property.IdentifierName};");
         }
     }
 }

@@ -16,6 +16,20 @@ public partial record TypeProperty(PropertyDeclarationSyntax PDS, ClassType Clas
     private string? _identiferName;
     private string? _comment;
 
+
+    /// <summary>
+    /// Gets or sets the relationship with.
+    /// </summary>
+    public RelationshipWith RelationshipWith { get; set; }
+
+    /// <summary>
+    /// Sets the relationship with.
+    /// </summary>
+    /// <param name="relationshipWith">The relationship with.</param>
+    public void SetRelationshipWith(RelationshipWith relationshipWith)
+    {
+        RelationshipWith = relationshipWith;
+    }
     /// <summary>                              
     /// Gets the symbol.
     /// </summary>
