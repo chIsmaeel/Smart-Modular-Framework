@@ -17,7 +17,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\libraries\SMF.ORM\SMF.ORM.csproj" />
         <ProjectReference Include="..\SMF.SourceGenerator.Core\SMF.SourceGenerator.Core.csproj" GeneratePathProperty="true" PrivateAssets="all" />
     </ItemGroup>
 
@@ -30,6 +29,7 @@
         <ItemGroup>
             <TargetPathWithTargetPlatformMoniker Include="..\..\gen\SMF.SourceGenerator.Core\bin\Debug\netstandard2.0\SMF.SourceGenerator.Core.dll" IncludeRuntimeDependency="false" />
             <TargetPathWithTargetPlatformMoniker Include="..\..\libraries\SMF.ORM\bin\Debug\netstandard2.0\SMF.ORM.dll" IncludeRuntimeDependency="false" />
+
         </ItemGroup>
     </Target>
 

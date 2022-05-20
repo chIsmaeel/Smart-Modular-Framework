@@ -195,7 +195,7 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Conf
                     var parentType = pType.LastOrDefault();
                     if (parentType != "" && parentType.Contains('_'))
                     {
-                        return _qualifiedParentName = ConfigSMFAndGlobalOptions?.RootNamespace + parentType?.Substring(0, parentType.IndexOf('_'))! + "Addon.Models." + parentType?.Substring(parentType.LastIndexOf('_') + 1)!;
+                        return _qualifiedParentName = ConfigSMFAndGlobalOptions?.RootNamespace + "." + parentType?.Substring(0, parentType.IndexOf('_'))! + "Addon.Models." + parentType?.Substring(parentType.LastIndexOf('_') + 1)!;
                     }
                 }
             }

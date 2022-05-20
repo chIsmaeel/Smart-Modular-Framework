@@ -16,7 +16,7 @@ public partial class PurchaseModel
     /// </summary>
     public PurchaseModel()
     {
-        OrderBy = new((Description, Order.Ascending), (Description, Order.Descending));
+        //OrderBy = new((Description, Order.Ascending), (Description, Order.Descending));
         //InheritModel = InheritModels.Purchase_PurchaseLineModel;
     }
     /// <summary>

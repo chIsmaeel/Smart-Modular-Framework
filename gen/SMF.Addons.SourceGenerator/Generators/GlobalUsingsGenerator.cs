@@ -26,6 +26,6 @@ public class GlobalUsingsGenerator : CommonIncrementalGenerator
     {
         SMFProductionContext context = new(c);
 
-        context.AddSource("GlobalNamespaces", "global using SMFields = SMF.ORM.Fields;\nglobal using SMF.ORM.Models;    q");
+        context.AddSource("GlobalNamespaces", "global using SMFields = SMF.ORM.Fields;\nglobal using SMF.ORM.Models;\nglobal using SMF.Addons;");
     }
 }

@@ -24,7 +24,3 @@ public partial class PurchaseModel
     //[SMF.Shared.ExcludeFromDefaultInterface]
     //public IField? Names { get; } = new SM.String();
 }
-
-public partial class PurchaseModel
-{
-}

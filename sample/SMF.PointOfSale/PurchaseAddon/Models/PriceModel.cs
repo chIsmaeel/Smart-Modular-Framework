@@ -1,5 +1,4 @@
-﻿global using SMFields = SMF.ORM.Fields;
-namespace SMF.PointOfSale.PurchaseAddon.Models;
+﻿namespace SMF.PointOfSale.PurchaseAddon.Models;
 public partial class PriceModel
 {
     public PriceModel()
