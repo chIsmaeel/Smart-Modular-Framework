@@ -1,6 +1,7 @@
 ﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
 
 using Humanizer;
+using SMF.SourceGenerator.Core;
 using SMF.SourceGenerator.Core.Types;
 
 /// <summary>

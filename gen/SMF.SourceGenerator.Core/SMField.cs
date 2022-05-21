@@ -111,6 +111,7 @@ public class SMField
     {
         if (!typeName.StartsWith("SMFields.")) return null;
         if (typeName.EndsWith("?")) typeName = typeName.Substring(0, typeName.Length - 1);
+
         return typeName switch
         {
             "SMFields.String" => new ORM.Fields.String(),
@@ -120,10 +121,10 @@ public class SMField
             "SMFields.Boolean" => new ORM.Fields.Boolean(),
             "SMFields.Id" => new ORM.Fields.Id(),
             "SMFields.Binary" => new ORM.Fields.Binary(),
-            "SMFields.O2O" => new ORM.Fields.O2O(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType)!.QualifiedName!)),
-            "SMFields.O2M" => new ORM.Fields.O2M(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType)!.QualifiedName!)),
-            "SMFields.M2O" => new ORM.Fields.M2O(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType)!.QualifiedName!)),
-            "SMFields.M2M" => new ORM.Fields.M2M(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType)!.QualifiedName!)),
+            "SMFields.O2O" => new ORM.Fields.O2O(new RegisteredModel("")),
+            "SMFields.O2M" => new ORM.Fields.O2M(new RegisteredModel("")),
+            "SMFields.M2O" => new ORM.Fields.M2O(new RegisteredModel("")),
+            "SMFields.M2M" => new ORM.Fields.M2M(new RegisteredModel("")),
             _ => null
         };
     }

@@ -32,3 +32,8 @@ public partial class SaleModel
     /// </summary>
     public SMFields.Id DescriptionMethod { get; } = new() { IsReadOnly = true, Index = true };
 }
+
+public partial class SaleModel
+{
+    partial void Get();
+}

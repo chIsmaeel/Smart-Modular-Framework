@@ -1,4 +1,7 @@
 ﻿namespace SMF.Addons.SourceGenerator.Generators;
+
+using SMF.SourceGenerator.Core;
+
 /// <summary>
 /// The model partial classes.
 /// </summary>
@@ -35,6 +38,17 @@ internal class ModelPartialClasses : CommonIncrementalGenerator
         };
         if (s.StringParentType == "ModelBase")
             DefaultPropertiesIfInheritModelIsNotDefined(classTemplate, s.IdentifierName);
+        //#if DEBUG
+        //        if (!System.Diagnostics.Debugger.IsAttached)
+        //            System.Diagnostics.Debugger.Launch();
+        //#endif
+        foreach (var property in s.Properties.Where(_ => _.SMField is not null))
+        {
+            if ((bool)(property?.SMField?.SMFField?.Compute)!)
+            {
+                classTemplate.StringMembers.Add($"partial {ModelPropertyTypes.GetPropertyType(property)} Compute{property.IdentifierName}({s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.UnitOfWork uow);");
+            }
+        }
 
         namespaceTemplate.TypeTemplates.Add(classTemplate);
         context.AddSource(namespaceTemplate);

@@ -1,6 +1,7 @@
 ﻿namespace SMF.ApplicationLayer.SourceGenerator;
 
 using Humanizer;
+using SMF.SourceGenerator.Core;
 using System.CodeDom.Compiler;
 /// <summary>
 /// The static methods.

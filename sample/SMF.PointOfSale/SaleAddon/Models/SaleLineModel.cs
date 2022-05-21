@@ -8,7 +8,7 @@ namespace SMF.PointOfSale.SaleAddon.Models;
 /// </summary>
 public partial class SaleLineModel
 {
-    public SMFields.Binary? Description { get; } = new() { };
+    public SMFields.Binary? Description { get; } = new() { Compute = true };
     public SMFields.Binary? ProductName { get; } = new() { };
     //public SMFields.O2M O2M => new(RegisteredModels.Purchase_PriceModel);
 

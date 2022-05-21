@@ -1,4 +1,4 @@
-﻿namespace SMF.Common.SourceGenerator.Abstractions;
+﻿namespace SMF.SourceGenerator.Core;
 
 using SMF.SourceGenerator.Core.Types.TypeMembers;
 
