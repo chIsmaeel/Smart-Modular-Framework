@@ -1,6 +1,7 @@
 ﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
 
 using Humanizer;
+using SMF.SourceGenerator.Core;
 
 /// <summary>
 /// The model entity configuration generator.
@@ -66,15 +67,9 @@ internal partial class ModelEntityConfigurationGenerator : CommonIncrementalGene
 
         foreach (var property in s.Properties!)
         {
-            if (property!.IdentifierName == "SalePrices")
-            {
-                //#if DEBUG
-                //                if (!System.Diagnostics.Debugger.IsAttached)
-                //                    System.Diagnostics.Debugger.Launch();
-                //#endif
-            }
-            SMField? field = new(property!);
-            if (field.SMFField is null) continue;
+
+            SMField? field = property!.SMField;
+            if (field!.SMFField is null) continue;
 
             WritePropertyFluentAPIs(writer, field, property!);
             if (property.IdentifierName == "SalePrices")
@@ -142,10 +137,10 @@ internal partial class ModelEntityConfigurationGenerator
         {
             writer.WriteLine();
 
-            if (property.RelationshipWith.RelationshipType is SMF.SourceGenerator.Core.Types.RelationshipType.M2O)
+            if (property.RelationshipWith.RelationshipType is SMF.SourceGenerator.Core.Types.RelationshipType.O2O)
                 writer.Write(".HasForeignKey<{1}>(_ => _.{0})", property.RelationshipWith.ForeignKey.IdentifierName, (property.RelationshipWith.ForeignKey.ClassType as ModelCT)!.NewQualifiedName);
             else
-                writer.Write(".HasForeignKey<{1}>(_ => _.{0})", property.RelationshipWith.ForeignKey.IdentifierName, (property.RelationshipWith.ForeignKey.ClassType as ModelCT)!.NewQualifiedName);
+                writer.Write(".HasForeignKey(_ => _.{0})", property.RelationshipWith.ForeignKey.IdentifierName);
         }
         writer.WriteLine(";");
         writer.Indent--;

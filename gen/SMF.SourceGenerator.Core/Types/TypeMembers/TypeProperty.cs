@@ -15,8 +15,13 @@ public partial record TypeProperty(PropertyDeclarationSyntax PDS, ClassType Clas
     private string _type = string.Empty;
     private string? _identiferName;
     private string? _comment;
+    private SMField? _sMField;
 
 
+    /// <summary>
+    /// Gets the s m field.
+    /// </summary>
+    public SMField? SMField => _sMField ??= new(this);
     /// <summary>
     /// Gets or sets the relationship with.
     /// </summary>
@@ -41,7 +46,11 @@ public partial record TypeProperty(PropertyDeclarationSyntax PDS, ClassType Clas
     /// <summary>
     /// Gets the identifier name.
     /// </summary>
-    public string IdentifierName => _identiferName ??= PDS.Identifier.ValueText;
+    public string IdentifierName
+    {
+        get => _identiferName ??= PDS.Identifier.ValueText;
+        set => _identiferName = value;
+    }
 
     /// <summary>
     /// Gets the comment.

@@ -151,82 +151,93 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
 
             if (moduleWithRegisteredModelCTs.RegisteredModelCTs?.Count() == 0) return modelCTs;
 
-            foreach (var registeredModelCT in moduleWithRegisteredModelCTs.RegisteredModelCTs!)
-                modelCTs.Add(registeredModelCT!);
-        }
-
-        foreach (var modelCT in modelCTs)
-        {
-            List<TypeProperty> typeProperties = new();
-            foreach (var property in modelCT.Properties.Where(_ => _!.Type is "SMFields.O2O" or "SMFields.O2M" or "SMFields.M2O" or "SMFields.M2M"))
+            foreach (var modelCT in moduleWithRegisteredModelCTs.RegisteredModelCTs!)
             {
-                var relationalModelName = (property!.PDS.DescendantNodes().OfType<ImplicitObjectCreationExpressionSyntax>().FirstOrDefault().ArgumentList.Arguments[0].Expression as MemberAccessExpressionSyntax)?.Name.Identifier.ValueText;
-                var relationalType = property.Type switch
+                List<TypeProperty> typeProperties = new();
+                foreach (var property in modelCT!.Properties)
                 {
-                    "SMFields.O2O" => RelationshipType.O2O,
-                    "SMFields.O2M" => RelationshipType.O2M,
-                    "SMFields.M2O" => RelationshipType.M2O,
-                    "SMFields.M2M" => RelationshipType.M2M,
-                    _ => RelationshipType.O2O,
-                };
-                var relationModelWithModuleName = relationalModelName?.Split('_');
-                var relationModelQualifiedName = $"{modelCT.ConfigSMFAndGlobalOptions.RootNamespace}.{relationModelWithModuleName?[0]}Addon.Models.{relationModelWithModuleName?[1]}";
-                var relationalModelCT = modelCTs.FirstOrDefault(_ => _.QualifiedName == relationModelQualifiedName);
-                if (relationalModelCT is null) continue;
-                TypeProperty containingProperty;
-                TypeProperty relationalModelProperty;
-                TypeProperty forignKey;
-                if (relationalType == RelationshipType.O2O)
-                {
-                    containingProperty = new TypeProperty(ClassType.CreateProperty(relationalModelCT.NewQualifiedName!, property.IdentifierName), modelCT);
-                    forignKey = new TypeProperty(ClassType.CreateProperty("int", property.IdentifierName + "_" + modelCT.IdentifierNameWithoutPostFix + "_FK"), modelCT!);
-                    relationalModelProperty = new TypeProperty(ClassType.CreateProperty(property.ClassType.NewQualifiedName!, modelCT.IdentifierNameWithoutPostFix + "_" + property.IdentifierName), relationalModelCT);
-
-                    property.SetRelationshipWith(new RelationshipWith(containingProperty, relationalModelProperty, RelationshipType.O2O, forignKey));
-
-                    relationalModelCT.Properties.Add(relationalModelProperty);
-                    typeProperties.Add(forignKey);
+                    if (property!.Type is "SMFields.O2O" or "SMFields.O2M" or "SMFields.M2O" or "SMFields.M2M")
+                        AddRelationalFields(property, modelCT, modelCTs, typeProperties);
                 }
-                else if (relationalType == RelationshipType.O2M)
-                {
-                    containingProperty = new TypeProperty(ClassType.CreateProperty(relationalModelCT.NewQualifiedName!, property.IdentifierName), modelCT);
-                    relationalModelProperty = (new TypeProperty(ClassType.CreateProperty($"System.Collections.Generic.List<{property.ClassType.NewQualifiedName!}>", modelCT!.IdentifierNameWithoutPostFix!.Pluralize()! + "_" + property.IdentifierName), relationalModelCT));
-                    forignKey = (new TypeProperty(ClassType.CreateProperty("int", property.IdentifierName + "_" + modelCT.IdentifierNameWithoutPostFix.Pluralize() + "_FK"), modelCT!));
 
-                    property.SetRelationshipWith(new RelationshipWith(containingProperty, relationalModelProperty, RelationshipType.O2M, forignKey));
-
-                    relationalModelCT.Properties.Add(relationalModelProperty);
-                    typeProperties.Add(forignKey);
-
-                }
-                else if (relationalType == RelationshipType.M2O)
-                {
-                    containingProperty = (new TypeProperty(ClassType.CreateProperty($"System.Collections.Generic.ICollection<{relationalModelCT.NewQualifiedName!}>", property.IdentifierName!.Pluralize()), modelCT));
-                    relationalModelProperty = (new TypeProperty(ClassType.CreateProperty(property.ClassType.NewQualifiedName!, modelCT!.IdentifierNameWithoutPostFix! + "_" + property.IdentifierName.Pluralize()!), relationalModelCT));
-                    forignKey = (new TypeProperty(ClassType.CreateProperty("int", modelCT.IdentifierNameWithoutPostFix + "_" + property.IdentifierName.Pluralize() + "_FK"), relationalModelCT!));
-
-                    property.SetRelationshipWith(new RelationshipWith(containingProperty, relationalModelProperty, RelationshipType.M2O, forignKey));
-
-                    relationalModelCT.Properties.Add(relationalModelProperty);
-                    relationalModelCT.Properties.Add(forignKey);
-
-                }
-                else
-                {
-                    containingProperty = (new TypeProperty(ClassType.CreateProperty($"System.Collections.Generic.ICollection<{relationalModelCT.NewQualifiedName!}>", property.IdentifierName.Pluralize()!), modelCT));
-                    relationalModelProperty = (new TypeProperty(ClassType.CreateProperty($"System.Collections.Generic.ICollection<{property.ClassType.NewQualifiedName!}>", modelCT.IdentifierNameWithoutPostFix.Pluralize() + "_" + property.IdentifierName.Pluralize()), relationalModelCT));
-
-                    property.SetRelationshipWith(new RelationshipWith(containingProperty, relationalModelProperty, RelationshipType.M2M, null));
-
-                    relationalModelCT.Properties.Add(relationalModelProperty);
-                }
+                modelCT.Properties.AddRange(typeProperties);
+                modelCTs.Add(modelCT!);
             }
-            modelCT.Properties.AddRange(typeProperties);
         }
         return modelCTs;
-    }
+    });
 
-    );
+    /// <summary>
+    /// Adds the relational fields.
+    /// </summary>
+    /// <param name="property">The property.</param>
+    /// <param name="modelCT">The model c t.</param>
+    /// <param name="modelCTs">The model c ts.</param>
+    /// <param name="typeProperties">The type properties.</param>
+    public static void AddRelationalFields(TypeProperty property, ModelCT modelCT, List<ModelCT> modelCTs, List<TypeProperty> typeProperties)
+    {
+        var relationalModelName = (property!.PDS.DescendantNodes().OfType<ImplicitObjectCreationExpressionSyntax>().FirstOrDefault().ArgumentList.Arguments[0].Expression as MemberAccessExpressionSyntax)?.Name.Identifier.ValueText;
+        var relationalType = property.Type switch
+        {
+            "SMFields.O2O" => RelationshipType.O2O,
+            "SMFields.O2M" => RelationshipType.O2M,
+            "SMFields.M2O" => RelationshipType.M2O,
+            "SMFields.M2M" => RelationshipType.M2M,
+            _ => RelationshipType.O2O,
+        };
+        var relationModelWithModuleName = relationalModelName?.Split('_');
+        var relationModelQualifiedName = $"{modelCT.ConfigSMFAndGlobalOptions.RootNamespace}.{relationModelWithModuleName?[0]}Addon.Models.{relationModelWithModuleName?[1]}";
+        var relationalModelCT = modelCTs.FirstOrDefault(_ => _.QualifiedName == relationModelQualifiedName);
+        if (relationalModelCT is null) return;
+        TypeProperty containingProperty;
+        TypeProperty relationalModelProperty;
+        TypeProperty forignKey;
+        if (relationalType == RelationshipType.O2O)
+        {
+            containingProperty = new TypeProperty(ClassType.CreateProperty(relationalModelCT.NewQualifiedName!, property.IdentifierName), modelCT);
+            forignKey = new TypeProperty(ClassType.CreateProperty("int", property.IdentifierName + "_" + modelCT.IdentifierNameWithoutPostFix + "_FK"), modelCT!);
+            relationalModelProperty = new TypeProperty(ClassType.CreateProperty(property.ClassType.NewQualifiedName!, modelCT.IdentifierNameWithoutPostFix + "_" + property.IdentifierName), relationalModelCT);
+
+            property.SetRelationshipWith(new RelationshipWith(containingProperty, relationalModelProperty, RelationshipType.O2O, forignKey));
+
+            relationalModelCT.Properties.Add(relationalModelProperty);
+            typeProperties.Add(forignKey);
+        }
+        else if (relationalType == RelationshipType.O2M)
+        {
+            containingProperty = new TypeProperty(ClassType.CreateProperty(relationalModelCT.NewQualifiedName!, property.IdentifierName), modelCT);
+            relationalModelProperty = (new TypeProperty(ClassType.CreateProperty($"System.Collections.Generic.List<{property.ClassType.NewQualifiedName!}>", modelCT!.IdentifierNameWithoutPostFix!.Pluralize()! + "_" + property.IdentifierName), relationalModelCT));
+            forignKey = (new TypeProperty(ClassType.CreateProperty("int", property.IdentifierName + "_" + modelCT.IdentifierNameWithoutPostFix.Pluralize() + "_FK"), modelCT!));
+
+            property.SetRelationshipWith(new RelationshipWith(containingProperty, relationalModelProperty, RelationshipType.O2M, forignKey));
+
+            relationalModelCT.Properties.Add(relationalModelProperty);
+            typeProperties.Add(forignKey);
+
+        }
+        else if (relationalType == RelationshipType.M2O)
+        {
+            containingProperty = (new TypeProperty(ClassType.CreateProperty($"System.Collections.Generic.ICollection<{relationalModelCT.NewQualifiedName!}>", property.IdentifierName!.Pluralize()), modelCT));
+            relationalModelProperty = (new TypeProperty(ClassType.CreateProperty(property.ClassType.NewQualifiedName!, modelCT!.IdentifierNameWithoutPostFix! + "_" + property.IdentifierName.Pluralize()!), relationalModelCT));
+            forignKey = (new TypeProperty(ClassType.CreateProperty("int", modelCT.IdentifierNameWithoutPostFix + "_" + property.IdentifierName.Pluralize() + "_FK"), relationalModelCT!));
+            property.IdentifierName = property.IdentifierName.Pluralize();
+            property.SetRelationshipWith(new RelationshipWith(containingProperty, relationalModelProperty, RelationshipType.M2O, forignKey));
+
+            relationalModelCT.Properties.Add(relationalModelProperty);
+            relationalModelCT.Properties.Add(forignKey);
+
+        }
+        else
+        {
+            containingProperty = (new TypeProperty(ClassType.CreateProperty($"System.Collections.Generic.ICollection<{relationalModelCT.NewQualifiedName!}>", property.IdentifierName.Pluralize()!), modelCT));
+            relationalModelProperty = (new TypeProperty(ClassType.CreateProperty($"System.Collections.Generic.ICollection<{property.ClassType.NewQualifiedName!}>", modelCT.IdentifierNameWithoutPostFix.Pluralize() + "_" + property.IdentifierName.Pluralize()), relationalModelCT));
+
+            property.IdentifierName = property.IdentifierName.Pluralize();
+            property.SetRelationshipWith(new RelationshipWith(containingProperty, relationalModelProperty, RelationshipType.M2M, null));
+
+            relationalModelCT.Properties.Add(relationalModelProperty);
+        }
+    }
 
     /// <summary>
     /// Gets or sets the config s m f and global options.

@@ -74,6 +74,7 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Conf
         }
     }
 
+
     /// <summary>
     /// Gets the parent type.                   
     /// </summary>

@@ -40,7 +40,8 @@ internal class ModelGenerator : CommonIncrementalGenerator
             AddDefaultProperties(classTypeTemplate);
         foreach (var property in s.Properties!)
         {
-            string identifierName = property.IdentifierName;
+
+            string identifierName = property!.IdentifierName;
             if (property.RelationshipWith is RelationshipWith relationshipWith && relationshipWith.RelationshipType is RelationshipType.M2O or RelationshipType.M2M)
                 identifierName = identifierName.Pluralize();
             AutoPropertyTemplate p = new(ModelPropertyTypes.GetPropertyType(property!), identifierName)

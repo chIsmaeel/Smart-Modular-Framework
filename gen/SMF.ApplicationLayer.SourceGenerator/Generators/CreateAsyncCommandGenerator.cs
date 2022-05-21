@@ -1,7 +1,7 @@
 ﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
 
+using SMF.ApplicationLayer.SourceGenerator;
 using SMF.SourceGenerator.Core;
-using System.CodeDom.Compiler;
 
 /// <summary>
 /// The model entity configuration generator.
@@ -42,10 +42,10 @@ internal class CreateAsyncCommandGenerator : CommonIncrementalGenerator
         var tempModelCT = s;
         while (tempModelCT.ParentClassType is not null)
         {
-            AddProperties((ModelCT)tempModelCT.ParentClassType, classTypeTemplate);
+            StaticMethods.AddProperties((ModelCT)tempModelCT.ParentClassType, classTypeTemplate);
             tempModelCT = (ModelCT)tempModelCT.ParentClassType;
         }
-        AddProperties(s, classTypeTemplate);
+        StaticMethods.AddProperties(s, classTypeTemplate);
         ClassTypeTemplate handlerClass = new(classTypeTemplate.IdentifierName + "Handler")
         {
             IsSubMemberofOtherType = true,
@@ -83,11 +83,11 @@ internal class CreateAsyncCommandGenerator : CommonIncrementalGenerator
                 w.WriteLine($"{objName}.CreatedOn = System.DateTime.Now;");
                 while (tempModelCT.ParentClassType is not null)
                 {
-                    AddProperties((ModelCT)tempModelCT.ParentClassType, w, objName);
+                    StaticMethods.AddProperties((ModelCT)tempModelCT.ParentClassType, w, objName);
                     tempModelCT = (ModelCT)tempModelCT.ParentClassType;
                 }
 
-                AddProperties(s, w, objName);
+                StaticMethods.AddProperties(s, w, objName);
                 w.WriteLine($"await  _uow.{s.IdentifierNameWithoutPostFix}Repository.InsertAsync({objName});");
                 w.WriteLine($"return await Task.FromResult({objName}.Id);");
             }
@@ -95,40 +95,5 @@ internal class CreateAsyncCommandGenerator : CommonIncrementalGenerator
         classTypeTemplate.Members.Add(handlerClass);
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);
         context.AddSource(fileScopedNamespace);
-    }
-
-    /// <summary>
-    /// Adds the properties.
-    /// </summary>
-    /// <param name="s">The s.</param>
-    /// <param name="classTypeTemplate">The class type template.</param>
-    private static void AddProperties(ModelCT s, ClassTypeTemplate classTypeTemplate)
-    {
-        foreach (var property in s.Properties!)
-        {
-            classTypeTemplate.Members.Add(new AutoPropertyTemplate(ModelPropertyTypes.GetPropertyType(property!), property.IdentifierName)
-            {
-                Comment = property.Comment,
-                SecondAccessor = "set"
-            });
-
-        }
-    }
-
-
-    /// <summary>
-    /// Adds the properties.
-    /// </summary>
-    /// <param name="s">The s.</param>
-    /// <param name="w">The w.</param>
-    /// <param name="objName">The obj name.</param>
-    private static void AddProperties(ModelCT s, IndentedTextWriter w, string? objName)
-    {
-        foreach (var property in s.Properties!)
-        {
-            if (property!.IdentifierName is "Id" or "UpdatedOn")
-                continue;
-            w.WriteLine($"{objName}.{property.IdentifierName} = command.{property.IdentifierName};");
-        }
     }
 }

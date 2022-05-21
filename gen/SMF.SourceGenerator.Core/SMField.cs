@@ -1,13 +1,14 @@
-﻿namespace SMF.EntityFramework.SourceGenerator;
+﻿namespace SMF.SourceGenerator.Core;
 
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using SMF.ORM.Models;
+using SMF.SourceGenerator.Core.Types.TypeMembers;
 
 /// <summary>
 /// The s m fields.
 /// </summary>
 
-internal class SMField
+public class SMField
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="EntityFramework.Generator.SMField"/> class.
@@ -94,7 +95,7 @@ internal class SMField
         return SMFField switch
         {
             ORM.Fields.Binary => value.Contains("=>") ? CSharpScript.EvaluateAsync<Func<byte[]>>(value).Result : null,
-            ORM.Fields.DateTime => System.DateTime.Parse(value),
+            ORM.Fields.DateTime => DateTime.Parse(value),
             ORM.Fields.Decimal => decimal.Parse(value),
             ORM.Fields.Id => int.Parse(value),
             ORM.Fields.Int => int.Parse(value),
@@ -119,10 +120,10 @@ internal class SMField
             "SMFields.Boolean" => new ORM.Fields.Boolean(),
             "SMFields.Id" => new ORM.Fields.Id(),
             "SMFields.Binary" => new ORM.Fields.Binary(),
-            "SMFields.O2O" => new ORM.Fields.O2O(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.NewQualifiedName!)),
-            "SMFields.O2M" => new ORM.Fields.O2M(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.NewQualifiedName!)),
-            "SMFields.M2O" => new ORM.Fields.M2O(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.NewQualifiedName!)),
-            "SMFields.M2M" => new ORM.Fields.M2M(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.NewQualifiedName!)),
+            "SMFields.O2O" => new ORM.Fields.O2O(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType)!.QualifiedName!)),
+            "SMFields.O2M" => new ORM.Fields.O2M(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType)!.QualifiedName!)),
+            "SMFields.M2O" => new ORM.Fields.M2O(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType)!.QualifiedName!)),
+            "SMFields.M2M" => new ORM.Fields.M2M(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType)!.QualifiedName!)),
             _ => null
         };
     }
