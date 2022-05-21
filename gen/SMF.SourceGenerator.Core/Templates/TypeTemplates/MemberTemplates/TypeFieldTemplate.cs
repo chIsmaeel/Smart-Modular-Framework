@@ -35,6 +35,5 @@ public record TypeFieldTemplate(string Type, string IdentifierName) : TypeMember
             _indentedTextWriter.Write(DefaultValue);
         }
         _indentedTextWriter.WriteLine(';');
-        //_indentedTextWriter.WriteLine();
     }
 }

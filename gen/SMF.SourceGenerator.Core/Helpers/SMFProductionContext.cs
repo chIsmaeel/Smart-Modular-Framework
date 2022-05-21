@@ -31,6 +31,8 @@ public class SMFProductionContext
         {
             ReportDiagnostic(diagnostic);
         }
+        sourceCode = CSharpSyntaxTree.ParseText(sourceCode).GetRoot().NormalizeWhitespace().SyntaxTree.GetText().ToString();
+
         _ctx.AddSource(fileName + ".g.cs", sourceCode);
     }
 

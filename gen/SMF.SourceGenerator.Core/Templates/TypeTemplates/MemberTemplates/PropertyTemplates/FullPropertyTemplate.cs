@@ -67,9 +67,7 @@ public record FullPropertyTemplate(string Type, string IdentifierName) : Propert
 
         WriteCommentAndAttributes();
         WritePropertyDeclaration();
-        _indentedTextWriter!.WriteLine();
-        _indentedTextWriter.WriteLine('{');
-        _indentedTextWriter.Indent++;
+        _indentedTextWriter!.WriteLine('{');
 
         if (FirstAccessorBodyAction is null)
             DefaultFirstAccessorBody();
@@ -77,11 +75,9 @@ public record FullPropertyTemplate(string Type, string IdentifierName) : Propert
         {
             _indentedTextWriter.WriteLine(FirstAccessor);
             _indentedTextWriter.WriteLine('{');
-            _indentedTextWriter.Indent++;
             if (ApplyCacheStatments)
                 _indentedTextWriter.WriteLine(GetPropertyCacheStatement(Type, PropertyField));
             FirstAccessorBodyAction(_indentedTextWriter, PropertyField!, fieldTemplates);
-            _indentedTextWriter.Indent--;
             _indentedTextWriter.WriteLine("}");
         }
 
@@ -91,15 +87,11 @@ public record FullPropertyTemplate(string Type, string IdentifierName) : Propert
         {
             _indentedTextWriter.WriteLine(SecondAccessor);
             _indentedTextWriter.WriteLine('{');
-            _indentedTextWriter.Indent++;
             SecondAccessorBodyAction(_indentedTextWriter, PropertyField!, fieldTemplates);
-            _indentedTextWriter.Indent--;
             _indentedTextWriter.WriteLine("}");
         }
 
-        _indentedTextWriter.Indent--;
         _indentedTextWriter.WriteLine('}');
-        //_indentedTextWriter.WriteLine();
         return this;
     }
 

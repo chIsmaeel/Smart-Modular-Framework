@@ -8,9 +8,4 @@ public interface IMemberTemplate : ITemplate
     /// Gets or sets the parent.
     /// </summary>
     ITemplate? Parent { get; set; }
-
-    /// <summary>
-    /// Gets a value indicating whether sub memberof other is type.
-    /// </summary>
-    bool IsSubMemberofOtherType { get; init; }
 }

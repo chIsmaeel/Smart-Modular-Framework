@@ -41,11 +41,6 @@ public record ConstructorTemplate(string IdentifierName) : IMemberTemplate
     /// Gets or sets the parent.
     /// </summary>
     public ITemplate? Parent { get; set; }
-    /// <summary>
-    /// Gets a value indicating whether sub memberof other is type.
-    /// </summary>
-    public bool IsSubMemberofOtherType { get; init; } = false;
-
 
     /// <summary>
     /// Creates the template.
@@ -57,42 +52,19 @@ public record ConstructorTemplate(string IdentifierName) : IMemberTemplate
         _indentedTextWriter = new(_stringWriter);
 
 
-        if (IsSubMemberofOtherType)
-            _indentedTextWriter.Indent++;
-        WriteComment();
-        _indentedTextWriter.Indent++;
+        TypeMemberTemplate.WriteComment(Comment, IdentifierName, _indentedTextWriter);
         _indentedTextWriter.Write($"public {IdentifierName}({string.Join(", ", Parameters.Select(p => $"{p.type} {p.parameterName}"))})");
         if (BaseConstructor != null)
         {
             _indentedTextWriter.Write($" : base({string.Join(", ", Parameters.Select(p => $"{p.parameterName}"))})");
         }
-        _indentedTextWriter.WriteLine();
         _indentedTextWriter.WriteLine("{");
         if (Body is not null)
         {
-            _indentedTextWriter.Indent++;
             Body(_indentedTextWriter, Parameters);
-            _indentedTextWriter.Indent--;
         }
         _indentedTextWriter.WriteLine("}");
-        _indentedTextWriter.Indent--;
-
-
         return this;
-    }
-
-    /// <summary>
-    /// Writes the comment.
-    /// </summary>
-    protected virtual void WriteComment()
-    {
-        _indentedTextWriter!.Write("    ");
-        if (IsSubMemberofOtherType)
-            _indentedTextWriter.Write("    ");
-        if (string.IsNullOrWhiteSpace(Comment))
-            _indentedTextWriter!.WriteLine(CommentTemplate.CreateCommentFromIdentifierName(IdentifierName));
-        else
-            _indentedTextWriter!.WriteLine(CommentTemplate.CreateCommentFromText(Comment!));
     }
 
     /// <summary>
@@ -101,8 +73,6 @@ public record ConstructorTemplate(string IdentifierName) : IMemberTemplate
     /// <returns>A string.</returns>
     public string GetTemplate()
     {
-        if (IsSubMemberofOtherType)
-            _indentedTextWriter!.Indent--;
         return _stringWriter!.ToString();
     }
 }

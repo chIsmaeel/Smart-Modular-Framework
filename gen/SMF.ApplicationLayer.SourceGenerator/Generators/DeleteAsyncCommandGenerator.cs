@@ -42,7 +42,7 @@ internal class DeleteAsyncCommandGenerator : CommonIncrementalGenerator
 
         ClassTypeTemplate handlerClass = new(classTypeTemplate.IdentifierName + "Handler")
         {
-            IsSubMemberofOtherType = true,
+
             Interfaces = new()
             {
                $"MediatR.IRequestHandler<{classTypeTemplate.IdentifierName},int>"
@@ -52,13 +52,13 @@ internal class DeleteAsyncCommandGenerator : CommonIncrementalGenerator
 
         handlerClass.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.UnitOfWork", "_uow")
         {
-            IsSubMemberofOtherType = true,
+
             Modifiers = "private readonly"
         });
 
         handlerClass.Members.Add(new ConstructorTemplate(handlerClass.IdentifierName)
         {
-            IsSubMemberofOtherType = true,
+
             Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.UnitOfWork", "uow") },
             Body = (w, _) => { w.WriteLine("_uow = uow;"); }
 
@@ -66,7 +66,7 @@ internal class DeleteAsyncCommandGenerator : CommonIncrementalGenerator
 
         handlerClass.Members.Add(new TypeMethodTemplate($"Task<int>", "Handle")
         {
-            IsSubMemberofOtherType = true,
+
             Modifiers = "public async",
             Parameters = new() { (classTypeTemplate.IdentifierName, "command"), ("System.Threading.CancellationToken", "cancellationToken") },
             Body = (w, p, gp, _) =>

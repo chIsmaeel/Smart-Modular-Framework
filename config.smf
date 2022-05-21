@@ -1,4 +1,4 @@
-SOLUTION_NAME = PointOfSale
+SOLUTION_NAME = TPointOfSale
 
 # Entity Framework Core Configurations
 EF_PROJECT_NAME = Saad.Data

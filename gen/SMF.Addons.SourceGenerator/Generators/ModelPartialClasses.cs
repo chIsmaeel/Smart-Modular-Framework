@@ -1,6 +1,7 @@
 ﻿namespace SMF.Addons.SourceGenerator.Generators;
 
 using SMF.SourceGenerator.Core;
+using SMF.SourceGenerator.Core.Templates.TypeTemplates.MemberTemplates;
 
 /// <summary>
 /// The model partial classes.
@@ -44,9 +45,13 @@ internal class ModelPartialClasses : CommonIncrementalGenerator
         //#endif
         foreach (var property in s.Properties.Where(_ => _.SMField is not null))
         {
-            if ((bool)(property?.SMField?.SMFField?.Compute)!)
+            if ((bool)(property?.SMField?.Field?.Compute)!)
             {
-                classTemplate.StringMembers.Add($"partial {ModelPropertyTypes.GetPropertyType(property)} Compute{property.IdentifierName}({s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.UnitOfWork uow);");
+                classTemplate.Members.Add(new PartialMethodTemplate(ModelPropertyTypes.GetPropertyType(property), $"Compute{property.IdentifierName}")
+                {
+                    Modifiers = "private",
+                    Parameters = new() { ($"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.UnitOfWork", "uow"), ((property.ClassType as ModelCT)!.NewQualifiedName, "currentObj") }
+                });
             }
         }
 
@@ -60,7 +65,7 @@ internal class ModelPartialClasses : CommonIncrementalGenerator
     /// <param name="classTemplate">The class template.</param>
     private static void DefaultPropertiesIfInheritModelIsNotDefined(ClassTypeTemplate classTemplate, string identifierName)
     {
-        AutoPropertyTemplate id = new("SMFields.Id", identifierName.Substring(0, identifierName.Length - "Model".Length))
+        AutoPropertyTemplate id = new("SMFields.Id", "Id")
         {
             Comment = "Primary Key of the Model.",
             DefaultValue = "new()",

@@ -9,7 +9,7 @@ public partial class PurchaseModel
     /// <summary>
     /// This is also a comment.
     /// </summary>
-    //public IField Ahmad { get; } = new SMFField.Varchar();
+    //public IField Ahmad { get; } = new Field.Varchar();
 
     //private readonly ModelKind parentModel = ModelKind.Purchase_PurchaseLine;
     //private readonly ModelImplementationKind[] modelImplementations = new[] {

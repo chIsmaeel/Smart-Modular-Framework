@@ -238,7 +238,7 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Conf
     /// <summary>
     /// Gets the new qualified name.
     /// </summary>
-    public override string? NewQualifiedName
+    public override string NewQualifiedName
     {
         get
         {

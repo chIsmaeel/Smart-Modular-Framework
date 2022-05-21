@@ -36,7 +36,6 @@ public record PropertyInterfaceTemplate(string Type, string IdentifierName) : In
         _indentedTextWriter.Write(';');
         _indentedTextWriter.Write(' ');
         _indentedTextWriter.Write('}');
-        _indentedTextWriter!.Indent--;
         return this;
     }
 }

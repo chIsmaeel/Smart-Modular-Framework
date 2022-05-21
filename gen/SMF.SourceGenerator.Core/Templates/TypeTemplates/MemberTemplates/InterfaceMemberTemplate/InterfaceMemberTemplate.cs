@@ -31,10 +31,6 @@ public record InterfaceMemberTemplate(string Type, string IdentifierName) : IMem
     /// Gets or sets the parent.
     /// </summary>
     public ITemplate? Parent { get; set; }
-    /// <summary>
-    /// Gets a value indicating whether sub memberof other is type.
-    /// </summary>
-    public bool IsSubMemberofOtherType { get; init; } = false;
 
     /// <summary>
     /// Creates the template.
@@ -45,10 +41,7 @@ public record InterfaceMemberTemplate(string Type, string IdentifierName) : IMem
         stringBuilder = new();
         _stringWriter = new(stringBuilder);
         _indentedTextWriter = new(_stringWriter);
-        if (IsSubMemberofOtherType)
-            _indentedTextWriter.Indent++;
         WriteComment();
-        _indentedTextWriter!.Indent++;
         return this;
     }
 
@@ -70,8 +63,6 @@ public record InterfaceMemberTemplate(string Type, string IdentifierName) : IMem
     /// <returns>A string.</returns>
     public string GetTemplate()
     {
-        if (IsSubMemberofOtherType)
-            _indentedTextWriter!.Indent--;
         return _stringWriter!.ToString();
     }
 }

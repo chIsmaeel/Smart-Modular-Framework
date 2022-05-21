@@ -28,7 +28,7 @@ public class SMField
     /// <summary>
     /// Gets the s m field.
     /// </summary>
-    public ORM.Fields.Field? SMFField { get; private set; }
+    public ORM.Fields.Field? Field { get; private set; }
 
     /// <summary>
     /// Assigns the values.
@@ -36,8 +36,8 @@ public class SMField
     public void AssignValues()
     {
 
-        SMFField = GetFieldObj(ModelProperty.Type);
-        if (SMFField is null || ModelProperty.AssignmentExpressionsIdentiferAndValue is null) return;
+        Field = GetFieldObj(ModelProperty.Type);
+        if (Field is null || ModelProperty.AssignmentExpressionsIdentiferAndValue is null) return;
         foreach ((string identifer, string value) in ModelProperty.AssignmentExpressionsIdentiferAndValue!)
         {
             if (identifer == "DefaultValue")
@@ -57,7 +57,7 @@ public class SMField
                 //var v = CSharpScript.Create(sb.ToString()).RunAsync().Result;
             }
 
-            SMFField?.GetType().GetProperty(identifer)?.SetValue(SMFField, GetValue(identifer, value));
+            Field?.GetType().GetProperty(identifer)?.SetValue(Field, GetValue(identifer, value));
         }
     }
 
@@ -92,7 +92,7 @@ public class SMField
     private object? GetDefaultValue(string? value)
     {
         if (value is null) return null;
-        return SMFField switch
+        return Field switch
         {
             ORM.Fields.Binary => value.Contains("=>") ? CSharpScript.EvaluateAsync<Func<byte[]>>(value).Result : null,
             ORM.Fields.DateTime => DateTime.Parse(value),

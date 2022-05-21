@@ -40,11 +40,6 @@ public abstract record TypeMemberTemplate(string IdentifierName) : ITypeMemberTe
     public ITemplate? Parent { get; set; }
 
     /// <summary>
-    /// Gets a value indicating whether sub memberof other is type.
-    /// </summary>
-    public bool IsSubMemberofOtherType { get; init; } = false;
-
-    /// <summary>
     /// Adds the comment and attributes.
     /// </summary>
     protected void WriteAttributes()
@@ -64,19 +59,19 @@ public abstract record TypeMemberTemplate(string IdentifierName) : ITypeMemberTe
     /// </summary>
     protected void WriteCommentAndAttributes()
     {
-        WriteComment();
+        WriteComment(Comment, IdentifierName, _indentedTextWriter);
         WriteAttributes();
     }
 
     /// <summary>
     /// Writes the comment.
     /// </summary>
-    protected virtual void WriteComment()
+    public static void WriteComment(string? comment, string identifierName, IndentedTextWriter? w)
     {
-        if (string.IsNullOrWhiteSpace(Comment))
-            _indentedTextWriter!.WriteLine(CommentTemplate.CreateCommentFromIdentifierName(IdentifierName));
+        if (string.IsNullOrWhiteSpace(comment))
+            w!.WriteLine(CommentTemplate.CreateCommentFromIdentifierName(identifierName));
         else
-            _indentedTextWriter!.WriteLine(CommentTemplate.CreateCommentFromText(Comment!));
+            w!.WriteLine(CommentTemplate.CreateCommentFromText(comment!));
     }
 
     /// <summary>
@@ -87,10 +82,6 @@ public abstract record TypeMemberTemplate(string IdentifierName) : ITypeMemberTe
         _stringWriter = new(_stringBuilder);
         _indentedTextWriter = new(_stringWriter);
 
-        _indentedTextWriter.Write("    ");
-        if (IsSubMemberofOtherType)
-            _indentedTextWriter.Write("    ");
-        _indentedTextWriter.Indent++;
         return this;
     }
 
@@ -100,8 +91,6 @@ public abstract record TypeMemberTemplate(string IdentifierName) : ITypeMemberTe
     /// <returns>A string.</returns>
     public string GetTemplate()
     {
-        if (IsSubMemberofOtherType)
-            _indentedTextWriter!.Indent--;
         return _stringWriter!.ToString();
     }
 }

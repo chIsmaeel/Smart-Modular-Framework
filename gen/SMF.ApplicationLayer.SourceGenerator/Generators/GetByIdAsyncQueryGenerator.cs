@@ -1,4 +1,8 @@
 ﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
+
+using SMF.ApplicationLayer.SourceGenerator;
+using System.CodeDom.Compiler;
+
 /// <summary>
 /// The model entity configuration generator.
 /// </summary>
@@ -39,7 +43,7 @@ internal class GetByIdAsyncQueryGenerator : CommonIncrementalGenerator
 
         ClassTypeTemplate handlerClass = new(classTypeTemplate.IdentifierName + "Handler")
         {
-            IsSubMemberofOtherType = true,
+
             Interfaces = new()
             {
                $"MediatR.IRequestHandler<{classTypeTemplate.IdentifierName},{s.NewQualifiedName}>"
@@ -48,27 +52,42 @@ internal class GetByIdAsyncQueryGenerator : CommonIncrementalGenerator
 
         handlerClass.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.UnitOfWork", "_uow")
         {
-            IsSubMemberofOtherType = true,
+
             Modifiers = "private readonly"
         });
 
+        var tempModelCTForMethods = s;
+        while (tempModelCTForMethods is not null)
+        {
+            classTypeTemplate.UsingNamespaces.AddRange(tempModelCTForMethods.Usings.Where(_ => _.StartsWith(tempModelCTForMethods.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME)));
+            StaticMethods.AddModelMethods(tempModelCTForMethods, handlerClass);
+            tempModelCTForMethods = tempModelCTForMethods.ParentClassType as ModelCT;
+        }
+
         handlerClass.Members.Add(new ConstructorTemplate(handlerClass.IdentifierName)
         {
-            IsSubMemberofOtherType = true,
+
             Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.UnitOfWork", "uow") },
             Body = (w, _) => { w.WriteLine("_uow = uow;"); }
 
         });
 
-        handlerClass.Members.Add(new TypeMethodTemplate($"Task<{s.NewQualifiedName}>", "Handle")
+        handlerClass.Members.Add(new TypeMethodTemplate($"Task<{s.NewQualifiedName}?>", "Handle")
         {
-            IsSubMemberofOtherType = true,
+
             Modifiers = "public async",
             Parameters = new() { (classTypeTemplate.IdentifierName, "query"), ("System.Threading.CancellationToken", "cancellationToken") },
             Body = (w, p, gp, _) =>
             {
                 w.WriteLine($"var response = await _uow.{s.IdentifierNameWithoutPostFix}Repository.GetByIdAsync(query.Id);");
                 w.WriteLine($"if(response is null) return null;");
+
+                var tempModelCTForComputedValues = s;
+                while (tempModelCTForComputedValues is not null)
+                {
+                    AddComputedValues(tempModelCTForComputedValues, w);
+                    tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
+                }
                 w.WriteLine("return await Task.FromResult(response);");
             }
         });
@@ -77,4 +96,20 @@ internal class GetByIdAsyncQueryGenerator : CommonIncrementalGenerator
         context.AddSource(fileScopedNamespace);
     }
 
+    /// <summary>
+    /// Adds the computed values.
+    /// </summary>
+    /// <param name="s">The s.</param>
+    /// <param name="w">The w.</param>
+    private static void AddComputedValues(ModelCT s, IndentedTextWriter w)
+    {
+        foreach (var property in s.Properties.Where(_ => _!.SMField is not null))
+        {
+            if (property!.SMField!.Field is not null && property.SMField.Field.Compute)
+            {
+                w.WriteLine($"response.{property!.IdentifierName} = Compute{property.IdentifierName}(_uow,response);");
+                continue;
+            }
+        }
+    }
 }

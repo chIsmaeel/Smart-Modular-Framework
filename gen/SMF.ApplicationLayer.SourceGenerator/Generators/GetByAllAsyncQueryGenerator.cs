@@ -1,6 +1,9 @@
 ﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
 
 using Humanizer;
+using SMF.ApplicationLayer.SourceGenerator;
+using SMF.SourceGenerator.Core.Types.TypeMembers;
+using System.CodeDom.Compiler;
 
 /// <summary>
 /// The model entity configuration generator.
@@ -40,7 +43,7 @@ internal class GetByAllAsyncQueryGenerator : CommonIncrementalGenerator
 
         ClassTypeTemplate handlerClass = new(classTypeTemplate.IdentifierName + "Handler")
         {
-            IsSubMemberofOtherType = true,
+
             Interfaces = new()
             {
                $"MediatR.IRequestHandler<{classTypeTemplate.IdentifierName},IEnumerable<{s.NewQualifiedName}>>"
@@ -49,27 +52,56 @@ internal class GetByAllAsyncQueryGenerator : CommonIncrementalGenerator
 
         handlerClass.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.UnitOfWork", "_uow")
         {
-            IsSubMemberofOtherType = true,
+
             Modifiers = "private readonly"
         });
 
         handlerClass.Members.Add(new ConstructorTemplate(handlerClass.IdentifierName)
         {
-            IsSubMemberofOtherType = true,
+
             Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.UnitOfWork", "uow") },
             Body = (w, _) => { w.WriteLine("_uow = uow;"); }
 
         });
 
-        handlerClass.Members.Add(new TypeMethodTemplate($"Task<IEnumerable<{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.{s.ContainingModuleName}.Models.{s.IdentifierNameWithoutPostFix}>>", "Handle")
+        var tempModelCTForMethods = s;
+        while (tempModelCTForMethods is not null)
         {
-            IsSubMemberofOtherType = true,
+            classTypeTemplate.UsingNamespaces.AddRange(tempModelCTForMethods.Usings.Where(_ => _.StartsWith(tempModelCTForMethods.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME)));
+            StaticMethods.AddModelMethods(tempModelCTForMethods, handlerClass);
+            tempModelCTForMethods = tempModelCTForMethods.ParentClassType as ModelCT;
+        }
+
+        handlerClass.Members.Add(new TypeMethodTemplate($"Task<IEnumerable<{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.{s.ContainingModuleName}.Models.{s.IdentifierNameWithoutPostFix}>?>", "Handle")
+        {
+
             Modifiers = "public async",
             Parameters = new() { (classTypeTemplate.IdentifierName, "query"), ("System.Threading.CancellationToken", "cancellationToken") },
             Body = (w, p, gp, _) =>
             {
                 w.WriteLine($"var response = await _uow.{s.IdentifierNameWithoutPostFix}Repository.GetAllAsync();");
                 w.WriteLine($"if(response is null) return null;");
+                var hasComputedValue = false;
+                var tempModelCTForComputedValues = s;
+                while (tempModelCTForComputedValues is not null)
+                {
+                    if (tempModelCTForComputedValues.Properties.Any(property => property!.SMField!.Field is not null && property.SMField.Field.Compute))
+                        hasComputedValue = true;
+                    tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
+                }
+
+                if (hasComputedValue)
+                {
+                    w.WriteLine($"foreach (var entity in response)");
+                    w.WriteLine("{");
+                    tempModelCTForComputedValues = s;
+                    while (tempModelCTForComputedValues is not null)
+                    {
+                        AssignComputedProperties(w, tempModelCTForComputedValues.Properties.Where(_ => _!.SMField is not null)!);
+                        tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
+                    }
+                    w.WriteLine("}");
+                }
                 w.WriteLine("return await Task.FromResult(response);");
             }
         });
@@ -78,4 +110,20 @@ internal class GetByAllAsyncQueryGenerator : CommonIncrementalGenerator
         context.AddSource(fileScopedNamespace);
     }
 
+    /// <summary>
+    /// Assigns the computed properties.
+    /// </summary>
+    /// <param name="w">The w.</param>
+    /// <param name="smFields">The sm fields.</param>
+    private static void AssignComputedProperties(IndentedTextWriter w, IEnumerable<TypeProperty> smFields)
+    {
+        foreach (var property in smFields)
+        {
+            if (property!.SMField!.Field is not null && property.SMField.Field.Compute)
+            {
+                w.WriteLine($"entity.{property!.IdentifierName} = Compute{property.IdentifierName}(_uow,entity);");
+                continue;
+            }
+        }
+    }
 }

@@ -22,10 +22,16 @@ internal class StaticMethods
             var type = ModelPropertyTypes.GetPropertyType(property!);
             if (type.StartsWith("System.Collections.Generic"))
                 identifer = identifer.Pluralize();
+
+            if (property.SMField is not null && property.SMField.Field is not null)
+            {
+                if (property.SMField.Field.Compute)
+                    continue;
+            }
             var autoProp = new AutoPropertyTemplate(type, identifer)
             {
                 Comment = property.Comment,
-                SecondAccessor = "set"
+                SecondAccessor = "set",
             };
             classTypeTemplate.Members.Add(autoProp);
 
@@ -43,14 +49,29 @@ internal class StaticMethods
     {
         foreach (var property in s.Properties!)
         {
-            var identifer = property!.IdentifierName;
-            var type = ModelPropertyTypes.GetPropertyType(property!);
-            if (type.StartsWith("System.Collections.Generic"))
-                identifer = identifer.Pluralize();
-
             if (property!.IdentifierName is "Id" or "UpdatedOn")
                 continue;
-            w.WriteLine($"{objName}.{identifer} = command.{identifer};");
+            if (property.SMField is not null && property.SMField.Field is not null && property.SMField.Field.Compute)
+            {
+                //w.WriteLine($"{objName}.{identifer} = Compute{property.IdentifierName}(_uow);");
+                continue;
+            }
+            w.WriteLine($"{objName}.{property!.IdentifierName} = command.{property!.IdentifierName};");
+        }
+    }
+
+    /// <summary>
+    /// Adds the model methods.
+    /// </summary>
+    /// <param name="s">The s.</param>
+    /// <param name="handlerClass">The handler class.</param>
+    public static void AddModelMethods(ModelCT s, ClassTypeTemplate handlerClass)
+    {
+        foreach (var method in s.Methods!)
+        {
+            var methodString = method!.MDS!.ToString();
+            methodString = methodString.Replace("private partial", "private");
+            handlerClass.StringMembers.Add(methodString);
         }
     }
 }

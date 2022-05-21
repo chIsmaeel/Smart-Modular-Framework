@@ -69,7 +69,7 @@ internal partial class ModelEntityConfigurationGenerator : CommonIncrementalGene
         {
 
             SMField? field = property!.SMField;
-            if (field!.SMFField is null) continue;
+            if (field!.Field is null) continue;
 
             WritePropertyFluentAPIs(writer, field, property!);
             if (property.IdentifierName == "SalePrices")
@@ -79,7 +79,7 @@ internal partial class ModelEntityConfigurationGenerator : CommonIncrementalGene
             if (property!.RelationshipWith is not null)
                 AddRelationalFluentAPI(writer, property);
 
-            if (field.SMFField.Index == true)
+            if (field.Field.Index == true)
                 indexList.Add("e." + property!.IdentifierName);
         }
         WriteIfHasIndex(writer, indexList);
@@ -155,12 +155,12 @@ internal partial class ModelEntityConfigurationGenerator
     /// <param name="property">The property.</param>
     private static void AddPropertyFluentAPI(IndentedTextWriter writer, SMField field, TypeProperty property)
     {
-        AddFluentAPI(writer, "HasColumnType", field.SMFField!.DbType);
+        AddFluentAPI(writer, "HasColumnType", field.Field!.DbType);
         AddFluentAPI(writer, "HasComment", property.Comment);
-        AddFluentAPI(writer, "HasDefaultValueSql", field.SMFField!.DefaultValueSql);
-        AddFluentAPI(writer, "HasDefaultValueSql", field.SMFField!.DefaultValueSql);
-        AddFluentAPI(writer, "HasDefaultValue", GetDefaultValue(field.SMFField!));
-        AddFluentAPIIfValueIsTrue(writer, "IsRequired", field.SMFField!.IsRequired);
+        AddFluentAPI(writer, "HasDefaultValueSql", field.Field!.DefaultValueSql);
+        AddFluentAPI(writer, "HasDefaultValueSql", field.Field!.DefaultValueSql);
+        AddFluentAPI(writer, "HasDefaultValue", GetDefaultValue(field.Field!));
+        AddFluentAPIIfValueIsTrue(writer, "IsRequired", field.Field!.IsRequired);
     }
 
     /// <summary>

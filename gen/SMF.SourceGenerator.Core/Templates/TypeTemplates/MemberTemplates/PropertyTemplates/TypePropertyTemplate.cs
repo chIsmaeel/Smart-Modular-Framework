@@ -32,15 +32,12 @@ public record PropertyTemplate(string Type, string IdentifierName) : TypeMemberT
     /// <summary>
     /// Writes the comment.
     /// </summary>                                                 
-    protected override void WriteComment()
+    protected void WriteComment()
     {
         if (Comment is null || Comment == IdentifierName || Comment == IdentifierName + ".")
             DefaultPropertyComment();
         else if (Comment != IdentifierName)
             _indentedTextWriter!.WriteLine(CommentTemplate.CreateCommentFromText(Comment!));
-
-        //Debug.Assert(false, Comment + "\n" + CommentTemplate.GetComment(Comment!));
-
     }
 
     /// <summary>

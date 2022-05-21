@@ -137,9 +137,6 @@ public abstract partial record TypeTemplate(string IdentifierName) : ITypeTempla
         // Add type Field Members.
         StringBuilder memberSB = new();
 
-        // String Members.
-        StringMembers.ForEach(_ => memberSB.AppendLine(_));
-
         // Members
         List<TypeFieldTemplate> typeFields = new();
         Members.Where(_ => _ is TypeFieldTemplate).Cast<TypeFieldTemplate>().ForEach(typeFields.Add);
@@ -199,6 +196,15 @@ public abstract partial record TypeTemplate(string IdentifierName) : ITypeTempla
                   UsingNamespaces.AddRange(_.UsingNamespaces);
           });
 
+        // Add Partial Methods in Members.
+        Members.Where(_ => _ is PartialMethodTemplate).Cast<PartialMethodTemplate>()
+          .ForEach(_ =>
+          {
+              memberSB.AppendLine(_.CreateTemplate().GetTemplate());
+              //if (_.UsingNamespaces?.Count > 0)
+              //    UsingNamespaces.AddRange(_.UsingNamespaces);
+          });
+
         // Add a Type in Members.
         Members.Where(_ => _ is TypeTemplate).Cast<TypeTemplate>()
           .ForEach(_ =>
@@ -208,6 +214,10 @@ public abstract partial record TypeTemplate(string IdentifierName) : ITypeTempla
               if (_.UsingNamespaces?.Count > 0)
                   UsingNamespaces.AddRange(_.UsingNamespaces);
           });
+
+        // String Members.
+        StringMembers.ForEach(_ => memberSB.AppendLine(_));
+
 
         return "    " + memberSB.ToString().Trim();
     }

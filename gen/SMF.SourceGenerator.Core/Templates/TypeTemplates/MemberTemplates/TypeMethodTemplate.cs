@@ -30,8 +30,6 @@ public record TypeMethodTemplate(string Type, string IdentifierName) : TypeMembe
     {
         base.CreateTemplate();
         WriteCommentAndAttributes();
-        if (IsSubMemberofOtherType)
-            _indentedTextWriter!.Indent++;
         _indentedTextWriter!.Write(Modifiers);
         _indentedTextWriter.Write(' ');
         _indentedTextWriter.Write(Type);
@@ -53,20 +51,14 @@ public record TypeMethodTemplate(string Type, string IdentifierName) : TypeMembe
             return this;
         }
 
-        _indentedTextWriter.WriteLine();
         _indentedTextWriter.WriteLine("{");
 
         if (Body is not null)
         {
-            _indentedTextWriter.Indent++;
             Body(_indentedTextWriter, Parameters, GenericParameters, fieldTemplates);
-            _indentedTextWriter.Indent--;
         }
 
         _indentedTextWriter.WriteLine("}");
-
-        //_indentedTextWriter.WriteLine();
-
         return this;
     }
 }

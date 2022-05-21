@@ -41,16 +41,14 @@ internal class UpdateAsyncCommandGenerator : CommonIncrementalGenerator
 
         classTypeTemplate.Members.Add(new AutoPropertyTemplate("int", "Id"));
         var tempModelCT = s;
-        while (tempModelCT.ParentClassType is not null)
+        while (tempModelCT is not null)
         {
-            StaticMethods.AddProperties((ModelCT)tempModelCT.ParentClassType, classTypeTemplate);
-            tempModelCT = (ModelCT)tempModelCT.ParentClassType;
+            StaticMethods.AddProperties(tempModelCT, classTypeTemplate);
+            tempModelCT = tempModelCT.ParentClassType as ModelCT;
         }
-        StaticMethods.AddProperties(s, classTypeTemplate);
-
         ClassTypeTemplate handlerClass = new(classTypeTemplate.IdentifierName + "Handler")
         {
-            IsSubMemberofOtherType = true,
+
             Interfaces = new()
             {
                $"MediatR.IRequestHandler<{classTypeTemplate.IdentifierName},int>"
@@ -60,13 +58,13 @@ internal class UpdateAsyncCommandGenerator : CommonIncrementalGenerator
 
         handlerClass.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.UnitOfWork", "_uow")
         {
-            IsSubMemberofOtherType = true,
+
             Modifiers = "private readonly"
         });
 
         handlerClass.Members.Add(new ConstructorTemplate(handlerClass.IdentifierName)
         {
-            IsSubMemberofOtherType = true,
+
             Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.UnitOfWork", "uow") },
             Body = (w, _) => { w.WriteLine("_uow = uow;"); }
 
@@ -74,7 +72,7 @@ internal class UpdateAsyncCommandGenerator : CommonIncrementalGenerator
 
         handlerClass.Members.Add(new TypeMethodTemplate($"Task<int>", "Handle")
         {
-            IsSubMemberofOtherType = true,
+
             Modifiers = "public async",
             Parameters = new() { (classTypeTemplate.IdentifierName, "command"), ("System.Threading.CancellationToken", "cancellationToken") },
             Body = (w, p, gp, _) =>
@@ -85,12 +83,11 @@ internal class UpdateAsyncCommandGenerator : CommonIncrementalGenerator
                 w.WriteLine($"if ({objName} is null) return default;");
                 w.WriteLine($"{objName}.LastModifiedOn = System.DateTime.Now;");
                 var tempModelCT = s;
-                while (tempModelCT.ParentClassType is not null)
+                while (tempModelCT is not null)
                 {
-                    StaticMethods.AddProperties((ModelCT)tempModelCT.ParentClassType, w, objName);
-                    tempModelCT = (ModelCT)tempModelCT.ParentClassType;
+                    StaticMethods.AddProperties(tempModelCT, w, objName);
+                    tempModelCT = tempModelCT.ParentClassType as ModelCT;
                 }
-                StaticMethods.AddProperties(s, w, objName);
                 w.WriteLine($"await _uow.{s.IdentifierNameWithoutPostFix}Repository.UpdateAsync({objName});");
                 w.WriteLine($"return await Task.FromResult({objName}.Id);");
             }
