@@ -10,4 +10,4 @@ public enum RelationshipType
     M2O,
     M2M,
 }
-public record RelationshipWith(TypeProperty HasRelations, TypeProperty WithRelationship, TypeProperty ForeignKey, RelationshipType RelationshipType);
+public record RelationshipWith(TypeProperty HasRelations, TypeProperty WithRelationship, RelationshipType RelationshipType, TypeProperty? ForeignKey = null);

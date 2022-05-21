@@ -11,7 +11,7 @@ public partial class PurchaseLineModel
 {
     public PurchaseLineModel()
     {
-       this.InheritModel = RegisteredModels.Sale_SaleLineModel;
+        InheritModel = RegisteredModels.Sale_SaleLineModel;
     }
 
     //private readonly ModelKind parentModel = ModelKind.Sale_SaleLine;

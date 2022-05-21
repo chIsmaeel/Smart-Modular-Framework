@@ -109,7 +109,7 @@ internal class UpdateAsyncCommandGenerator : CommonIncrementalGenerator
     {
         foreach (var property in s.Properties!)
         {
-            classTypeTemplate.Members.Add(new AutoPropertyTemplate(ModelPropertyTypes.GetPropertyType(property!.Type), property.IdentifierName)
+            classTypeTemplate.Members.Add(new AutoPropertyTemplate(ModelPropertyTypes.GetPropertyType(property!), property.IdentifierName)
             {
                 Comment = property.Comment,
                 SecondAccessor = "set"

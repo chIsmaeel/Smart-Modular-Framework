@@ -1,11 +1,14 @@
 ﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
+
+using Humanizer;
+
 /// <summary>
 /// The model entity configuration generator.
 /// </summary>
 
 [Generator]
 
-internal class ModelEntityConfigurationGenerator : CommonIncrementalGenerator
+internal partial class ModelEntityConfigurationGenerator : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
@@ -38,20 +41,7 @@ internal class ModelEntityConfigurationGenerator : CommonIncrementalGenerator
             Parameters = new() { ($"EntityTypeBuilder<{s.NewQualifiedName}>", "builder") },
             Body = (writer, parameters, genericParameters, fields) =>
             {
-                var indexList = new List<string>();
-                if (s.Properties.Any(_ => _!.IdentifierName == s.IdentifierNameWithoutPostFix + "Id"))
-                    indexList.Add("e." + s.IdentifierNameWithoutPostFix + "Id");
-
-                foreach (var property in s.Properties!)
-                {
-                    SMField? field = new(property!);
-                    if (field.SMFField is null) return;
-                    WritePropertyFluentAPIs(writer, field, property!);
-                    if (field.SMFField.Index == true)
-                        indexList.Add("e." + property!.IdentifierName);
-                }
-                WriteIfHasIndex(writer, indexList);
-
+                WriteConfigBody(s, writer);
             }
         };
         typeMethodTemplate.UsingNamespaces.AddRange(new[] { "Microsoft.EntityFrameworkCore", "Microsoft.EntityFrameworkCore.Metadata.Builders" });
@@ -59,6 +49,172 @@ internal class ModelEntityConfigurationGenerator : CommonIncrementalGenerator
         classTypeTemplate.Members.Add(typeMethodTemplate);
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);
         context.AddSource(fileScopedNamespace);
+    }
+
+    /// <summary>
+    /// Writes the config body.
+    /// </summary>
+    /// <param name="s">The s.</param>
+    /// <param name="writer">The writer.</param>
+    private static void WriteConfigBody(ModelCT s, IndentedTextWriter writer)
+    {
+        //Debugger.Launch();
+        var indexList = new List<string>()
+        {
+            "e.Id"
+        };
+
+        foreach (var property in s.Properties!)
+        {
+            if (property!.IdentifierName == "SalePrices")
+            {
+                //#if DEBUG
+                //                if (!System.Diagnostics.Debugger.IsAttached)
+                //                    System.Diagnostics.Debugger.Launch();
+                //#endif
+            }
+            SMField? field = new(property!);
+            if (field.SMFField is null) continue;
+
+            WritePropertyFluentAPIs(writer, field, property!);
+            if (property.IdentifierName == "SalePrices")
+            {
+
+            }
+            if (property!.RelationshipWith is not null)
+                AddRelationalFluentAPI(writer, property);
+
+            if (field.SMFField.Index == true)
+                indexList.Add("e." + property!.IdentifierName);
+        }
+        WriteIfHasIndex(writer, indexList);
+    }
+}
+/// <summary>
+/// The model entity configuration generator.
+/// </summary>
+
+internal partial class ModelEntityConfigurationGenerator
+{
+    /// <summary>
+    /// Writes the values.
+    /// </summary>
+    /// <param name="writer">The writer.</param>
+    /// <param name="field">The field.</param>
+    /// <param name="property">The property.</param>
+    private static void WritePropertyFluentAPIs(IndentedTextWriter writer, SMField field, TypeProperty property)
+    {
+        writer.WriteLine("builder");
+        writer.Indent++;
+        writer.Write(".Property(e => e.{0})", property.IdentifierName);
+
+        AddPropertyFluentAPI(writer, field, property);
+
+        writer.WriteLine(";");
+        writer.Indent--;
+        writer.WriteLine();
+    }
+
+    /// <summary>
+    /// Adds the relational fluent a p i.
+    /// </summary>
+    /// <param name="writer">The writer.</param>
+    /// <param name="field">The field.</param>
+    /// <param name="property">The property.</param>
+    private static void AddRelationalFluentAPI(IndentedTextWriter writer, TypeProperty property)
+    {
+        writer.WriteLine("builder");
+        writer.Indent++;
+        if (property.RelationshipWith!.RelationshipType is SMF.SourceGenerator.Core.Types.RelationshipType.O2O or SMF.SourceGenerator.Core.Types.RelationshipType.O2M)
+            writer.Write(".HasOne(_ => _.{0})", property.IdentifierName);
+        else
+            writer.Write(".HasMany(_ => _.{0})", property.IdentifierName.Pluralize());
+
+        writer.WriteLine();
+
+        if (property.RelationshipWith!.RelationshipType is SMF.SourceGenerator.Core.Types.RelationshipType.O2O or SMF.SourceGenerator.Core.Types.RelationshipType.M2O)
+            writer.Write(".WithOne(_ => _.{0})", property.RelationshipWith.WithRelationship.IdentifierName);
+        else
+            writer.Write(".WithMany(_ => _.{0})", property.RelationshipWith.WithRelationship.IdentifierName);
+
+
+        if (property.RelationshipWith.ForeignKey is not null)
+        {
+            writer.WriteLine();
+
+            if (property.RelationshipWith.RelationshipType is SMF.SourceGenerator.Core.Types.RelationshipType.M2O)
+                writer.Write(".HasForeignKey<{1}>(_ => _.{0})", property.RelationshipWith.ForeignKey.IdentifierName, (property.RelationshipWith.ForeignKey.ClassType as ModelCT)!.NewQualifiedName);
+            else
+                writer.Write(".HasForeignKey<{1}>(_ => _.{0})", property.RelationshipWith.ForeignKey.IdentifierName, (property.RelationshipWith.ForeignKey.ClassType as ModelCT)!.NewQualifiedName);
+        }
+        writer.WriteLine(";");
+        writer.Indent--;
+        writer.WriteLine();
+    }
+
+    /// <summary>
+    /// Adds the property fluent a p i.
+    /// </summary>
+    /// <param name="writer">The writer.</param>
+    /// <param name="field">The field.</param>
+    /// <param name="property">The property.</param>
+    private static void AddPropertyFluentAPI(IndentedTextWriter writer, SMField field, TypeProperty property)
+    {
+        AddFluentAPI(writer, "HasColumnType", field.SMFField!.DbType);
+        AddFluentAPI(writer, "HasComment", property.Comment);
+        AddFluentAPI(writer, "HasDefaultValueSql", field.SMFField!.DefaultValueSql);
+        AddFluentAPI(writer, "HasDefaultValueSql", field.SMFField!.DefaultValueSql);
+        AddFluentAPI(writer, "HasDefaultValue", GetDefaultValue(field.SMFField!));
+        AddFluentAPIIfValueIsTrue(writer, "IsRequired", field.SMFField!.IsRequired);
+    }
+
+    /// <summary>
+    /// Adds the fluent a p i if value is true.
+    /// </summary>
+    /// <param name="writer">The writer.</param>
+    /// <param name="fluentAPIName">The fluent a p i name.</param>
+    /// <param name="value">If true, value.</param>
+    private static void AddFluentAPIIfValueIsTrue(IndentedTextWriter writer, string fluentAPIName, bool value)
+    {
+        if (value)
+        {
+            writer.WriteLine();
+            writer.Write(".{0}()", fluentAPIName);
+        }
+    }
+
+    /// <summary>
+    /// Adds the fluent a p i.
+    /// </summary>
+    /// <param name="writer">The writer.</param>
+    /// <param name="field">The field.</param>
+    private static void AddFluentAPI(IndentedTextWriter writer, string fluentAPIName, string? value)
+    {
+        if (!string.IsNullOrEmpty(value))
+        {
+            writer.WriteLine();
+            writer.Write($".{fluentAPIName}(\"{value}\")");
+        }
+    }
+
+    /// <summary>
+    /// Gets the default value.
+    /// </summary>
+    /// <param name="field">The field.</param>
+    /// <returns>A string? .</returns>
+    private static string? GetDefaultValue(ORM.Fields.Field field)
+    {
+        return field switch
+        {
+            ORM.Fields.Binary => ((ORM.Fields.Binary)field).DefaultValue is null ? null : @$"CAST('{Convert.ToBase64String(((ORM.Fields.Binary)field).DefaultValue!.Invoke())}' AS VARBINARY)",
+            ORM.Fields.Boolean => ((ORM.Fields.Boolean)field).DefaultValue.ToString(),
+            ORM.Fields.DateTime => ((ORM.Fields.DateTime)field).DefaultValue.ToString() == default(System.DateTime).ToString() ? null : ((ORM.Fields.DateTime)field).DefaultValue.ToString(),
+            ORM.Fields.Decimal => ((ORM.Fields.Decimal)field).DefaultValue.ToString(),
+            ORM.Fields.Int => ((ORM.Fields.Int)field).DefaultValue.ToString(),
+            ORM.Fields.String => ((ORM.Fields.String)field).DefaultValue.ToString(),
+            _ => null,
+
+        };
     }
 
     /// <summary>
@@ -83,83 +239,5 @@ internal class ModelEntityConfigurationGenerator : CommonIncrementalGenerator
             writer.Indent--;
         }
     }
-
-    /// <summary>
-    /// Writes the values.
-    /// </summary>
-    /// <param name="writer">The writer.</param>
-    /// <param name="field">The field.</param>
-    /// <param name="property">The property.</param>
-    private static void WritePropertyFluentAPIs(IndentedTextWriter writer, SMField field, TypeProperty property)
-    {
-
-        if (!string.IsNullOrEmpty(property.Comment) || !string.IsNullOrEmpty(GetDefaultValue(field.SMFField!)))
-        {
-            writer.WriteLine("builder");
-            writer.Indent++;
-            writer.Write(".Property(e => e.{0})", property.IdentifierName);
-
-            if (!string.IsNullOrEmpty(field.SMFField!.DbType))
-            {
-                writer.WriteLine();
-                writer.Write($".HasColumnType(\"{field.SMFField!.DbType}\")");
-            }
-            if (!string.IsNullOrEmpty(property.Comment))
-            {
-                writer.WriteLine();
-                writer.Write(".HasComment(\"{0}\")", property.Comment);
-            }
-
-            if (!string.IsNullOrEmpty(field.SMFField!.DefaultValueSql))
-            {
-                writer.WriteLine();
-                writer.Write(".HasDefaultValueSql(\"{0}\")", field.SMFField!.DefaultValueSql);
-            }
-
-            if (!string.IsNullOrEmpty(GetDefaultValue(field.SMFField!)))
-            {
-                var defaultValue = GetDefaultValue(field.SMFField!);
-                if (!string.IsNullOrEmpty(defaultValue))
-                {
-                    writer.WriteLine();
-                    writer.Write(".HasDefaultValue(\"{0}\")", defaultValue);
-                }
-            }
-
-            if (field.SMFField!.IsRequired == true)
-            {
-                writer.WriteLine();
-                writer.Write(".IsRequired()");
-            }
-
-            if (field.SMFField is ORM.Fields.Id)
-            {
-                writer.WriteLine();
-                writer.Write(".UseHiLo()");
-            }
-            writer.WriteLine(";");
-            writer.Indent--;
-            writer.WriteLine();
-        }
-    }
-
-    /// <summary>
-    /// Gets the default value.
-    /// </summary>
-    /// <param name="field">The field.</param>
-    /// <returns>A string? .</returns>
-    private static string? GetDefaultValue(ORM.Fields.Field field)
-    {
-        return field switch
-        {
-            ORM.Fields.Binary => ((ORM.Fields.Binary)field).DefaultValue is null ? null : @$"CAST('{Convert.ToBase64String(((ORM.Fields.Binary)field).DefaultValue!.Invoke())}' AS VARBINARY)",
-            ORM.Fields.Boolean => ((ORM.Fields.Boolean)field).DefaultValue.ToString(),
-            ORM.Fields.DateTime => ((ORM.Fields.DateTime)field).DefaultValue.ToString() == default(System.DateTime).ToString() ? null : ((ORM.Fields.DateTime)field).DefaultValue.ToString(),
-            ORM.Fields.Decimal => ((ORM.Fields.Decimal)field).DefaultValue.ToString(),
-            ORM.Fields.Int => ((ORM.Fields.Int)field).DefaultValue.ToString(),
-            ORM.Fields.String => ((ORM.Fields.String)field).DefaultValue.ToString(),
-            _ => null,
-
-        };
-    }
 }
+

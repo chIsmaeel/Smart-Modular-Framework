@@ -14,7 +14,7 @@ public partial class SaleLineModel
 
     //public SMFields.O2O Price => new(RegisteredModels.Purchase_PriceModel);
 
-    public SMFields.M2M SalePrices => new(RegisteredModels.Purchase_PriceModel);
+    public SMFields.M2O Price => new(RegisteredModels.Purchase_PriceModel);
 
 
     //public SMFields.M2M M2M => new(RegisteredModels.Purchase_PriceModel);

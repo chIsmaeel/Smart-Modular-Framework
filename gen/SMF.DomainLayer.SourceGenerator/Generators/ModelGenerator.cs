@@ -1,4 +1,8 @@
 ﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
+
+using Humanizer;
+using SMF.SourceGenerator.Core.Types;
+
 /// <summary>
 /// The model generator.
 /// </summary>
@@ -36,7 +40,10 @@ internal class ModelGenerator : CommonIncrementalGenerator
             AddDefaultProperties(classTypeTemplate);
         foreach (var property in s.Properties!)
         {
-            AutoPropertyTemplate p = new(ModelPropertyTypes.GetPropertyType(property!.Type), property.IdentifierName)
+            string identifierName = property.IdentifierName;
+            if (property.RelationshipWith is RelationshipWith relationshipWith && relationshipWith.RelationshipType is RelationshipType.M2O or RelationshipType.M2M)
+                identifierName = identifierName.Pluralize();
+            AutoPropertyTemplate p = new(ModelPropertyTypes.GetPropertyType(property!), identifierName)
             {
                 Comment = property.Comment,
                 SecondAccessor = "set"

@@ -1,4 +1,7 @@
 ﻿namespace SMF.Common.SourceGenerator.Abstractions;
+
+using SMF.SourceGenerator.Core.Types.TypeMembers;
+
 /// <summary>
 /// The model property types.
 /// </summary>
@@ -8,8 +11,9 @@ public class ModelPropertyTypes
     /// <summary>
     /// Gets the property type.
     /// </summary>
-    public static string GetPropertyType(string propertyType)
+    public static string GetPropertyType(TypeProperty property)
     {
+        string propertyType = property!.Type;
         bool isNullable = false;
         if (!propertyType.StartsWith("SMFields")) return propertyType;
         if (propertyType.EndsWith("?"))
@@ -17,11 +21,15 @@ public class ModelPropertyTypes
             isNullable = true;
             propertyType = propertyType.Substring(0, propertyType.Length - 1);
         }
-        var result = propertyType switch
+        string? result = propertyType switch
         {
             "SMFields.String" => "string",
             "SMFields.Id" => "int",
             "SMFields.Int" => "int",
+            "SMFields.O2O" => property.RelationshipWith!.WithRelationship.ClassType.NewQualifiedName,
+            "SMFields.O2M" => property.RelationshipWith!.WithRelationship.ClassType.NewQualifiedName,
+            "SMFields.M2O" => $"System.Collections.Generic.List<{property.RelationshipWith!.WithRelationship.ClassType.NewQualifiedName}>",
+            "SMFields.M2M" => $"System.Collections.Generic.ICollection<{property.RelationshipWith!.WithRelationship.ClassType.NewQualifiedName}>",
             "SMFields.Decimal" => "decimal",
             "SMFields.DateTime" => "DateTime",
             "SMFields.Binary" => "byte[]",
@@ -41,6 +49,7 @@ public class ModelPropertyTypes
             "SMFields.Object" => "object",
             _ => propertyType
         };
+        if (result is null) return "";
         return isNullable ? $"{result}?" : result;
     }
 }

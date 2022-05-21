@@ -1,6 +1,7 @@
 ﻿namespace SMF.EntityFramework.SourceGenerator;
 
 using Microsoft.CodeAnalysis.CSharp.Scripting;
+using SMF.ORM.Models;
 
 /// <summary>
 /// The s m fields.
@@ -77,6 +78,7 @@ internal class SMField
             "Compute" => bool.Parse(value),
             "Translate" => bool.Parse(value),
             "Index" => bool.Parse(value),
+            "Length" => int.Parse(value),
             _ => value.Substring(1, value.Length - 2),
         };
     }
@@ -104,7 +106,7 @@ internal class SMField
     /// Gets the field obj.
     /// </summary>
     /// <param name="type">The type.</param>       
-    private static ORM.Fields.Field? GetFieldObj(string typeName)
+    private ORM.Fields.Field? GetFieldObj(string typeName)
     {
         if (!typeName.StartsWith("SMFields.")) return null;
         if (typeName.EndsWith("?")) typeName = typeName.Substring(0, typeName.Length - 1);
@@ -117,6 +119,10 @@ internal class SMField
             "SMFields.Boolean" => new ORM.Fields.Boolean(),
             "SMFields.Id" => new ORM.Fields.Id(),
             "SMFields.Binary" => new ORM.Fields.Binary(),
+            "SMFields.O2O" => new ORM.Fields.O2O(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.NewQualifiedName!)),
+            "SMFields.O2M" => new ORM.Fields.O2M(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.NewQualifiedName!)),
+            "SMFields.M2O" => new ORM.Fields.M2O(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.NewQualifiedName!)),
+            "SMFields.M2M" => new ORM.Fields.M2M(new RegisteredModel((ModelProperty.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.NewQualifiedName!)),
             _ => null
         };
     }
