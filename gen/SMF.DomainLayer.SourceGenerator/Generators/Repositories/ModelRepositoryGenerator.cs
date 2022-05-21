@@ -26,6 +26,7 @@ internal class ModelRepositoryGenerator : CommonIncrementalGenerator
     /// <param name="s">The s.</param>
     private void AddModelRepositoies(SourceProductionContext c, ModelCT s)
     {
+
         SMFProductionContext context = new(c);
         if (s.ContainingModuleName is null) return;
         FileScopedNamespaceTemplate fileScopedNamespace = new(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME + ".Domain." + s.ContainingModuleName + ".Repositories");

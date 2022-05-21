@@ -86,9 +86,10 @@ internal class CreateAsyncCommandGenerator : CommonIncrementalGenerator
                     AddProperties((ModelCT)tempModelCT.ParentClassType, w, objName);
                     tempModelCT = (ModelCT)tempModelCT.ParentClassType;
                 }
+
                 AddProperties(s, w, objName);
-                w.WriteLine($"_uow.{s.IdentifierNameWithoutPostFix}Repository.InsertAsync({objName});");
-                w.WriteLine($"return {objName}.Id;");
+                w.WriteLine($"await  _uow.{s.IdentifierNameWithoutPostFix}Repository.InsertAsync({objName});");
+                w.WriteLine($"return await Task.FromResult({objName}.Id);");
             }
         });
         classTypeTemplate.Members.Add(handlerClass);

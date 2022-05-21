@@ -73,7 +73,7 @@ internal class DeleteAsyncCommandGenerator : CommonIncrementalGenerator
             {
                 var objName = s.IdentifierNameWithoutPostFix.FirstCharToLowerCase();
                 w.WriteLine($" await _uow.{s.IdentifierNameWithoutPostFix}Repository.DeleteAsync(command.Id);");
-                w.WriteLine($"return command.Id;");
+                w.WriteLine($"return await Task.FromResult(command.Id);");
             }
         });
         classTypeTemplate.Members.Add(handlerClass);

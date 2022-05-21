@@ -15,6 +15,7 @@ internal class DBContextGenerator : CommonIncrementalGenerator
     /// <param name="context">The context.</param>
     protected override void Execute(IncrementalGeneratorInitializationContext context)
     {
+        //Debugger.Launch();
         context.RegisterSourceOutput(RegisteredModelCTs.Collect(), AddDBContext);
     }
 

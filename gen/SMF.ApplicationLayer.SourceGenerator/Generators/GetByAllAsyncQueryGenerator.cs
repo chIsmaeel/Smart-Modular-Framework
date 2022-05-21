@@ -70,7 +70,7 @@ internal class GetByAllAsyncQueryGenerator : CommonIncrementalGenerator
             {
                 w.WriteLine($"var response = await _uow.{s.IdentifierNameWithoutPostFix}Repository.GetAllAsync();");
                 w.WriteLine($"if(response is null) return null;");
-                w.WriteLine("return response;");
+                w.WriteLine("return await Task.FromResult(response);");
             }
         });
         classTypeTemplate.Members.Add(handlerClass);

@@ -69,7 +69,7 @@ internal class GetByIdAsyncQueryGenerator : CommonIncrementalGenerator
             {
                 w.WriteLine($"var response = await _uow.{s.IdentifierNameWithoutPostFix}Repository.GetByIdAsync(query.Id);");
                 w.WriteLine($"if(response is null) return null;");
-                w.WriteLine("return response;");
+                w.WriteLine("return await Task.FromResult(response);");
             }
         });
         classTypeTemplate.Members.Add(handlerClass);

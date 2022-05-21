@@ -10,6 +10,17 @@ public partial class SaleLineModel
 {
     public SMFields.Binary? Description { get; } = new() { };
     public SMFields.Binary? ProductName { get; } = new() { };
+    //public SMFields.O2M O2M => new(RegisteredModels.Purchase_PriceModel);
+
+    //public SMFields.O2O Price => new(RegisteredModels.Purchase_PriceModel);
+
+    public SMFields.M2M SalePrices => new(RegisteredModels.Purchase_PriceModel);
+
+
+    //public SMFields.M2M M2M => new(RegisteredModels.Purchase_PriceModel);
+
+
+    //public SMFields.M2O M2O => new(RegisteredModels.Purchase_PriceModel);
 
     //private readonly ModelKind parentModel = ModelKind.Sale_Sale;
     //private readonly ModelImplementationKind[] modelImplementations = new[] {
