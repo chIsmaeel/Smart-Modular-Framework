@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.DomainLayer.SourceGener
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.ApplicationLayer.SourceGenerator", "gen\SMF.ApplicationLayer.SourceGenerator\SMF.ApplicationLayer.SourceGenerator.csproj", "{2D47175B-BAE7-4E05-9324-D747894ABFF2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.InfrastructureLayer.SourceGenerator", "gen\SMF.InfrastructureLayer.SourceGenerator\SMF.InfrastructureLayer.SourceGenerator.csproj", "{8C575D7D-20A1-4CF4-8596-DB19CAACA049}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{2D47175B-BAE7-4E05-9324-D747894ABFF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D47175B-BAE7-4E05-9324-D747894ABFF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D47175B-BAE7-4E05-9324-D747894ABFF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C575D7D-20A1-4CF4-8596-DB19CAACA049}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C575D7D-20A1-4CF4-8596-DB19CAACA049}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C575D7D-20A1-4CF4-8596-DB19CAACA049}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C575D7D-20A1-4CF4-8596-DB19CAACA049}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{70CF49CC-BBB0-4EFA-9229-DE64FF31ACF1} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
 		{1376C80B-63AE-430F-9411-00552BAB22B1} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
 		{2D47175B-BAE7-4E05-9324-D747894ABFF2} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
+		{8C575D7D-20A1-4CF4-8596-DB19CAACA049} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4A8507FA-B0E0-4282-81FA-6A3A33A041B2}

@@ -1,6 +1,5 @@
-﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
+﻿namespace Application.Commands;
 
-using SMF.ApplicationLayer.SourceGenerator;
 using SMF.SourceGenerator.Core;
 
 /// <summary>
@@ -9,7 +8,7 @@ using SMF.SourceGenerator.Core;
 
 [Generator]
 
-internal class UpdateAsyncCommandGenerator : CommonIncrementalGenerator
+internal class DeleteAsyncCommands : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
@@ -33,19 +32,14 @@ internal class UpdateAsyncCommandGenerator : CommonIncrementalGenerator
 
         SMFProductionContext context = new(c);
         FileScopedNamespaceTemplate fileScopedNamespace = new($"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Application.{s.ContainingModuleName}.Commands");
-        ClassTypeTemplate classTypeTemplate = new($"Update{s.IdentifierNameWithoutPostFix}Command")
+        ClassTypeTemplate classTypeTemplate = new($"Delete{s.IdentifierNameWithoutPostFix}Command")
         {
             Modifiers = "public partial",
             Interfaces = new() { $"MediatR.IRequest<int>" },
         };
 
         classTypeTemplate.Members.Add(new AutoPropertyTemplate("int", "Id"));
-        var tempModelCT = s;
-        while (tempModelCT is not null)
-        {
-            StaticMethods.AddProperties(tempModelCT, classTypeTemplate);
-            tempModelCT = tempModelCT.ParentClassType as ModelCT;
-        }
+
         ClassTypeTemplate handlerClass = new(classTypeTemplate.IdentifierName + "Handler")
         {
 
@@ -56,7 +50,7 @@ internal class UpdateAsyncCommandGenerator : CommonIncrementalGenerator
         };
 
 
-        handlerClass.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.UnitOfWork", "_uow")
+        handlerClass.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Infrastructure.UnitOfWork", "_uow")
         {
 
             Modifiers = "private readonly"
@@ -65,7 +59,7 @@ internal class UpdateAsyncCommandGenerator : CommonIncrementalGenerator
         handlerClass.Members.Add(new ConstructorTemplate(handlerClass.IdentifierName)
         {
 
-            Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.UnitOfWork", "uow") },
+            Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Infrastructure.UnitOfWork", "uow") },
             Body = (w, _) => { w.WriteLine("_uow = uow;"); }
 
         });
@@ -78,22 +72,12 @@ internal class UpdateAsyncCommandGenerator : CommonIncrementalGenerator
             Body = (w, p, gp, _) =>
             {
                 var objName = s.IdentifierNameWithoutPostFix.FirstCharToLowerCase();
-                w.WriteLine($"var {objName} = await _uow.{s.IdentifierNameWithoutPostFix}Repository.GetByIdAsync(command.Id);");
-
-                w.WriteLine($"if ({objName} is null) return default;");
-                w.WriteLine($"{objName}.LastModifiedOn = System.DateTime.Now;");
-                var tempModelCT = s;
-                while (tempModelCT is not null)
-                {
-                    StaticMethods.AddProperties(tempModelCT, w, objName);
-                    tempModelCT = tempModelCT.ParentClassType as ModelCT;
-                }
-                w.WriteLine($"await _uow.{s.IdentifierNameWithoutPostFix}Repository.UpdateAsync({objName});");
-                w.WriteLine($"return await Task.FromResult({objName}.Id);");
+                w.WriteLine($" await _uow.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository.DeleteAsync(command.Id);");
+                w.WriteLine($"return await Task.FromResult(command.Id);");
             }
         });
         classTypeTemplate.Members.Add(handlerClass);
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);
-        context.AddSource(fileScopedNamespace);
+        context.AddSource($"Delete{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Command", fileScopedNamespace.CreateTemplate().GetTemplate());
     }
 }

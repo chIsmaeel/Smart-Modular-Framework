@@ -1,4 +1,4 @@
-﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
+﻿namespace Application.Queries;
 
 using Humanizer;
 using SMF.ApplicationLayer.SourceGenerator;
@@ -11,7 +11,7 @@ using System.CodeDom.Compiler;
 
 [Generator]
 
-internal class GetByAllAsyncQueryGenerator : CommonIncrementalGenerator
+internal class GetByAllAsyncQueries : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
@@ -50,7 +50,7 @@ internal class GetByAllAsyncQueryGenerator : CommonIncrementalGenerator
             }
         };
 
-        handlerClass.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.UnitOfWork", "_uow")
+        handlerClass.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Infrastructure.UnitOfWork", "_uow")
         {
 
             Modifiers = "private readonly"
@@ -59,7 +59,7 @@ internal class GetByAllAsyncQueryGenerator : CommonIncrementalGenerator
         handlerClass.Members.Add(new ConstructorTemplate(handlerClass.IdentifierName)
         {
 
-            Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.UnitOfWork", "uow") },
+            Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Infrastructure.UnitOfWork", "uow") },
             Body = (w, _) => { w.WriteLine("_uow = uow;"); }
 
         });
@@ -72,14 +72,14 @@ internal class GetByAllAsyncQueryGenerator : CommonIncrementalGenerator
             tempModelCTForMethods = tempModelCTForMethods.ParentClassType as ModelCT;
         }
 
-        handlerClass.Members.Add(new TypeMethodTemplate($"Task<IEnumerable<{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.{s.ContainingModuleName}.Models.{s.IdentifierNameWithoutPostFix}>?>", "Handle")
+        handlerClass.Members.Add(new TypeMethodTemplate($"Task<IEnumerable<{s.NewQualifiedName}>?>", "Handle")
         {
 
             Modifiers = "public async",
             Parameters = new() { (classTypeTemplate.IdentifierName, "query"), ("System.Threading.CancellationToken", "cancellationToken") },
             Body = (w, p, gp, _) =>
             {
-                w.WriteLine($"var response = await _uow.{s.IdentifierNameWithoutPostFix}Repository.GetAllAsync();");
+                w.WriteLine($"var response = await _uow.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository.GetAllAsync();");
                 w.WriteLine($"if(response is null) return null;");
                 var hasComputedValue = false;
                 var tempModelCTForComputedValues = s;
@@ -107,7 +107,7 @@ internal class GetByAllAsyncQueryGenerator : CommonIncrementalGenerator
         });
         classTypeTemplate.Members.Add(handlerClass);
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);
-        context.AddSource(fileScopedNamespace);
+        context.AddSource($"GetAll{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix.Pluralize()}Query", fileScopedNamespace.CreateTemplate().GetTemplate());
     }
 
     /// <summary>
@@ -118,12 +118,10 @@ internal class GetByAllAsyncQueryGenerator : CommonIncrementalGenerator
     private static void AssignComputedProperties(IndentedTextWriter w, IEnumerable<TypeProperty> smFields)
     {
         foreach (var property in smFields)
-        {
             if (property!.SMField!.Field is not null && property.SMField.Field.Compute)
             {
                 w.WriteLine($"entity.{property!.IdentifierName} = Compute{property.IdentifierName}(_uow,entity);");
                 continue;
             }
-        }
     }
 }

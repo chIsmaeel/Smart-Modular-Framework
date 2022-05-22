@@ -26,6 +26,7 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Conf
     private string? _newContainingNamespace;
     private string? _orderByString;
     private string? _newQualifiedName;
+    private string? _moduleNameWithoutPostFix;
 
     /// <summary>
     /// Gets or sets the registering module c ts.
@@ -197,6 +198,17 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Conf
 
     }
 
+    /// <summary>
+    /// Gets the module name without post fix.
+    /// </summary>
+    public string ModuleNameWithoutPostFix
+    {
+        get
+        {
+            if (_moduleNameWithoutPostFix is not null) return _moduleNameWithoutPostFix;
+            return _moduleNameWithoutPostFix = ContainingModuleName!.Substring(0, ContainingModuleName.Length - "Addon".Length);
+        }
+    }
 
     /// <summary>
     /// Gets the qualified parent name.
@@ -230,7 +242,7 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Conf
         get
         {
             if (_newContainingNamespace is not null) return _newContainingNamespace;
-            _newContainingNamespace = $"{ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.{ContainingModuleName}.Models";
+            _newContainingNamespace = $"{ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.{ContainingModuleName}.Entities";
             return _newContainingNamespace;
         }
     }
@@ -243,7 +255,7 @@ public partial record ModelCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Conf
         get
         {
             if (_newQualifiedName is not null) return _newQualifiedName;
-            return _newQualifiedName = $"{ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.{ContainingModuleName}.Models.{IdentifierNameWithoutPostFix}";
+            return _newQualifiedName = $"{ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.{ContainingModuleName}.Entities.{IdentifierNameWithoutPostFix}";
         }
     }
 }

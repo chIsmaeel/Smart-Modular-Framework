@@ -1,4 +1,4 @@
-﻿namespace SMF.EntityFramework.SourceGenerator.Generators.Repositories;
+﻿namespace Application.Interfaces;
 
 using SMF.SourceGenerator.Core.Templates.TypeTemplates.MemberTemplates.InterfaceMemberTemplate;
 
@@ -6,7 +6,7 @@ using SMF.SourceGenerator.Core.Templates.TypeTemplates.MemberTemplates.Interface
 ///          ModelRepostoryInterfaceGenerator
 /// </summary>
 [Generator]
-internal class ModelRepostoryInterfaceGenerator : CommonIncrementalGenerator
+internal class Repositories : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
@@ -26,7 +26,7 @@ internal class ModelRepostoryInterfaceGenerator : CommonIncrementalGenerator
     private void AddIRepositoryInterface(SourceProductionContext c, ConfigSMFAndGlobalOptions s)
     {
         SMFProductionContext context = new(c);
-        FileScopedNamespaceTemplate fileScopedNamespace = new(s.ConfigSMF!.SOLUTION_NAME + ".Domain.Interfaces");
+        FileScopedNamespaceTemplate fileScopedNamespace = new(s.ConfigSMF!.SOLUTION_NAME + ".Application.Interfaces");
         InterfaceTemplate interfaceTemplate = new("IRepository")
         {
             Modifiers = "public",
@@ -54,12 +54,12 @@ internal class ModelRepostoryInterfaceGenerator : CommonIncrementalGenerator
     {
         SMFProductionContext context = new(c);
         if (s.ContainingModuleName is null) return;
-        FileScopedNamespaceTemplate fileScopedNamespace = new(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME + ".Domain." + s.ContainingModuleName + ".Repositories.Interfaces");
+        FileScopedNamespaceTemplate fileScopedNamespace = new(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME + ".Application." + s.ContainingModuleName + ".Repositories.Interfaces");
         InterfaceTemplate interfaceTemplate = new($"I{s.IdentifierNameWithoutPostFix}Repository")
         {
-            Interfaces = new() { $"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.Interfaces.IRepository<{s.NewQualifiedName}>" },
+            Interfaces = new() { $"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Application.Interfaces.IRepository<{s.NewQualifiedName}>" },
         };
         fileScopedNamespace.TypeTemplates.Add(interfaceTemplate);
-        context.AddSource(fileScopedNamespace);
+        context.AddSource($"I{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}", fileScopedNamespace.CreateTemplate().GetTemplate());
     }
 }

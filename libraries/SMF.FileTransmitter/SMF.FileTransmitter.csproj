@@ -1,18 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>exe</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
+    <PropertyGroup>
+        <OutputType>exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<EditorConfigFiles Remove="..\SMF.FilesTransmitter\.editorconfig" />
-	</ItemGroup>
+    <ItemGroup>
+        <EditorConfigFiles Remove="..\SMF.FilesTransmitter\.editorconfig" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<None Include="..\libraries\SMF.FilesTransmitter\.editorconfig" />
-	</ItemGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="..\..\config.smf" />
+    </ItemGroup>
 
 </Project>

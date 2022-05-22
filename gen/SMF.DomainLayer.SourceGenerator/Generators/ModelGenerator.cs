@@ -1,4 +1,4 @@
-﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
+﻿namespace Domain;
 
 using Humanizer;
 using SMF.SourceGenerator.Core;
@@ -8,7 +8,7 @@ using SMF.SourceGenerator.Core.Types;
 /// The model generator.
 /// </summary>
 [Generator]
-internal class ModelGenerator : CommonIncrementalGenerator
+internal class Entities : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
@@ -31,7 +31,7 @@ internal class ModelGenerator : CommonIncrementalGenerator
 
         FileScopedNamespaceTemplate fileScopedNamespace = new(s.NewContainingNamespace);
 
-        ClassTypeTemplate classTypeTemplate = new(s.IdentifierNameWithoutPostFix)
+        ClassTypeTemplate classTypeTemplate = new($"{s.IdentifierNameWithoutPostFix}")
         {
             Modifiers = "public partial",
             ParentType = s.StringParentType == "ModelBase" ? null : s.ParentClassType?.NewQualifiedName,
@@ -53,7 +53,7 @@ internal class ModelGenerator : CommonIncrementalGenerator
             classTypeTemplate.Members.Add(p);
         }
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);
-        context.AddSource(fileScopedNamespace);
+        context.AddSourceWithModuleNamePrefix(fileScopedNamespace, s.ModuleNameWithoutPostFix);
         //Debug.Assert(false, classTypeTemplate.CreateTemplate().GetTemplate());
     }
 

@@ -3,10 +3,6 @@
 // </copyright>
 
 namespace SMF.PointOfSale.SaleAddon.Models;
-
-using TPointOfSale.Domain;
-using TPointOfSale.Domain.SaleAddon.Models;
-
 /// <summary>
 /// asdfjasdklfjkasdlfjlad
 /// </summary>
@@ -16,23 +12,27 @@ public partial class SaleLineModel
     //{
     //    throw new NotImplementedException();
     //}
-    public SMFields.Binary? Description { get; } = new() { Compute = true };
+    //public SMFields.Binary? Description { get; } = new() { Compute = true };
     public SMFields.Binary? ProductName { get; } = new() { Compute = true };
     //public SMFields.O2M O2M => new(RegisteredModels.Purchase_PriceModel);
 
     //public SMFields.O2O Price => new(RegisteredModels.Purchase_PriceModel);
 
     public SMFields.M2O Price => new(RegisteredModels.Purchase_PriceModel);
+    //private partial byte[]? ComputeProductName(UniPointOfSale.Domain.UnitOfWork uow, UniPointOfSale.Domain.SaleAddon.Models.SaleLine currentObj)
+    //{
+    //    return currentObj.ProductName;
+    //}
 
-    private partial byte[]? ComputeProductName(UnitOfWork uow, TPointOfSale.Domain.SaleAddon.Models.SaleLine currentObj)
-    {
-        return currentObj.ProductName;
-    }
 
-    private partial byte[]? ComputeDescription(UnitOfWork uow, SaleLine currentObj)
-    {
-        return currentObj.ProductName;
-    }
+
+
+
+
+    //private partial byte[]? ComputeDescription(UnitOfWork uow, SaleLine currentObj)
+    //{
+    //    return currentObj.ProductName;
+    //}
     //public SMFields.M2M M2M => new(RegisteredModels.Purchase_PriceModel);
 
 

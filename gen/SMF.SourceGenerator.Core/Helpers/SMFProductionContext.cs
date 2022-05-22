@@ -46,6 +46,16 @@ public class SMFProductionContext
     }
 
     /// <summary>
+    /// Adds the source with module name prefix.
+    /// </summary>
+    /// <param name="fileScopedNamespaceTemplate">The file scoped namespace template.</param>
+    /// <param name="moduleName">The module name.</param>
+    public void AddSourceWithModuleNamePrefix(FileScopedNamespaceTemplate fileScopedNamespaceTemplate, string moduleName)
+    {
+        AddSource(moduleName + "_" + fileScopedNamespaceTemplate.FileName!, fileScopedNamespaceTemplate.CreateTemplate().GetTemplate());
+    }
+
+    /// <summary>
     /// Reports the diagnostic.
     /// </summary>
     /// <param name="diagnostic">The diagnostic.</param>

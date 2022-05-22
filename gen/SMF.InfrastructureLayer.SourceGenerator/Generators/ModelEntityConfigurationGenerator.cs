@@ -1,15 +1,15 @@
-﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
+﻿namespace Infrastructure_Data.Config;
 
 using Humanizer;
 using SMF.SourceGenerator.Core;
 
-/// <summary>
+/// <summary>                         
 /// The model entity configuration generator.
 /// </summary>
 
 [Generator]
 
-internal partial class ModelEntityConfigurationGenerator : CommonIncrementalGenerator
+internal partial class ModelEntityConfigurations : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
@@ -30,8 +30,8 @@ internal partial class ModelEntityConfigurationGenerator : CommonIncrementalGene
         if (s.ConfigSMFAndGlobalOptions.RootNamespace is null) return;
 
         SMFProductionContext context = new(c);
-        FileScopedNamespaceTemplate fileScopedNamespace = new($"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.{s.ContainingModuleName}.Entities.Configurations");
-        ClassTypeTemplate classTypeTemplate = new(s.IdentifierNameWithoutPostFix + "EntityTypeConfiguration")
+        FileScopedNamespaceTemplate fileScopedNamespace = new($"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Infrastructure.{s.ContainingModuleName}.Data.Config");
+        ClassTypeTemplate classTypeTemplate = new($"{s.IdentifierNameWithoutPostFix}EntityTypeConfiguration")
         {
             Modifiers = "public partial",
             Interfaces = new() { "IEntityTypeConfiguration<" + s.NewQualifiedName + ">" },
@@ -49,7 +49,7 @@ internal partial class ModelEntityConfigurationGenerator : CommonIncrementalGene
 
         classTypeTemplate.Members.Add(typeMethodTemplate);
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);
-        context.AddSource(fileScopedNamespace);
+        context.AddSource($"{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Config", fileScopedNamespace.CreateTemplate().GetTemplate());
     }
 
     /// <summary>
@@ -72,10 +72,6 @@ internal partial class ModelEntityConfigurationGenerator : CommonIncrementalGene
             if (field!.Field is null) continue;
 
             WritePropertyFluentAPIs(writer, field, property!);
-            if (property.IdentifierName == "SalePrices")
-            {
-
-            }
             if (property!.RelationshipWith is not null)
                 AddRelationalFluentAPI(writer, property);
 
@@ -87,9 +83,9 @@ internal partial class ModelEntityConfigurationGenerator : CommonIncrementalGene
 }
 /// <summary>
 /// The model entity configuration generator.
-/// </summary>
+/// </summary>             
 
-internal partial class ModelEntityConfigurationGenerator
+internal partial class ModelEntityConfigurations
 {
     /// <summary>
     /// Writes the values.
@@ -99,15 +95,11 @@ internal partial class ModelEntityConfigurationGenerator
     /// <param name="property">The property.</param>
     private static void WritePropertyFluentAPIs(IndentedTextWriter writer, SMField field, TypeProperty property)
     {
-        writer.WriteLine("builder");
-        writer.Indent++;
-        writer.Write(".Property(e => e.{0})", property.IdentifierName);
+        writer.Write("builder.Property(e => e.{0})", property.IdentifierName);
 
         AddPropertyFluentAPI(writer, field, property);
 
         writer.WriteLine(";");
-        writer.Indent--;
-        writer.WriteLine();
     }
 
     /// <summary>
@@ -118,14 +110,11 @@ internal partial class ModelEntityConfigurationGenerator
     /// <param name="property">The property.</param>
     private static void AddRelationalFluentAPI(IndentedTextWriter writer, TypeProperty property)
     {
-        writer.WriteLine("builder");
-        writer.Indent++;
+        writer.Write("builder");
         if (property.RelationshipWith!.RelationshipType is SMF.SourceGenerator.Core.Types.RelationshipType.O2O or SMF.SourceGenerator.Core.Types.RelationshipType.O2M)
             writer.Write(".HasOne(_ => _.{0})", property.IdentifierName);
         else
             writer.Write(".HasMany(_ => _.{0})", property.IdentifierName.Pluralize());
-
-        writer.WriteLine();
 
         if (property.RelationshipWith!.RelationshipType is SMF.SourceGenerator.Core.Types.RelationshipType.O2O or SMF.SourceGenerator.Core.Types.RelationshipType.M2O)
             writer.Write(".WithOne(_ => _.{0})", property.RelationshipWith.WithRelationship.IdentifierName);
@@ -135,16 +124,12 @@ internal partial class ModelEntityConfigurationGenerator
 
         if (property.RelationshipWith.ForeignKey is not null)
         {
-            writer.WriteLine();
-
             if (property.RelationshipWith.RelationshipType is SMF.SourceGenerator.Core.Types.RelationshipType.O2O)
                 writer.Write(".HasForeignKey<{1}>(_ => _.{0})", property.RelationshipWith.ForeignKey.IdentifierName, (property.RelationshipWith.ForeignKey.ClassType as ModelCT)!.NewQualifiedName);
             else
                 writer.Write(".HasForeignKey(_ => _.{0})", property.RelationshipWith.ForeignKey.IdentifierName);
         }
-        writer.WriteLine(";");
-        writer.Indent--;
-        writer.WriteLine();
+        writer.Write(";");
     }
 
     /// <summary>
@@ -172,10 +157,7 @@ internal partial class ModelEntityConfigurationGenerator
     private static void AddFluentAPIIfValueIsTrue(IndentedTextWriter writer, string fluentAPIName, bool value)
     {
         if (value)
-        {
-            writer.WriteLine();
             writer.Write(".{0}()", fluentAPIName);
-        }
     }
 
     /// <summary>
@@ -186,10 +168,7 @@ internal partial class ModelEntityConfigurationGenerator
     private static void AddFluentAPI(IndentedTextWriter writer, string fluentAPIName, string? value)
     {
         if (!string.IsNullOrEmpty(value))
-        {
-            writer.WriteLine();
             writer.Write($".{fluentAPIName}(\"{value}\")");
-        }
     }
 
     /// <summary>
@@ -197,16 +176,16 @@ internal partial class ModelEntityConfigurationGenerator
     /// </summary>
     /// <param name="field">The field.</param>
     /// <returns>A string? .</returns>
-    private static string? GetDefaultValue(ORM.Fields.Field field)
+    private static string? GetDefaultValue(SMF.ORM.Fields.Field field)
     {
         return field switch
         {
-            ORM.Fields.Binary => ((ORM.Fields.Binary)field).DefaultValue is null ? null : @$"CAST('{Convert.ToBase64String(((ORM.Fields.Binary)field).DefaultValue!.Invoke())}' AS VARBINARY)",
-            ORM.Fields.Boolean => ((ORM.Fields.Boolean)field).DefaultValue.ToString(),
-            ORM.Fields.DateTime => ((ORM.Fields.DateTime)field).DefaultValue.ToString() == default(System.DateTime).ToString() ? null : ((ORM.Fields.DateTime)field).DefaultValue.ToString(),
-            ORM.Fields.Decimal => ((ORM.Fields.Decimal)field).DefaultValue.ToString(),
-            ORM.Fields.Int => ((ORM.Fields.Int)field).DefaultValue.ToString(),
-            ORM.Fields.String => ((ORM.Fields.String)field).DefaultValue.ToString(),
+            SMF.ORM.Fields.Binary => ((SMF.ORM.Fields.Binary)field).DefaultValue is null ? null : @$"CAST('{Convert.ToBase64String(((SMF.ORM.Fields.Binary)field).DefaultValue!.Invoke())}' AS VARBINARY)",
+            SMF.ORM.Fields.Boolean => ((SMF.ORM.Fields.Boolean)field).DefaultValue.ToString(),
+            SMF.ORM.Fields.DateTime => ((SMF.ORM.Fields.DateTime)field).DefaultValue.ToString() == default(System.DateTime).ToString() ? null : ((SMF.ORM.Fields.DateTime)field).DefaultValue.ToString(),
+            SMF.ORM.Fields.Decimal => ((SMF.ORM.Fields.Decimal)field).DefaultValue.ToString(),
+            SMF.ORM.Fields.Int => ((SMF.ORM.Fields.Int)field).DefaultValue.ToString(),
+            SMF.ORM.Fields.String => ((SMF.ORM.Fields.String)field).DefaultValue.ToString(),
             _ => null,
 
         };
@@ -220,19 +199,9 @@ internal partial class ModelEntityConfigurationGenerator
     private static void WriteIfHasIndex(IndentedTextWriter writer, List<string> indexList)
     {
         if (indexList.Count == 1)
-        {
-            writer.WriteLine("builder");
-            writer.Indent++;
-            writer.WriteLine($".HasIndex(e => {indexList.FirstOrDefault()});");
-            writer.Indent--;
-        }
+            writer.WriteLine($"builder.HasIndex(e => {indexList.FirstOrDefault()});");
         else if (indexList.Count > 1)
-        {
-            writer.WriteLine("builder");
-            writer.Indent++;
-            writer.WriteLine($".HasIndex(e=> new {{{string.Join(", ", indexList)}}});");
-            writer.Indent--;
-        }
+            writer.WriteLine($"builder.HasIndex(e=> new {{{string.Join(",", indexList)}}});");
     }
 }
 

@@ -1,14 +1,12 @@
-﻿namespace SMF.EntityFramework.SourceGenerator.Generators.Repositories;
+﻿namespace Infrastructure;
 
 using Humanizer;
-using Microsoft.CodeAnalysis;
-using SMF.Common.SourceGenerator.Abstractions.Types.ClassTypes;
 
 /// <summary>
 /// This class is responsible to generate the source code for the repositories.
 /// </summary>
 [Generator]
-internal class ModelRepositoryGenerator : CommonIncrementalGenerator
+internal class Repositories : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
@@ -29,16 +27,16 @@ internal class ModelRepositoryGenerator : CommonIncrementalGenerator
 
         SMFProductionContext context = new(c);
         if (s.ContainingModuleName is null) return;
-        FileScopedNamespaceTemplate fileScopedNamespace = new(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME + ".Domain." + s.ContainingModuleName + ".Repositories");
-        ClassTypeTemplate classTypeTemplate = new(s.IdentifierNameWithoutPostFix + "Repository")
+        FileScopedNamespaceTemplate fileScopedNamespace = new(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME + ".Infrastructure." + s.ContainingModuleName + ".Repositories");
+        ClassTypeTemplate classTypeTemplate = new($"{s.IdentifierNameWithoutPostFix}Repository")
         {
-            Interfaces = new() { s.ConfigSMFAndGlobalOptions.ConfigSMF.SOLUTION_NAME + ".Domain." + s.ContainingModuleName + ".Repositories.Interfaces.I" + s.IdentifierNameWithoutPostFix + "Repository" },
+            Interfaces = new() { s.ConfigSMFAndGlobalOptions.ConfigSMF.SOLUTION_NAME + ".Application." + s.ContainingModuleName + ".Repositories.Interfaces.I" + s.IdentifierNameWithoutPostFix + "Repository" },
         };
         AddConstructor(s, classTypeTemplate);
         AddRepositoryMethods(s, classTypeTemplate);
 
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);
-        context.AddSource(fileScopedNamespace);
+        context.AddSource($"{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository", fileScopedNamespace.CreateTemplate().GetTemplate());
     }
 
     /// <summary>
@@ -47,10 +45,10 @@ internal class ModelRepositoryGenerator : CommonIncrementalGenerator
     /// <param name="classTypeTemplate">The class type template.</param>
     private void AddConstructor(ModelCT s, ClassTypeTemplate classTypeTemplate)
     {
-        classTypeTemplate.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.Data.SMFDbContext", "_context"));
+        classTypeTemplate.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Infrastructure.Data.SMFDbContext", "_context"));
         classTypeTemplate.Members.Add(new ConstructorTemplate(classTypeTemplate.IdentifierName)
         {
-            Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Domain.Data.SMFDbContext", "context") },
+            Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Infrastructure.Data.SMFDbContext", "context") },
             Body = (writer, parameters) => { writer.WriteLine("_context = context;"); },
         });
 
@@ -66,10 +64,10 @@ internal class ModelRepositoryGenerator : CommonIncrementalGenerator
         classTypeTemplate.Members.Add(new TypeMethodTemplate($"Task<IEnumerable<{s.NewQualifiedName}>>", "GetAllAsync")
         {
             Modifiers = "public async",
-            UsingNamespaces = new() { "Microsoft.EntityFrameworkCore.ChangeTracking" },
+            //UsingNamespaces = new() { "Microsoft.EntityFrameworkCore.ChangeTracking" },
             Body = (_writer, parameters, genericParamerters, privateFields) =>
             {
-                _writer.WriteLine("return await Task.FromResult(_context." + s.IdentifierNameWithoutPostFix.Pluralize() + ".ToList()" + s.OrderByString + ");");
+                _writer.WriteLine("return await Task.FromResult(_context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".ToList()" + s.OrderByString + ");");
             }
         }); ;
 
@@ -79,7 +77,7 @@ internal class ModelRepositoryGenerator : CommonIncrementalGenerator
             Parameters = new() { ("int", "id") },
             Body = (_writer, parameters, genericParamerters, privateFields) =>
             {
-                _writer.WriteLine("return await Task.FromResult(_context." + s.IdentifierNameWithoutPostFix.Pluralize() + ".Where(x => x.Id == id).FirstOrDefault());");
+                _writer.WriteLine("return await Task.FromResult(_context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".Where(x => x.Id == id).FirstOrDefault());");
             }
         });
 
@@ -92,7 +90,7 @@ internal class ModelRepositoryGenerator : CommonIncrementalGenerator
                 _writer.WriteLine("try");
                 _writer.WriteLine("{");
                 _writer.Indent++;
-                _writer.WriteLine("_context." + s.IdentifierNameWithoutPostFix.Pluralize() + ".Add(entity);");
+                _writer.WriteLine("_context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".Add(entity);");
                 _writer.WriteLine("await _context.SaveChangesAsync();");
                 _writer.Indent--;
                 _writer.WriteLine("}");
@@ -114,7 +112,7 @@ internal class ModelRepositoryGenerator : CommonIncrementalGenerator
                 _writer.WriteLine("try");
                 _writer.WriteLine("{");
                 _writer.Indent++;
-                _writer.WriteLine("var tempEntity = _context." + s.IdentifierNameWithoutPostFix.Pluralize() + ".FirstOrDefault(e=>e.Id==entity.Id);");
+                _writer.WriteLine("var tempEntity = _context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".FirstOrDefault(e=>e.Id==entity.Id);");
                 var tempModelCT = s;
 
                 _writer.WriteLine($"tempEntity.LastModifiedOn = entity.LastModifiedOn;");
@@ -149,7 +147,7 @@ internal class ModelRepositoryGenerator : CommonIncrementalGenerator
                 _writer.WriteLine("{");
                 _writer.Indent++;
                 _writer.WriteLine("var tempEntity = await _context." + s.IdentifierNameWithoutPostFix.Pluralize() + ".FindAsync(id);");
-                _writer.WriteLine("_context." + s.IdentifierNameWithoutPostFix.Pluralize() + ".Remove(tempEntity);");
+                _writer.WriteLine("_context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".Remove(tempEntity);");
                 _writer.WriteLine("await _context.SaveChangesAsync();");
                 _writer.Indent--;
                 _writer.WriteLine("}");

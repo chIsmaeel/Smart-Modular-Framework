@@ -1,4 +1,4 @@
-﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
+﻿namespace Infrastructure;
 
 using Microsoft.CodeAnalysis;
 using SMF.Common.SourceGenerator.Abstractions.Types.ClassTypes;
@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 /// </summary>
 
 [Generator]
-internal class UnitOfWorkGenerator : CommonIncrementalGenerator
+internal class UnitOfWork : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
@@ -28,19 +28,19 @@ internal class UnitOfWorkGenerator : CommonIncrementalGenerator
     {
         var configSMF = s.FirstOrDefault()?.ConfigSMFAndGlobalOptions.ConfigSMF;
         SMFProductionContext context = new(c);
-        FileScopedNamespaceTemplate fileScopedNamespace = new(configSMF!.SOLUTION_NAME! + ".Domain");
+        FileScopedNamespaceTemplate fileScopedNamespace = new(configSMF!.SOLUTION_NAME! + ".Infrastructure");
         ClassTypeTemplate classTypeTemplate = new("UnitOfWork")
         {
             Interfaces = new() { "System.IDisposable" }
         };
 
-        classTypeTemplate.Members.Add(new AutoPropertyTemplate(configSMF.SOLUTION_NAME! + ".Domain.Data.SMFDbContext", "SMFDbContext"));
+        classTypeTemplate.Members.Add(new AutoPropertyTemplate(configSMF.SOLUTION_NAME! + ".Infrastructure.Data.SMFDbContext", "SMFDbContext"));
         classTypeTemplate.Members.Add(new TypeFieldTemplate("bool", "disposed") { DefaultValue = "false" });
 
         classTypeTemplate.Members.Add(new ConstructorTemplate(classTypeTemplate.IdentifierName)
         {
 
-            Parameters = new() { (configSMF!.SOLUTION_NAME! + ".Domain.Data.SMFDbContext", "context") },
+            Parameters = new() { (configSMF!.SOLUTION_NAME! + ".Infrastructure.Data.SMFDbContext", "context") },
             Body = (writer, parameters) =>
             {
                 writer.WriteLine("SMFDbContext = context;");
@@ -49,11 +49,11 @@ internal class UnitOfWorkGenerator : CommonIncrementalGenerator
         });
         foreach (var modelCT in s)
         {
-            classTypeTemplate.Members.Add(new FullPropertyTemplate(configSMF!.SOLUTION_NAME + ".Domain." + modelCT.ContainingModuleName + ".Repositories.Interfaces." + $"I{modelCT.IdentifierNameWithoutPostFix}Repository", modelCT.IdentifierNameWithoutPostFix + "Repository")
+            classTypeTemplate.Members.Add(new FullPropertyTemplate($"{configSMF!.SOLUTION_NAME}.Application.{modelCT.ContainingModuleName}.Repositories.Interfaces." + $"I{modelCT.IdentifierNameWithoutPostFix}Repository", $"{modelCT.ModuleNameWithoutPostFix}_{modelCT.IdentifierNameWithoutPostFix}Repository")
             {
                 FirstAccessorBodyAction = (writer, propertyField, otherFields) =>
                 {
-                    writer.WriteLine($"return {propertyField} = new {configSMF!.SOLUTION_NAME}.Domain." + modelCT.ContainingModuleName + ".Repositories." + $"{modelCT.IdentifierNameWithoutPostFix}Repository(SMFDbContext);");
+                    writer.WriteLine($"return {propertyField} = new {configSMF!.SOLUTION_NAME}.Infrastructure." + modelCT.ContainingModuleName + ".Repositories." + $"{modelCT.IdentifierNameWithoutPostFix}Repository(SMFDbContext); ");
                 }
             }
             );

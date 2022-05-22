@@ -38,12 +38,12 @@ internal class ModelPartialClasses : CommonIncrementalGenerator
             ParentType = s.QualifiedParentName == "SMF.ORM.Models.ModelBase" ? s.QualifiedParentName : s.ParentClassType?.QualifiedName,
         };
         if (s.StringParentType == "ModelBase")
-            DefaultPropertiesIfInheritModelIsNotDefined(classTemplate, s.IdentifierName);
+            DefaultPropertiesIfInheritModelIsNotDefined(classTemplate);
         //#if DEBUG
         //        if (!System.Diagnostics.Debugger.IsAttached)
         //            System.Diagnostics.Debugger.Launch();
         //#endif
-        foreach (var property in s.Properties.Where(_ => _.SMField is not null))
+        foreach (var property in s.Properties.Where(_ => _!.SMField is not null))
         {
             if ((bool)(property?.SMField?.Field?.Compute)!)
             {
@@ -63,7 +63,7 @@ internal class ModelPartialClasses : CommonIncrementalGenerator
     /// Defaults the properties if inherit model is not defined.
     /// </summary>
     /// <param name="classTemplate">The class template.</param>
-    private static void DefaultPropertiesIfInheritModelIsNotDefined(ClassTypeTemplate classTemplate, string identifierName)
+    private static void DefaultPropertiesIfInheritModelIsNotDefined(ClassTypeTemplate classTemplate)
     {
         AutoPropertyTemplate id = new("SMFields.Id", "Id")
         {

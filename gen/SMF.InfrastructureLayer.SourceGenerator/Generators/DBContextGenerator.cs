@@ -1,4 +1,4 @@
-﻿namespace SMF.EntityFramework.SourceGenerator.Generators;
+﻿namespace Infrastructure;
 
 using Humanizer;
 using System.Collections.Immutable;
@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 /// The class that generates the code for the entity framework context.
 /// </summary>
 [Generator]
-internal class DBContextGenerator : CommonIncrementalGenerator
+internal class Data : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
@@ -30,7 +30,7 @@ internal class DBContextGenerator : CommonIncrementalGenerator
         var configSMF = s.FirstOrDefault()?.ConfigSMFAndGlobalOptions.ConfigSMF;
         if (rootNamespace is null) return;
         SMFProductionContext context = new(c);
-        FileScopedNamespaceTemplate fileScopedNamespace = new(configSMF!.SOLUTION_NAME! + ".Domain.Data");
+        FileScopedNamespaceTemplate fileScopedNamespace = new(configSMF!.SOLUTION_NAME! + ".Infrastructure.Data");
 
         ClassTypeTemplate classTypeTemplate = new("SMFDbContext")
         {
@@ -39,7 +39,7 @@ internal class DBContextGenerator : CommonIncrementalGenerator
         };
 
         foreach (var modelCT in s)
-            classTypeTemplate.Members.Add(new AutoPropertyTemplate($"DbSet<{modelCT.NewQualifiedName}>", modelCT.IdentifierNameWithoutPostFix.Pluralize()));
+            classTypeTemplate.Members.Add(new AutoPropertyTemplate($"DbSet<{modelCT.NewQualifiedName}>", $"{modelCT.ModuleNameWithoutPostFix}_{modelCT.IdentifierNameWithoutPostFix.Pluralize()}"));
 
         classTypeTemplate.UsingNamespaces.AddRange(new[] { "Microsoft.EntityFrameworkCore", "Microsoft.EntityFrameworkCore.Metadata.Builders" });
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);

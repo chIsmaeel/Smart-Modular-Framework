@@ -1,5 +1,7 @@
-SOLUTION_NAME = TPointOfSale
+SOLUTION_BASE_PATH = E:\Projects
+SOLUTION_NAME = MyPointOfSale
 
-# Entity Framework Core Configurations
-EF_PROJECT_NAME = Saad.Data
-EF_PROJECT_PATH = 
+GENERATOR_PROJECT_NAME = SMF.PointOfSale
+GENERATOR_PROJECT_BASE_PATH = E:\Projects\Smart Modular Framework\sample\SMF.PointOfSale
+GENERATED_DIR_PATH = E:\Projects\Smart Modular Framework\sample\SMF.PointOfSale\obj\Generated
+
