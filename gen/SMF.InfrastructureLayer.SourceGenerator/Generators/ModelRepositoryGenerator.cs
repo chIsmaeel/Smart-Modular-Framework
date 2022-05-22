@@ -1,4 +1,4 @@
-﻿namespace Infrastructure;
+﻿namespace Infrastructure.Repositories;
 
 using Humanizer;
 
@@ -6,7 +6,7 @@ using Humanizer;
 /// This class is responsible to generate the source code for the repositories.
 /// </summary>
 [Generator]
-internal class Repositories : CommonIncrementalGenerator
+internal class RepositorGenerator : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.

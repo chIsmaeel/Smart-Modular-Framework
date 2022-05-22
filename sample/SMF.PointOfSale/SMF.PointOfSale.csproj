@@ -34,7 +34,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Using Alias="SMFields"  Include="SMF.ORM.Fields" />
+        <Using Alias="SMFields" Include="SMF.ORM.Fields" />
         <Using Include="SMF.ORM.Models" />
         <Using Include="SMF.Addons" />
     </ItemGroup>
@@ -51,5 +51,13 @@
         <ProjectReference Include="..\..\gen\SMF.ApplicationLayer.SourceGenerator\SMF.ApplicationLayer.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
         <ProjectReference Include="..\..\gen\SMF.InfrastructureLayer.SourceGenerator\SMF.InfrastructureLayer.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
     </ItemGroup>
+
+
+
+
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command="dotnet run --project ..\..\libraries\SMF.FileTransmitter\SMF.FileTransmitter.csproj" />
+    </Target>
 
 </Project>

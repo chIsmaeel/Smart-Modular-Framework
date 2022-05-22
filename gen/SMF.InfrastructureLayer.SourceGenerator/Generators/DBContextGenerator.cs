@@ -1,4 +1,4 @@
-﻿namespace Infrastructure;
+﻿namespace Infrastructure.Data;
 
 using Humanizer;
 using System.Collections.Immutable;
@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 /// The class that generates the code for the entity framework context.
 /// </summary>
 [Generator]
-internal class Data : CommonIncrementalGenerator
+internal class SMFDbContext : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.

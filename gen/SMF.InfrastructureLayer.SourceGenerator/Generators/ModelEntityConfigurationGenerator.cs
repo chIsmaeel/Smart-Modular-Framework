@@ -1,4 +1,4 @@
-﻿namespace Infrastructure_Data.Config;
+﻿namespace Infrastructure.Data.Config;
 
 using Humanizer;
 using SMF.SourceGenerator.Core;

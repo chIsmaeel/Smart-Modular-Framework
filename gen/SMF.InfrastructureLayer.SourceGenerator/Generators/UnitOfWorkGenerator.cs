@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 /// </summary>
 
 [Generator]
-internal class UOW : CommonIncrementalGenerator
+internal class UnitOfWork : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.

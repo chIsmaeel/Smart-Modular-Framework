@@ -1,4 +1,4 @@
-﻿namespace Domain;
+﻿namespace Domain.Entities;
 
 using Humanizer;
 using SMF.SourceGenerator.Core;
@@ -8,7 +8,7 @@ using SMF.SourceGenerator.Core.Types;
 /// The model generator.
 /// </summary>
 [Generator]
-internal class Entities : CommonIncrementalGenerator
+internal class EntitiesGenerator : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
