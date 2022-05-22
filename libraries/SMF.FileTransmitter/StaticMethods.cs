@@ -1,5 +1,7 @@
 ﻿namespace SMF.FileTransmitter;
 using System;
+using System.Diagnostics;
+
 /// <summary>
 /// The static methods.
 /// </summary>
@@ -49,7 +51,7 @@ internal static class StaticMethods
             Console.WriteLine("---------------------------------------");
             Console.WriteLine();
         }
-        if (sDirInfo.EnumerateFiles("*.g.cs", SearchOption.AllDirectories).Count() > 0)
+        if (sDirInfo.EnumerateFiles("*.g.cs", SearchOption.AllDirectories).Any())
         {
             Console.WriteLine();
             foreach (var di in dDirInfo.EnumerateDirectories("*", SearchOption.AllDirectories))
@@ -66,6 +68,31 @@ internal static class StaticMethods
         MoveProjectFiles(_configSMF, projectName, generatedFilesDirInfo);
         Console.WriteLine($"---------------------------------------------------------------------------------------------------------------------");
     }
+
+    /// <summary>
+    /// Adds the c s proj file if not exist.
+    /// </summary>
+    /// <param name="configSMF">The config s m f.</param>
+    /// <param name="projectName">The project name.</param>
+    /// <param name="properties">The properties.</param>
+    /// <param name="references">The references.</param>
+    public static void AddCSProjFileIfNotExist(ConfigSMF configSMF, string projectName, CSProjConfig cSProjConfig)
+    {
+        Console.WriteLine();
+        var (properties, references) = cSProjConfig;
+        var csProjFilePath = Path.Combine(configSMF.SOLUTION_BASE_PATH, configSMF.SOLUTION_NAME, "src", configSMF.SOLUTION_NAME + "." + projectName, $"{configSMF.SOLUTION_NAME}.{projectName}.csproj");
+        if (!File.Exists(csProjFilePath))
+        {
+            using var fs = File.Create(csProjFilePath);
+            using var ws = new StreamWriter(fs);
+            ws.Write(CSProjGenerator.Template(CSProjGenerator.GetProperties(properties), CSProjGenerator.GetReferences(references)));
+            Console.WriteLine("Created: " + csProjFilePath.Replace(Path.Combine(configSMF.SOLUTION_BASE_PATH, configSMF.SOLUTION_NAME, "src"), ""));
+
+        }
+        Console.WriteLine("---------------------------------------");
+        Console.WriteLine();
+    }
+
     /// <summary>
     /// Moves the project files.
     /// </summary>
@@ -82,7 +109,7 @@ internal static class StaticMethods
             sourceDirPath = Path.Combine(sourceDirPath, $"SMF.{projectName}Layer.SourceGenerator", projectName);
 
             if (!dirInfo.Exists) continue;
-            if (dirInfo.EnumerateFiles("*", SearchOption.AllDirectories).Count() == 0)
+            if (!dirInfo.EnumerateFiles("*", SearchOption.AllDirectories).Any())
                 continue;
 
             var name = dirInfo.Name;
@@ -119,6 +146,40 @@ internal static class StaticMethods
             Console.WriteLine("---------------------------------------");
             Console.WriteLine();
             sourceDirPath = null;
+        }
+    }
+
+    /// <summary>
+    /// Adds the solution file.
+    /// </summary>
+    /// <param name="_configSMF">The _config s m f.</param>
+    public static void AddSolutionFileIfNotExist(ConfigSMF _configSMF)
+    {
+        var path = Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, _configSMF.SOLUTION_NAME + ".sln");
+        if (File.Exists(path))
+            return;
+        List<string> commands = new()
+        {
+    $"dotnet new sln --output {Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME)} --name {_configSMF.SOLUTION_NAME} ",
+    $"dotnet sln {Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, _configSMF.SOLUTION_NAME)}.sln add { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Domain")}" ,
+    $"dotnet sln { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, _configSMF.SOLUTION_NAME)}.sln add { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Application")}",
+    $"dotnet sln { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, _configSMF.SOLUTION_NAME)}.sln add { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Infrastructure")}",
+};
+
+        for (int i = 0; i < commands.Count; i++)
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Arguments = "/C " + commands[i],
+                //WindowStyle = ProcessWindowStyle.Hidden,
+                //CreateNoWindow = true,
+                //UseShellExecute = false
+            };
+            Process.Start(startInfo);
+            if (i != commands.Count - 1)
+                Task.Delay(5000).Wait();
+
         }
     }
 }

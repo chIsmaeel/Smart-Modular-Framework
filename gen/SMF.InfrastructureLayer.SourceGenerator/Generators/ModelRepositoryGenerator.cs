@@ -45,10 +45,10 @@ internal class RepositorGenerator : CommonIncrementalGenerator
     /// <param name="classTypeTemplate">The class type template.</param>
     private void AddConstructor(ModelCT s, ClassTypeTemplate classTypeTemplate)
     {
-        classTypeTemplate.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Infrastructure.Data.SMFDbContext", "_context"));
+        classTypeTemplate.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Application.Interfaces.ISMFDbContext", "_context"));
         classTypeTemplate.Members.Add(new ConstructorTemplate(classTypeTemplate.IdentifierName)
         {
-            Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Infrastructure.Data.SMFDbContext", "context") },
+            Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Application.Interfaces.ISMFDbContext", "context") },
             Body = (writer, parameters) => { writer.WriteLine("_context = context;"); },
         });
 
@@ -91,7 +91,7 @@ internal class RepositorGenerator : CommonIncrementalGenerator
                 _writer.WriteLine("{");
                 _writer.Indent++;
                 _writer.WriteLine("_context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".Add(entity);");
-                _writer.WriteLine("await _context.SaveChangesAsync();");
+                _writer.WriteLine($"await (_context as {s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Infrastructure.Data.SMFDbContext).SaveChangesAsync();");
                 _writer.Indent--;
                 _writer.WriteLine("}");
                 _writer.WriteLine("catch (Exception ex)");
@@ -125,14 +125,11 @@ internal class RepositorGenerator : CommonIncrementalGenerator
                 AddProperties(s, _writer);
 
                 //_writer.WriteLine("_context.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;");
-                _writer.WriteLine("await _context.SaveChangesAsync();");
-                _writer.Indent--;
+                _writer.WriteLine($"await (_context as {s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Infrastructure.Data.SMFDbContext).SaveChangesAsync();");
                 _writer.WriteLine("}");
                 _writer.WriteLine("catch (Exception ex)");
                 _writer.WriteLine("{");
-                _writer.Indent++;
                 _writer.WriteLine("throw ex;");
-                _writer.Indent--;
                 _writer.WriteLine("}");
             }
         });
@@ -145,17 +142,13 @@ internal class RepositorGenerator : CommonIncrementalGenerator
             {
                 _writer.WriteLine("try");
                 _writer.WriteLine("{");
-                _writer.Indent++;
                 _writer.WriteLine("var tempEntity = await _context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".FindAsync(id);");
                 _writer.WriteLine("_context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".Remove(tempEntity);");
-                _writer.WriteLine("await _context.SaveChangesAsync();");
-                _writer.Indent--;
+                _writer.WriteLine($"await (_context as {s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Infrastructure.Data.SMFDbContext).SaveChangesAsync();");
                 _writer.WriteLine("}");
                 _writer.WriteLine("catch (Exception ex)");
                 _writer.WriteLine("{");
-                _writer.Indent++;
                 _writer.WriteLine("throw ex;");
-                _writer.Indent--;
                 _writer.WriteLine("}");
             }
         });

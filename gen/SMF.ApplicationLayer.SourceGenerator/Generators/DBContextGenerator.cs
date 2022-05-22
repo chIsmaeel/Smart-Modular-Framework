@@ -1,13 +1,14 @@
-﻿namespace Infrastructure.Data;
+﻿namespace Application.Interfaces;
 
 using Humanizer;
+using SMF.SourceGenerator.Core.Templates.TypeTemplates.MemberTemplates.InterfaceMemberTemplate;
 using System.Collections.Immutable;
 
 /// <summary>
 /// The class that generates the code for the entity framework context.
 /// </summary>
 [Generator]
-internal class SMFDbContext : CommonIncrementalGenerator
+internal class ISMFDbContext : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
@@ -30,20 +31,18 @@ internal class SMFDbContext : CommonIncrementalGenerator
         var configSMF = s.FirstOrDefault()?.ConfigSMFAndGlobalOptions.ConfigSMF;
         if (rootNamespace is null) return;
         SMFProductionContext context = new(c);
-        FileScopedNamespaceTemplate fileScopedNamespace = new(configSMF!.SOLUTION_NAME! + ".Infrastructure.Data");
+        FileScopedNamespaceTemplate fileScopedNamespace = new(configSMF!.SOLUTION_NAME! + ".Application.Interfaces");
 
-        ClassTypeTemplate classTypeTemplate = new("SMFDbContext")
+        InterfaceTemplate interfaceIypeTemplate = new("ISMFDbContext")
         {
             Modifiers = "public partial",
-            ParentType = "DbContext",
-            Interfaces = new() { configSMF!.SOLUTION_NAME! + ".Application.Interfaces.ISMFDbContext" }
         };
 
         foreach (var modelCT in s)
-            classTypeTemplate.Members.Add(new AutoPropertyTemplate($"DbSet<{modelCT.NewQualifiedName}>", $"{modelCT.ModuleNameWithoutPostFix}_{modelCT.IdentifierNameWithoutPostFix.Pluralize()}"));
+            interfaceIypeTemplate.Members.Add(new PropertyInterfaceTemplate($"DbSet<{modelCT.NewQualifiedName}>", $"{modelCT.ModuleNameWithoutPostFix}_{modelCT.IdentifierNameWithoutPostFix.Pluralize()}"));
 
-        classTypeTemplate.UsingNamespaces.AddRange(new[] { "Microsoft.EntityFrameworkCore", "Microsoft.EntityFrameworkCore.Metadata.Builders" });
-        fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);
+        interfaceIypeTemplate.UsingNamespaces.AddRange(new[] { "Microsoft.EntityFrameworkCore", "Microsoft.EntityFrameworkCore.Metadata.Builders" });
+        fileScopedNamespace.TypeTemplates.Add(interfaceIypeTemplate);
         context.AddSource(fileScopedNamespace);
     }
 }

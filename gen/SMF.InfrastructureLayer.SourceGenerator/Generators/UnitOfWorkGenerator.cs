@@ -31,16 +31,16 @@ internal class UnitOfWork : CommonIncrementalGenerator
         FileScopedNamespaceTemplate fileScopedNamespace = new(configSMF!.SOLUTION_NAME! + ".Infrastructure");
         ClassTypeTemplate classTypeTemplate = new("UnitOfWork")
         {
-            Interfaces = new() { "System.IDisposable" }
+            Interfaces = new() { $"{configSMF.SOLUTION_NAME}.Application.Interfaces.IUnitOfWork" }
         };
 
-        classTypeTemplate.Members.Add(new AutoPropertyTemplate(configSMF.SOLUTION_NAME! + ".Infrastructure.Data.SMFDbContext", "SMFDbContext"));
+        classTypeTemplate.Members.Add(new AutoPropertyTemplate(configSMF.SOLUTION_NAME! + ".Application.Interfaces.ISMFDbContext", "SMFDbContext"));
         classTypeTemplate.Members.Add(new TypeFieldTemplate("bool", "disposed") { DefaultValue = "false" });
 
         classTypeTemplate.Members.Add(new ConstructorTemplate(classTypeTemplate.IdentifierName)
         {
 
-            Parameters = new() { (configSMF!.SOLUTION_NAME! + ".Infrastructure.Data.SMFDbContext", "context") },
+            Parameters = new() { (configSMF!.SOLUTION_NAME! + ".Application.Interfaces.ISMFDbContext", "context") },
             Body = (writer, parameters) =>
             {
                 writer.WriteLine("SMFDbContext = context;");
@@ -70,7 +70,7 @@ internal class UnitOfWork : CommonIncrementalGenerator
                 writer.Indent++;
                 writer.WriteLine("if (disposing)");
                 writer.Indent++;
-                writer.WriteLine("SMFDbContext.Dispose();");
+                writer.WriteLine($"(SMFDbContext as  Microsoft.EntityFrameworkCore.DbContext).Dispose();");
                 writer.Indent--;
                 writer.WriteLine("disposed = true;");
                 writer.Indent--;

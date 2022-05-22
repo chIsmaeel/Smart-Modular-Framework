@@ -29,7 +29,7 @@ internal class Repositories : CommonIncrementalGenerator
         FileScopedNamespaceTemplate fileScopedNamespace = new(s.ConfigSMF!.SOLUTION_NAME + ".Application.Interfaces");
         InterfaceTemplate interfaceTemplate = new("IRepository")
         {
-            Modifiers = "public",
+            Modifiers = "public partial",
             GenericParameters = new() { "T" }
         };
         //Debugger.Launch();

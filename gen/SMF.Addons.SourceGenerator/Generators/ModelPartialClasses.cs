@@ -50,7 +50,7 @@ internal class ModelPartialClasses : CommonIncrementalGenerator
                 classTemplate.Members.Add(new PartialMethodTemplate(ModelPropertyTypes.GetPropertyType(property), $"Compute{property.IdentifierName}")
                 {
                     Modifiers = "private",
-                    Parameters = new() { ($"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Infrastructure.UnitOfWork", "uow"), ((property.ClassType as ModelCT)!.NewQualifiedName, "currentObj") }
+                    Parameters = new() { ($"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Application.Interfaces.IUnitOfWork", "uow"), ((property.ClassType as ModelCT)!.NewQualifiedName, "currentObj") }
                 });
             }
         }

@@ -3,6 +3,10 @@
 // </copyright>
 
 namespace SMF.PointOfSale.SaleAddon.Models;
+
+using MyPointOfSale.Application.Interfaces;
+using MyPointOfSale.Domain.SaleAddon.Entities;
+
 /// <summary>
 /// asdfjasdklfjkasdlfjlad
 /// </summary>
@@ -18,7 +22,11 @@ public partial class SaleLineModel
 
     //public SMFields.O2O Price => new(RegisteredModels.Purchase_PriceModel);
 
-    public SMFields.M2O Price => new(RegisteredModels.Purchase_PriceModel);
+    //private partial byte[]? ComputeProductName(UnitOfWork uow, SaleLine currentObj)
+    //{
+    //    throw new NotImplementedException();
+    //}
+    //public SMFields.M2O Price => new(RegisteredModels.Purchase_PriceModel);
     //private partial byte[]? ComputeProductName(UniPointOfSale.Domain.UnitOfWork uow, UniPointOfSale.Domain.SaleAddon.Models.SaleLine currentObj)
     //{
     //    return currentObj.ProductName;
@@ -34,15 +42,19 @@ public partial class SaleLineModel
     //    throw new NotImplementedException();
     //}
 
-    private partial byte[]? ComputeProductName(MyPointOfSale.Infrastructure.UnitOfWork uow, MyPointOfSale.Domain.SaleAddon.Entities.SaleLine currentObj)
+    //private partial byte[]? ComputeProductName(MyPointOfSale.Infrastructure.UnitOfWork uow, MyPointOfSale.Domain.SaleAddon.Entities.SaleLine currentObj)
+    //{
+    //    MyPointOfSale.Domain.SaleAddon.Entities.SaleLine saleLine = uow.Sale_SaleLineRepository.GetByIdAsync(1).Result;
+    //    throw new NotImplementedException();
+    //}
+
+
+
+    private partial byte[]? ComputeProductName(IUnitOfWork uow, SaleLine currentObj)
     {
-        MyPointOfSale.Domain.SaleAddon.Entities.SaleLine saleLine = uow.Sale_SaleLineRepository.GetByIdAsync(1).Result;
+
         throw new NotImplementedException();
     }
-
-
-
-
 
     //private partial byte[]? ComputeDescription(UnitOfWork uow, SaleLine currentObj)
     //{

@@ -50,7 +50,7 @@ internal class GetByIdAsyncQueries : CommonIncrementalGenerator
             }
         };
 
-        handlerClass.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Infrastructure.UnitOfWork", "_uow")
+        handlerClass.Members.Add(new TypeFieldTemplate(s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Application.Interfaces.IUnitOfWork", "_uow")
         {
 
             Modifiers = "private readonly"
@@ -67,7 +67,7 @@ internal class GetByIdAsyncQueries : CommonIncrementalGenerator
         handlerClass.Members.Add(new ConstructorTemplate(handlerClass.IdentifierName)
         {
 
-            Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Infrastructure.UnitOfWork", "uow") },
+            Parameters = new() { (s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME! + ".Application.Interfaces.IUnitOfWork", "uow") },
             Body = (w, _) => { w.WriteLine("_uow = uow;"); }
 
         });
