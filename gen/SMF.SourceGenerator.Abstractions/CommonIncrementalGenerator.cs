@@ -110,7 +110,7 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
     /// <summary>
     /// Gets the global usings.
     /// </summary>
-    public IncrementalValueProvider<string> GlobalUsings => ModuleCTsWithModelCTsAndControllerCTs.Select(static (s, _) =>
+    public IncrementalValueProvider<string> GlobalUsings => RegisteredModelCTs.Collect().Select(static (s, _) =>
         {
             List<string> globalNamespaces = new()
         {
@@ -118,9 +118,7 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
             "SMF.Addons",
             "SMFields = SMF.ORM.Fields",
         };
-            s.moduleCTs?.ForEach(_ => globalNamespaces.Add(_.ContainingNamespace));
-            s.modelCTs?.ForEach(_ => globalNamespaces.Add(_.ContainingNamespace));
-            s.controllerCTs?.ForEach(_ => globalNamespaces.Add(_.ContainingNamespace));
+            s.ForEach(_ => globalNamespaces.Add(_.ContainingNamespace));
 
             var distinctGlobalNamespaces = globalNamespaces.Distinct();
             return string.Join("\n", distinctGlobalNamespaces.Select(_ => "global using " + _ + ";"));

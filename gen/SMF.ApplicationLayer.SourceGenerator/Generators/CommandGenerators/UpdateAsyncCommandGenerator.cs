@@ -78,7 +78,7 @@ internal class UpdateAsyncCommands : CommonIncrementalGenerator
             Body = (w, p, gp, _) =>
             {
                 var objName = s.IdentifierNameWithoutPostFix.FirstCharToLowerCase();
-                w.WriteLine($"var {objName} = await _uow.{s.IdentifierNameWithoutPostFix}Repository.GetByIdAsync(command.Id);");
+                w.WriteLine($"var {objName} = await _uow.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository.GetByIdAsync(command.Id);");
 
                 w.WriteLine($"if ({objName} is null) return default;");
                 w.WriteLine($"{objName}.LastModifiedOn = System.DateTime.Now;");

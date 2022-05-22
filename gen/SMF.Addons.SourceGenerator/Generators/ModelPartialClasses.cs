@@ -43,14 +43,14 @@ internal class ModelPartialClasses : CommonIncrementalGenerator
         //        if (!System.Diagnostics.Debugger.IsAttached)
         //            System.Diagnostics.Debugger.Launch();
         //#endif
-        foreach (var property in s.Properties.Where(_ => _!.SMField is not null))
+        foreach (var property in s.Properties.Where(_ => _!.SMField is not null && _.SMField.Field is not null))
         {
             if ((bool)(property?.SMField?.Field?.Compute)!)
             {
                 classTemplate.Members.Add(new PartialMethodTemplate(ModelPropertyTypes.GetPropertyType(property), $"Compute{property.IdentifierName}")
                 {
                     Modifiers = "private",
-                    Parameters = new() { ($"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Domain.UnitOfWork", "uow"), ((property.ClassType as ModelCT)!.NewQualifiedName, "currentObj") }
+                    Parameters = new() { ($"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Infrastructure.UnitOfWork", "uow"), ((property.ClassType as ModelCT)!.NewQualifiedName, "currentObj") }
                 });
             }
         }

@@ -146,7 +146,7 @@ internal class Repositories : CommonIncrementalGenerator
                 _writer.WriteLine("try");
                 _writer.WriteLine("{");
                 _writer.Indent++;
-                _writer.WriteLine("var tempEntity = await _context." + s.IdentifierNameWithoutPostFix.Pluralize() + ".FindAsync(id);");
+                _writer.WriteLine("var tempEntity = await _context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".FindAsync(id);");
                 _writer.WriteLine("_context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".Remove(tempEntity);");
                 _writer.WriteLine("await _context.SaveChangesAsync();");
                 _writer.Indent--;

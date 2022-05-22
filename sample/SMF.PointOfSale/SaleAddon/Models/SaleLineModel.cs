@@ -23,7 +23,22 @@ public partial class SaleLineModel
     //{
     //    return currentObj.ProductName;
     //}
+    /// <summary>
+    /// Computes the product name.
+    /// </summary>
+    /// <param name="uow">The uow.</param>
+    /// <param name="currentObj">The current obj.</param>
+    /// <returns>A byte[]? .</returns>
+    //private partial byte[]? ComputeProductName(UnitOfWork uow, SaleLine currentObj)
+    //{
+    //    throw new NotImplementedException();
+    //}
 
+    private partial byte[]? ComputeProductName(MyPointOfSale.Infrastructure.UnitOfWork uow, MyPointOfSale.Domain.SaleAddon.Entities.SaleLine currentObj)
+    {
+        MyPointOfSale.Domain.SaleAddon.Entities.SaleLine saleLine = uow.Sale_SaleLineRepository.GetByIdAsync(1).Result;
+        throw new NotImplementedException();
+    }
 
 
 
