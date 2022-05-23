@@ -26,11 +26,6 @@ public abstract partial record TypeTemplate(string IdentifierName) : ITypeTempla
     /// </summary>
     public virtual List<string>? Attributes { get; init; } = new();
 
-    /// <summary>
-    /// Gets a value indicating whether member of other is type.
-    /// </summary>
-    public bool IsSubMemberofOtherType { get; init; } = false;
-
     /// <summary>                
     /// Gets the modifiers.
     /// </summary>
@@ -39,6 +34,11 @@ public abstract partial record TypeTemplate(string IdentifierName) : ITypeTempla
     /// Gets the type.
     /// </summary>
     public virtual string Type { get; init; } = "class";
+
+    /// <summary>
+    /// Gets a value indicating whether add default comment if not exist.
+    /// </summary>
+    public bool AddDefaultCommentIfNotExist { get; init; } = true;
 
     /// <summary>
     /// Gets the base type.
@@ -54,6 +54,7 @@ public abstract partial record TypeTemplate(string IdentifierName) : ITypeTempla
     /// Gets the generic parameters.
     /// </summary>
     public List<string>? GenericParameters { get; init; } = new();
+
     /// <summary>
     /// Gets the members.
     /// </summary>                        
@@ -77,10 +78,14 @@ public abstract partial record TypeTemplate(string IdentifierName) : ITypeTempla
     /// Gets the type comment.
     /// </summary>
     /// <returns>A string.</returns>
-    private string? GetTypeComment()
+    public string? WriteComment()
     {
-        if (Comment is null) return null;
-        return CommentTemplate.CreateCommentFromText(Comment);
+
+        if (!string.IsNullOrWhiteSpace(Comment))
+            return (CommentTemplate.CreateCommentFromText(Comment!));
+        else if (AddDefaultCommentIfNotExist && string.IsNullOrWhiteSpace(Comment))
+            return (CommentTemplate.CreateCommentFromIdentifierName(IdentifierName));
+        return null;
     }
 
     /// <summary>
@@ -234,7 +239,7 @@ public abstract partial record TypeTemplate(string IdentifierName) : ITypeTempla
     /// <param name="members">The members.</param>
     private void ExtractValues(out string? typeComment, out string? typeAttributes, out string typeDeclarationWithParent, out string members)
     {
-        typeComment = GetTypeComment();
+        typeComment = WriteComment();
         typeDeclarationWithParent = GetTypeDeclarationWithBaseTypeAndInterfaces();
         members = GetMembers();
         typeAttributes = GetTypeAttributes();
@@ -248,10 +253,6 @@ public abstract partial record TypeTemplate(string IdentifierName) : ITypeTempla
         stringBuilder = new();
         _stringWriter = new(stringBuilder);
         _indentedTextWriter = new(_stringWriter);
-        if (IsSubMemberofOtherType)
-            _indentedTextWriter.Indent++;
-        if (IsSubMemberofOtherType)
-            _indentedTextWriter.Write("    ");
         ExtractValues(out var typeComment, out string? typeAttributes, out var typeDeclarationWithParent, out var members);
         if (typeComment is not null) _indentedTextWriter!.WriteLine(typeComment);
         if (typeAttributes is not null) _indentedTextWriter!.WriteLine(typeAttributes);
@@ -260,10 +261,7 @@ public abstract partial record TypeTemplate(string IdentifierName) : ITypeTempla
         //_indentedTextWriter!.Indent++;
         if (members.Length > 4)
             _indentedTextWriter!.WriteLine(members);
-        //_indentedTextWriter!.Indent--;
         _indentedTextWriter!.WriteLine("}");
-        if (IsSubMemberofOtherType)
-            _indentedTextWriter.Indent--;
         return this;
     }
     /// <summary>

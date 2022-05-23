@@ -96,7 +96,7 @@ internal class CreateAsyncCommands : CommonIncrementalGenerator
                     StaticMethods.AddProperties(tempModelCT, w, objName);
                     tempModelCT = tempModelCT.ParentClassType as ModelCT;
                 }
-                w.WriteLine($"await  _uow.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository.InsertAsync({objName});");
+                w.WriteLine($"await  _uow.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository.AddAsync({objName});");
                 w.WriteLine($"return await Task.FromResult({objName}.Id);");
             }
         });

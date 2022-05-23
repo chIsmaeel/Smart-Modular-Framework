@@ -81,7 +81,7 @@ internal class RepositorGenerator : CommonIncrementalGenerator
             }
         });
 
-        classTypeTemplate.Members.Add(new TypeMethodTemplate("Task", "InsertAsync")
+        classTypeTemplate.Members.Add(new TypeMethodTemplate("Task", "AddAsync")
         {
             Modifiers = "public async",
             Parameters = new() { ($"{s.NewQualifiedName}", "entity") },

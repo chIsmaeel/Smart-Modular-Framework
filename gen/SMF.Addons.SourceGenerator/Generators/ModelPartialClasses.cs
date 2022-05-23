@@ -34,6 +34,7 @@ internal class ModelPartialClasses : CommonIncrementalGenerator
         var ii = s.ParentClassType;
         ClassTypeTemplate classTemplate = new(s.IdentifierName)
         {
+            AddDefaultCommentIfNotExist = false,
             Modifiers = "public partial",
             ParentType = s.QualifiedParentName == "SMF.ORM.Models.ModelBase" ? s.QualifiedParentName : s.ParentClassType?.QualifiedName,
         };
@@ -49,6 +50,7 @@ internal class ModelPartialClasses : CommonIncrementalGenerator
             {
                 classTemplate.Members.Add(new PartialMethodTemplate(ModelPropertyTypes.GetPropertyType(property), $"Compute{property.IdentifierName}")
                 {
+
                     Modifiers = "private",
                     Parameters = new() { ($"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Application.Interfaces.IUnitOfWork", "uow"), ((property.ClassType as ModelCT)!.NewQualifiedName, "currentObj") }
                 });

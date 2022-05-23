@@ -36,7 +36,7 @@ internal class Repositories : CommonIncrementalGenerator
 
         interfaceTemplate.Members.Add(new MethodInterfaceTemplate($"Task<IEnumerable<{interfaceTemplate.GenericParameters.FirstOrDefault()}>>", "GetAllAsync"));
         interfaceTemplate.Members.Add(new MethodInterfaceTemplate($"Task<{interfaceTemplate.GenericParameters.FirstOrDefault()}>", "GetByIdAsync") { Parameters = new() { ("int", "id") } });
-        interfaceTemplate.Members.Add(new MethodInterfaceTemplate($"Task", "InsertAsync") { Parameters = new() { (interfaceTemplate.GenericParameters.FirstOrDefault(), "entity") } });
+        interfaceTemplate.Members.Add(new MethodInterfaceTemplate($"Task", "AddAsync") { Parameters = new() { (interfaceTemplate.GenericParameters.FirstOrDefault(), "entity") } });
         interfaceTemplate.Members.Add(new MethodInterfaceTemplate($"Task", "UpdateAsync") { Parameters = new() { (interfaceTemplate.GenericParameters.FirstOrDefault(), "entity") } });
         interfaceTemplate.Members.Add(new MethodInterfaceTemplate($"Task", "DeleteAsync") { Parameters = new() { ("int", "id") } });
 
