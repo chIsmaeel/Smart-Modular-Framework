@@ -59,19 +59,4 @@ internal class StaticMethods
             w.WriteLine($"{objName}.{property!.IdentifierName} = command.{property!.IdentifierName};");
         }
     }
-
-    /// <summary>
-    /// Adds the model methods.
-    /// </summary>
-    /// <param name="s">The s.</param>
-    /// <param name="handlerClass">The handler class.</param>
-    public static void AddModelMethods(ModelCT s, ClassTypeTemplate handlerClass)
-    {
-        foreach (var method in s.Methods!)
-        {
-            var methodString = method!.MDS!.ToString();
-            methodString = methodString.Replace("private partial", "private");
-            handlerClass.StringMembers.Add(methodString);
-        }
-    }
 }

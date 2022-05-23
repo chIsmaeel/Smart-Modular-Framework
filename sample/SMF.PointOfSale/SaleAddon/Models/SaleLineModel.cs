@@ -17,7 +17,9 @@ public partial class SaleLineModel
     //    throw new NotImplementedException();
     //}
     //public SMFields.Binary? Description { get; } = new() { Compute = true };
-    public SMFields.Binary? ProductName { get; } = new() { Compute = true };
+    public SMFields.String? ProductName { get; } = new() { Compute = true };
+
+
     //public SMFields.O2M O2M => new(RegisteredModels.Purchase_PriceModel);
 
     //public SMFields.O2O Price => new(RegisteredModels.Purchase_PriceModel);
@@ -49,10 +51,8 @@ public partial class SaleLineModel
     //}
 
 
-
-    private partial byte[]? ComputeProductName(IUnitOfWork uow, SaleLine currentObj)
+    private partial string? ComputeProductName(ISMFDbContext _context, SaleLine currentObj)
     {
-
         throw new NotImplementedException();
     }
 

@@ -1,5 +1,6 @@
 ﻿namespace SMF.Addons.SourceGenerator.Generators;
 
+using SMF.SourceGenerator.Abstractions;
 using SMF.SourceGenerator.Core;
 using SMF.SourceGenerator.Core.Templates.TypeTemplates.MemberTemplates;
 
@@ -52,7 +53,7 @@ internal class ModelPartialClasses : CommonIncrementalGenerator
                 {
 
                     Modifiers = "private",
-                    Parameters = new() { ($"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Application.Interfaces.IUnitOfWork", "uow"), ((property.ClassType as ModelCT)!.NewQualifiedName, "currentObj") }
+                    Parameters = new() { ($"{QualifiedNames.GetISMFDbContext(s.ConfigSMFAndGlobalOptions.ConfigSMF!)}", "_context"), ((property.ClassType as ModelCT)!.NewQualifiedName, "currentObj") }
                 });
             }
         }

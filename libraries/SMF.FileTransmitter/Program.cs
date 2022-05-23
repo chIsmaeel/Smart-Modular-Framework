@@ -67,8 +67,11 @@ CSProjConfig InfrastructureCsProjConfig()
 
     List<References> references = new()
     {
-    new ("Microsoft.EntityFrameworkCore.Analyzers",ReferenceType.Package, ("Version","6.0.5")),
-    new ("Microsoft.EntityFrameworkCore.SqlServer",ReferenceType.Package, ("Version","6.0.5")),
+
+    new ("Microsoft.Extensions.DependencyInjection",ReferenceType.Package, ("Version","6.0.0")),
+         new ("Microsoft.EntityFrameworkCore.Analyzers",ReferenceType.Package, ("Version","6.0.5")),
+
+        new ("Microsoft.EntityFrameworkCore.SqlServer",ReferenceType.Package, ("Version","6.0.5")),
     new ("Microsoft.EntityFrameworkCore.Tools",ReferenceType.Package, ("Version","6.0.5")),
     new (@$"..\{_configSMF.SOLUTION_NAME}.Application\{_configSMF.SOLUTION_NAME}.Application.csproj",ReferenceType.Project),
 

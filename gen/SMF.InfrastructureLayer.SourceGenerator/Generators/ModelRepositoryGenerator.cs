@@ -1,6 +1,7 @@
 ﻿namespace Infrastructure.Repositories;
 
 using Humanizer;
+using SMF.InfrastructureLayer.SourceGenerator;
 
 /// <summary>
 /// This class is responsible to generate the source code for the repositories.
@@ -64,21 +65,52 @@ internal class RepositorGenerator : CommonIncrementalGenerator
         classTypeTemplate.Members.Add(new TypeMethodTemplate($"Task<IEnumerable<{s.NewQualifiedName}>>", "GetAllAsync")
         {
             Modifiers = "public async",
-            //UsingNamespaces = new() { "Microsoft.EntityFrameworkCore.ChangeTracking" },
+            UsingNamespaces = new() { "Microsoft.EntityFrameworkCore" },
             Body = (_writer, parameters, genericParamerters, privateFields) =>
             {
-                _writer.WriteLine("return await Task.FromResult(_context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".ToList()" + s.OrderByString + ");");
+                _writer.WriteLine("var response = _context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".ToList()" + s.OrderByString + ";");
+                var hasComputedValue = false;
+                var tempModelCTForComputedValues = s;
+                while (tempModelCTForComputedValues is not null)
+                {
+                    if (tempModelCTForComputedValues.Properties.Any(property => property!.SMField!.Field is not null && property.SMField.Field.Compute))
+                        hasComputedValue = true;
+                    tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
+                }
+
+                if (hasComputedValue)
+                {
+                    _writer.WriteLine($"foreach (var entity in response)");
+                    _writer.WriteLine("{");
+                    tempModelCTForComputedValues = s;
+                    while (tempModelCTForComputedValues is not null)
+                    {
+                        AssignComputedProperties(_writer, tempModelCTForComputedValues.Properties.Where(_ => _!.SMField is not null)!);
+                        tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
+                    }
+                    _writer.WriteLine("}");
+                }
+
+                _writer.WriteLine("return await Task.FromResult(response);");
             }
-        }); ;
+        });
 
         classTypeTemplate.Members.Add(new TypeMethodTemplate($"Task<{s.NewQualifiedName}>", "GetByIdAsync")
         {
             Modifiers = "public async",
             Parameters = new() { ("int", "id") },
             Body = (_writer, parameters, genericParamerters, privateFields) =>
-            {
-                _writer.WriteLine("return await Task.FromResult(_context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".Where(x => x.Id == id).FirstOrDefault());");
-            }
+{
+
+    _writer.WriteLine("var response = _context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".Where(x => x.Id == id).FirstOrDefault(); ");
+    var tempModelCTForComputedValues = s;
+    while (tempModelCTForComputedValues is not null)
+    {
+        AddComputedValues(tempModelCTForComputedValues, _writer);
+        tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
+    }
+    _writer.WriteLine("return await Task.FromResult(response);");
+}
         });
 
         classTypeTemplate.Members.Add(new TypeMethodTemplate("Task", "AddAsync")
@@ -91,7 +123,7 @@ internal class RepositorGenerator : CommonIncrementalGenerator
                 _writer.WriteLine("{");
                 _writer.Indent++;
                 _writer.WriteLine("_context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".Add(entity);");
-                _writer.WriteLine($"await (_context as {s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Infrastructure.Data.SMFDbContext).SaveChangesAsync();");
+                _writer.WriteLine($"await (_context as Microsoft.EntityFrameworkCore.DbContext).SaveChangesAsync();");
                 _writer.Indent--;
                 _writer.WriteLine("}");
                 _writer.WriteLine("catch (Exception ex)");
@@ -125,7 +157,7 @@ internal class RepositorGenerator : CommonIncrementalGenerator
                 AddProperties(s, _writer);
 
                 //_writer.WriteLine("_context.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;");
-                _writer.WriteLine($"await (_context as {s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Infrastructure.Data.SMFDbContext).SaveChangesAsync();");
+                _writer.WriteLine($"await (_context as Microsoft.EntityFrameworkCore.DbContext).SaveChangesAsync();");
                 _writer.WriteLine("}");
                 _writer.WriteLine("catch (Exception ex)");
                 _writer.WriteLine("{");
@@ -144,7 +176,7 @@ internal class RepositorGenerator : CommonIncrementalGenerator
                 _writer.WriteLine("{");
                 _writer.WriteLine("var tempEntity = await _context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".FindAsync(id);");
                 _writer.WriteLine("_context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".Remove(tempEntity);");
-                _writer.WriteLine($"await (_context as {s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Infrastructure.Data.SMFDbContext).SaveChangesAsync();");
+                _writer.WriteLine($"await (_context as Microsoft.EntityFrameworkCore.DbContext).SaveChangesAsync();");
                 _writer.WriteLine("}");
                 _writer.WriteLine("catch (Exception ex)");
                 _writer.WriteLine("{");
@@ -152,6 +184,47 @@ internal class RepositorGenerator : CommonIncrementalGenerator
                 _writer.WriteLine("}");
             }
         });
+
+        var tempModelCTForMethods = s;
+        while (tempModelCTForMethods is not null)
+        {
+            //classTypeTemplate.UsingNamespaces.AddRange(tempModelCTForMethods.Usings.Where(_ => _.StartsWith(tempModelCTForMethods.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME)));
+            StaticMethods.AddModelMethods(tempModelCTForMethods, classTypeTemplate);
+            tempModelCTForMethods = tempModelCTForMethods.ParentClassType as ModelCT;
+        }
+
+    }
+
+
+
+    /// <summary>
+    /// Assigns the computed properties.
+    /// </summary>
+    /// <param name="w">The w.</param>
+    /// <param name="smFields">The sm fields.</param>
+    private static void AssignComputedProperties(IndentedTextWriter w, IEnumerable<TypeProperty> smFields)
+    {
+        foreach (var property in smFields)
+            if (property!.SMField!.Field is not null && property.SMField.Field.Compute)
+            {
+                w.WriteLine($"entity.{property!.IdentifierName} = Compute{property.IdentifierName}(_context,entity);");
+                continue;
+            }
+    }
+
+    /// <summary>
+    /// Adds the computed values.
+    /// </summary>
+    /// <param name="s">The s.</param>
+    /// <param name="w">The w.</param>
+    private static void AddComputedValues(ModelCT s, IndentedTextWriter w)
+    {
+        foreach (var property in s.Properties.Where(_ => _!.SMField is not null))
+            if (property!.SMField!.Field is not null && property.SMField.Field.Compute)
+            {
+                w.WriteLine($"response.{property!.IdentifierName} = Compute{property.IdentifierName}(_context,response);");
+                continue;
+            }
     }
 
     /// <summary>

@@ -6,6 +6,8 @@
 public class ConfigSMF
 {
     private readonly string[]? _configFileLines;
+    private string? _dB_NAME;
+    private string? _dB_DATA_SOURCE;
     private string? _sOLUTION_NAME;
     private string? _ef_PROJECT_PARENT_PATH;
     private string? _ef_PROJECT_NAME;
@@ -49,7 +51,11 @@ public class ConfigSMF
     /// </summary>
     public string SOLUTION_NAME => _sOLUTION_NAME ??= GetValueFromKeyValuesDict(nameof(SOLUTION_NAME), "SMF");     /// <summary>
                                                                                                                    /// Gets the e f_ p r o j e c t_ n a m e.
-                                                                                                                   /// </summary>
+    public string DB_DATA_SOURCE => _dB_DATA_SOURCE ??= GetValueFromKeyValuesDict(nameof(DB_DATA_SOURCE), ".");     /// <summary>
+
+    public string DB_NAME => _dB_NAME ??= GetValueFromKeyValuesDict(nameof(DB_NAME), "SMF");
+    /// <summary>
+
     public string EF_PROJECT_NAME => _ef_PROJECT_NAME ??= GetValueFromKeyValuesDict(nameof(EF_PROJECT_NAME), "SMF.Data");
 
     /// <summary>

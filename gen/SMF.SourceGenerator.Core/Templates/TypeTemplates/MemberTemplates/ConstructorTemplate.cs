@@ -23,6 +23,10 @@ public record ConstructorTemplate(string IdentifierName) : IMemberTemplate
     public ConstructorTemplate? BaseConstructor { get; set; }
 
     /// <summary>
+    /// Gets the base constructor parameters.
+    /// </summary>
+    public string[]? BaseConstructorParameters { get; init; }
+    /// <summary>
     /// Gets the parameters.
     /// </summary>
     public List<(string type, string parameterName)> Parameters { get; init; } = new();
@@ -54,6 +58,11 @@ public record ConstructorTemplate(string IdentifierName) : IMemberTemplate
 
         TypeMemberTemplate.WriteComment(Comment, IdentifierName, _indentedTextWriter);
         _indentedTextWriter.Write($"public {IdentifierName}({string.Join(", ", Parameters.Select(p => $"{p.type} {p.parameterName}"))})");
+        if (BaseConstructorParameters is not null && BaseConstructorParameters.Length > 0)
+        {
+            _indentedTextWriter.Write($" : base({string.Join(", ", Parameters.Select(p => $"{p.parameterName}"))})");
+
+        }
         if (BaseConstructor != null)
         {
             _indentedTextWriter.Write($" : base({string.Join(", ", Parameters.Select(p => $"{p.parameterName}"))})");

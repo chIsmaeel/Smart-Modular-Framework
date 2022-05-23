@@ -1,8 +1,4 @@
 ﻿namespace Application.Queries;
-
-using SMF.ApplicationLayer.SourceGenerator;
-using System.CodeDom.Compiler;
-
 /// <summary>
 /// The model entity configuration generator.
 /// </summary>                                       
@@ -56,14 +52,6 @@ internal class GetByIdAsyncQueries : CommonIncrementalGenerator
             Modifiers = "private readonly"
         });
 
-        var tempModelCTForMethods = s;
-        while (tempModelCTForMethods is not null)
-        {
-            classTypeTemplate.UsingNamespaces.AddRange(tempModelCTForMethods.Usings.Where(_ => _.StartsWith(tempModelCTForMethods.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME)));
-            StaticMethods.AddModelMethods(tempModelCTForMethods, handlerClass);
-            tempModelCTForMethods = tempModelCTForMethods.ParentClassType as ModelCT;
-        }
-
         handlerClass.Members.Add(new ConstructorTemplate(handlerClass.IdentifierName)
         {
 
@@ -82,12 +70,6 @@ internal class GetByIdAsyncQueries : CommonIncrementalGenerator
                 w.WriteLine($"var response = await _uow.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository.GetByIdAsync(query.Id);");
                 w.WriteLine($"if(response is null) return null;");
 
-                var tempModelCTForComputedValues = s;
-                while (tempModelCTForComputedValues is not null)
-                {
-                    AddComputedValues(tempModelCTForComputedValues, w);
-                    tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
-                }
                 w.WriteLine("return await Task.FromResult(response);");
             }
         });
@@ -96,18 +78,5 @@ internal class GetByIdAsyncQueries : CommonIncrementalGenerator
         context.AddSource($"Get{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}ByIdQuery", fileScopedNamespace.CreateTemplate().GetTemplate());
     }
 
-    /// <summary>
-    /// Adds the computed values.
-    /// </summary>
-    /// <param name="s">The s.</param>
-    /// <param name="w">The w.</param>
-    private static void AddComputedValues(ModelCT s, IndentedTextWriter w)
-    {
-        foreach (var property in s.Properties.Where(_ => _!.SMField is not null))
-            if (property!.SMField!.Field is not null && property.SMField.Field.Compute)
-            {
-                w.WriteLine($"response.{property!.IdentifierName} = Compute{property.IdentifierName}(_uow,response);");
-                continue;
-            }
-    }
+
 }

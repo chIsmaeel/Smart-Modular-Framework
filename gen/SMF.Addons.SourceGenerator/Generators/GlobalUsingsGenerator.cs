@@ -29,7 +29,7 @@ public class GlobalUsingsGenerator : CommonIncrementalGenerator
         SMFProductionContext context = new(c);
         List<string> globalNamespaces = new()
         {
-            $"{s.FirstOrDefault()?.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Infrastructure"
+            $"{s.FirstOrDefault()?.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Application.Interfaces"
         };
         //#if DEBUG
         //        if (!System.Diagnostics.Debugger.IsAttached)

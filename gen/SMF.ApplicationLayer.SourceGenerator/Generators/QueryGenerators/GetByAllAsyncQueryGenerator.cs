@@ -1,9 +1,6 @@
 ﻿namespace Application.Queries;
 
 using Humanizer;
-using SMF.ApplicationLayer.SourceGenerator;
-using SMF.SourceGenerator.Core.Types.TypeMembers;
-using System.CodeDom.Compiler;
 
 /// <summary>
 /// The model entity configuration generator.
@@ -64,14 +61,6 @@ internal class GetByAllAsyncQueries : CommonIncrementalGenerator
 
         });
 
-        var tempModelCTForMethods = s;
-        while (tempModelCTForMethods is not null)
-        {
-            classTypeTemplate.UsingNamespaces.AddRange(tempModelCTForMethods.Usings.Where(_ => _.StartsWith(tempModelCTForMethods.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME)));
-            StaticMethods.AddModelMethods(tempModelCTForMethods, handlerClass);
-            tempModelCTForMethods = tempModelCTForMethods.ParentClassType as ModelCT;
-        }
-
         handlerClass.Members.Add(new TypeMethodTemplate($"Task<IEnumerable<{s.NewQualifiedName}>?>", "Handle")
         {
 
@@ -81,47 +70,11 @@ internal class GetByAllAsyncQueries : CommonIncrementalGenerator
             {
                 w.WriteLine($"var response = await _uow.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository.GetAllAsync();");
                 w.WriteLine($"if(response is null) return null;");
-                var hasComputedValue = false;
-                var tempModelCTForComputedValues = s;
-                while (tempModelCTForComputedValues is not null)
-                {
-                    if (tempModelCTForComputedValues.Properties.Any(property => property!.SMField!.Field is not null && property.SMField.Field.Compute))
-                        hasComputedValue = true;
-                    tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
-                }
-
-                if (hasComputedValue)
-                {
-                    w.WriteLine($"foreach (var entity in response)");
-                    w.WriteLine("{");
-                    tempModelCTForComputedValues = s;
-                    while (tempModelCTForComputedValues is not null)
-                    {
-                        AssignComputedProperties(w, tempModelCTForComputedValues.Properties.Where(_ => _!.SMField is not null)!);
-                        tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
-                    }
-                    w.WriteLine("}");
-                }
                 w.WriteLine("return await Task.FromResult(response);");
             }
         });
         classTypeTemplate.Members.Add(handlerClass);
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);
         context.AddSource($"GetAll{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix.Pluralize()}Query", fileScopedNamespace.CreateTemplate().GetTemplate());
-    }
-
-    /// <summary>
-    /// Assigns the computed properties.
-    /// </summary>
-    /// <param name="w">The w.</param>
-    /// <param name="smFields">The sm fields.</param>
-    private static void AssignComputedProperties(IndentedTextWriter w, IEnumerable<TypeProperty> smFields)
-    {
-        foreach (var property in smFields)
-            if (property!.SMField!.Field is not null && property.SMField.Field.Compute)
-            {
-                w.WriteLine($"entity.{property!.IdentifierName} = Compute{property.IdentifierName}(_uow,entity);");
-                continue;
-            }
     }
 }

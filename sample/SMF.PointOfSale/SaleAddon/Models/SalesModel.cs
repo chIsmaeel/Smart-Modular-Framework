@@ -13,6 +13,7 @@ public partial class SaleModel
     /// </summary>
     public SaleModel()
     {
+        //DbContextOptionsBuilder
     }
 
     public SMFields.O2M Products => new(RegisteredModels.Purchase_PriceModel);

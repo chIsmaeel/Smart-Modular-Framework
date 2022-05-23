@@ -56,6 +56,9 @@ internal static class StaticMethods
             Console.WriteLine();
             foreach (var di in dDirInfo.EnumerateDirectories("*", SearchOption.AllDirectories))
             {
+                if (di.Name.Contains("Migrations"))
+                    continue;
+
                 di.Delete(true);
                 Console.WriteLine("Deleted: " + di.FullName.Replace(Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src"), ""));
             }
