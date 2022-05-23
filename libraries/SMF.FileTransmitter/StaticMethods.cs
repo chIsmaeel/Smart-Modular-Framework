@@ -27,6 +27,29 @@ internal static class StaticMethods
     }
 
     /// <summary>
+    /// Writes the file if not exist.
+    /// </summary>
+    /// <param name="configSMF">The config s m f.</param>
+    /// <param name="filePath">The file path.</param>
+    public static void WriteFileIfNotExist(ConfigSMF configSMF, string filePath, string fileContent)
+    {
+        Console.WriteLine();
+        var file = new FileInfo(filePath);
+        if (!Directory.Exists(file.Directory!.FullName))
+            Directory.CreateDirectory(file.Directory.FullName);
+        if (!file.Exists)
+        {
+            using var fs = file.Create();
+            using var ws = new StreamWriter(fs);
+            ws.Write(fileContent);
+            Console.WriteLine("Created: " + filePath.Replace(Path.Combine(configSMF.SOLUTION_BASE_PATH, configSMF.SOLUTION_NAME, "src"), ""));
+
+        }
+        Console.WriteLine("---------------------------------------");
+        Console.WriteLine();
+    }
+
+    /// <summary>
     /// Moves the project files.
     /// </summary>
     /// <param name="_configSMF">The _config s m f.</param>
@@ -40,9 +63,9 @@ internal static class StaticMethods
 
         var generatedFilesDirInfo = new DirectoryInfo(_configSMF.GENERATED_DIR_PATH);
         var dDirPath = Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + "." + projectName);
-        var sourceDirPath = Path.Combine(generatedFilesDirInfo.FullName, $"SMF.{projectName}Layer.SourceGenerator");
+        var sourceDirPath = Path.Combine(generatedFilesDirInfo.FullName, $"SMF.{projectName}.SourceGenerator");
         var sDirInfo = new DirectoryInfo(sourceDirPath);
-
+        if (!sDirInfo.Exists) return;
         var dDirInfo = new DirectoryInfo(dDirPath);
         if (!dDirInfo.Exists)
         {
@@ -79,16 +102,19 @@ internal static class StaticMethods
     /// <param name="projectName">The project name.</param>
     /// <param name="properties">The properties.</param>
     /// <param name="references">The references.</param>
-    public static void AddCSProjFileIfNotExist(ConfigSMF configSMF, string projectName, CSProjConfig cSProjConfig)
+    public static void AddCSProjFileIfNotExist(ConfigSMF configSMF, string projectName, CSProjConfig cSProjConfig, string version = "net6.0")
     {
         Console.WriteLine();
         var (properties, references) = cSProjConfig;
         var csProjFilePath = Path.Combine(configSMF.SOLUTION_BASE_PATH, configSMF.SOLUTION_NAME, "src", configSMF.SOLUTION_NAME + "." + projectName, $"{configSMF.SOLUTION_NAME}.{projectName}.csproj");
-        if (!File.Exists(csProjFilePath))
+        var file = new FileInfo(csProjFilePath);
+        if (!Directory.Exists(file.Directory!.FullName))
+            Directory.CreateDirectory(file.Directory.FullName);
+        if (!file.Exists)
         {
-            using var fs = File.Create(csProjFilePath);
+            using var fs = file.OpenWrite();
             using var ws = new StreamWriter(fs);
-            ws.Write(CSProjGenerator.Template(CSProjGenerator.GetProperties(properties), CSProjGenerator.GetReferences(references)));
+            ws.Write(CSProjGenerator.Template(CSProjGenerator.GetProperties(properties), CSProjGenerator.GetReferences(references), version));
             Console.WriteLine("Created: " + csProjFilePath.Replace(Path.Combine(configSMF.SOLUTION_BASE_PATH, configSMF.SOLUTION_NAME, "src"), ""));
 
         }
@@ -109,8 +135,8 @@ internal static class StaticMethods
             var destinationDirPath = Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + "." + projectName);
             var sourceDirPath = generatedFilesDirInfo.FullName;
 
-            sourceDirPath = Path.Combine(sourceDirPath, $"SMF.{projectName}Layer.SourceGenerator", projectName);
-
+            sourceDirPath = Path.Combine(sourceDirPath, $"SMF.{projectName}.SourceGenerator", projectName);
+            //if (!Directory.Exists(sourceDirPath)) continue;
             if (!dirInfo.Exists) continue;
             if (!dirInfo.EnumerateFiles("*", SearchOption.AllDirectories).Any())
                 continue;
@@ -167,6 +193,8 @@ internal static class StaticMethods
     $"dotnet sln {Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, _configSMF.SOLUTION_NAME)}.sln add { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Domain")}" ,
     $"dotnet sln { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, _configSMF.SOLUTION_NAME)}.sln add { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Application")}",
     $"dotnet sln { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, _configSMF.SOLUTION_NAME)}.sln add { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Infrastructure")}",
+  $"dotnet sln { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, _configSMF.SOLUTION_NAME)}.sln add { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".API")}",
+
 };
 
         for (int i = 0; i < commands.Count; i++)

@@ -48,8 +48,9 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\gen\SMF.Addons.SourceGenerator\SMF.Addons.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
-        <ProjectReference Include="..\..\gen\SMF.ApplicationLayer.SourceGenerator\SMF.ApplicationLayer.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
-        <ProjectReference Include="..\..\gen\SMF.InfrastructureLayer.SourceGenerator\SMF.InfrastructureLayer.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
+        <ProjectReference Include="..\..\gen\SMF.API.SourceGenerator\SMF.API.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
+        <ProjectReference Include="..\..\gen\SMF.Application.SourceGenerator\SMF.Application.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
+        <ProjectReference Include="..\..\gen\SMF.Infrastructure.SourceGenerator\SMF.Infrastructure.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
     </ItemGroup>
 
 

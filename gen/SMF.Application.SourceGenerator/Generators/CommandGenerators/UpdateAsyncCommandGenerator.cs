@@ -1,6 +1,6 @@
 ﻿namespace Application.Commands;
 
-using SMF.SourceGenerator.Core;
+using SMF.ApplicationLayer.SourceGenerator;
 
 /// <summary>
 /// The model entity configuration generator.
@@ -8,7 +8,7 @@ using SMF.SourceGenerator.Core;
 
 [Generator]
 
-internal class DeleteAsyncCommands : CommonIncrementalGenerator
+internal class UpdateAsyncCommands : CommonIncrementalGenerator
 {
     /// <summary>
     /// Executes the.
@@ -32,14 +32,19 @@ internal class DeleteAsyncCommands : CommonIncrementalGenerator
 
         SMFProductionContext context = new(c);
         FileScopedNamespaceTemplate fileScopedNamespace = new($"{s.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}.Application.{s.ContainingModuleName}.Commands");
-        ClassTypeTemplate classTypeTemplate = new($"Delete{s.IdentifierNameWithoutPostFix}Command")
+        ClassTypeTemplate classTypeTemplate = new($"Update{s.IdentifierNameWithoutPostFix}Command")
         {
             Modifiers = "public partial",
             Interfaces = new() { $"MediatR.IRequest<int>" },
         };
 
         classTypeTemplate.Members.Add(new AutoPropertyTemplate("int", "Id"));
-
+        var tempModelCT = s;
+        while (tempModelCT is not null)
+        {
+            StaticMethods.AddProperties(tempModelCT, classTypeTemplate);
+            tempModelCT = tempModelCT.ParentClassType as ModelCT;
+        }
         ClassTypeTemplate handlerClass = new(classTypeTemplate.IdentifierName + "Handler")
         {
 
@@ -72,12 +77,22 @@ internal class DeleteAsyncCommands : CommonIncrementalGenerator
             Body = (w, p, gp, _) =>
             {
                 var objName = s.IdentifierNameWithoutPostFix.FirstCharToLowerCase();
-                w.WriteLine($" await _uow.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository.DeleteAsync(command.Id);");
-                w.WriteLine($"return await Task.FromResult(command.Id);");
+                w.WriteLine($"var {objName} = await _uow.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository.GetByIdAsync(command.Id);");
+
+                w.WriteLine($"if ({objName} is null) return default;");
+                w.WriteLine($"{objName}.LastModifiedOn = System.DateTime.Now;");
+                var tempModelCT = s;
+                while (tempModelCT is not null)
+                {
+                    StaticMethods.AddProperties(tempModelCT, w, objName);
+                    tempModelCT = tempModelCT.ParentClassType as ModelCT;
+                }
+                w.WriteLine($"await _uow.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository.UpdateAsync({objName});");
+                w.WriteLine($"return await Task.FromResult({objName}.Id);");
             }
         });
         classTypeTemplate.Members.Add(handlerClass);
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);
-        context.AddSource($"Delete{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Command", fileScopedNamespace.CreateTemplate().GetTemplate());
+        context.AddSource($"Update{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Command", fileScopedNamespace.CreateTemplate().GetTemplate());
     }
 }

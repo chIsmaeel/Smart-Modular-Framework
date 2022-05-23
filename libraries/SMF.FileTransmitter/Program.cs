@@ -8,75 +8,28 @@ StaticMethods.DeleteSMFAddonsSourceGenerator(_configSMF);
 StaticMethods.MoveProjectFiles(_configSMF, "Domain");
 StaticMethods.MoveProjectFiles(_configSMF, "Application");
 StaticMethods.MoveProjectFiles(_configSMF, "Infrastructure");
+//StaticMethods.MoveProjectFiles(_configSMF, "API");
 
 
-StaticMethods.AddCSProjFileIfNotExist(_configSMF, "Domain", DomainCsProjConfig());
-StaticMethods.AddCSProjFileIfNotExist(_configSMF, "Application", ApplicationCsProjConfig());
-StaticMethods.AddCSProjFileIfNotExist(_configSMF, "Infrastructure", InfrastructureCsProjConfig());
+StaticMethods.AddCSProjFileIfNotExist(_configSMF, "Domain", CSProjConfig.DomainCsProjConfig(_configSMF));
+StaticMethods.AddCSProjFileIfNotExist(_configSMF, "Application", CSProjConfig.ApplicationCsProjConfig(_configSMF));
+StaticMethods.AddCSProjFileIfNotExist(_configSMF, "Infrastructure", CSProjConfig.InfrastructureCsProjConfig(_configSMF));
+StaticMethods.AddCSProjFileIfNotExist(_configSMF, "API", CSProjConfig.MinimalApiCsProjConfig(_configSMF), "net7.0");
+ProgramFileGenerator.Generate(_configSMF);
 
+
+// API Json File
+
+StaticMethods.WriteFileIfNotExist(
+    _configSMF,
+    Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".API", "Properties", "launchSettings.json"),
+    Templates.LanchSettingsTemplate());
+
+StaticMethods.WriteFileIfNotExist(
+    _configSMF,
+    Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".API", "appsettings.json"),
+    Templates.AppSettingsTemplate());
 
 StaticMethods.AddSolutionFileIfNotExist(_configSMF);
 
-CSProjConfig DomainCsProjConfig()
-{
-    List<CSProjProperties> properties = new()
-    {
-        new("RootNamespace",_configSMF.SOLUTION_NAME+".Domain"),
-        new("AssemblyName",_configSMF.SOLUTION_NAME+".Domain"),
-        new("NoWarn","CS8669"),
-    };
-
-
-    List<References> references = new()
-    {
-
-    };
-
-    return new(properties, references);
-}
-
-CSProjConfig ApplicationCsProjConfig()
-{
-    var csprojfileName = _configSMF.SOLUTION_NAME + ".Application";
-    List<CSProjProperties> properties = new()
-    {
-        new("RootNamespace",csprojfileName),
-        new("AssemblyName",csprojfileName),
-          new("NoWarn","CS8669"),
-
-    };
-
-    List<References> references = new()
-    {
-     new ("Microsoft.EntityFrameworkCore",ReferenceType.Package, ("Version","6.0.5")),
-     new ("MediatR",ReferenceType.Package, ("Version","10.0.1")),
-     new (@$"..\{_configSMF.SOLUTION_NAME}.Domain\{_configSMF.SOLUTION_NAME}.Domain.csproj",ReferenceType.Project),
-    };
-
-    return new(properties, references);
-}
-
-CSProjConfig InfrastructureCsProjConfig()
-{
-    List<CSProjProperties> properties = new()
-    {
-        new("RootNamespace",_configSMF.SOLUTION_NAME+".Infrastructure"),
-        new("AssemblyName",_configSMF.SOLUTION_NAME+".Infrastructure"),
-        new("NoWarn","CS8669"),
-    };
-
-    List<References> references = new()
-    {
-
-    new ("Microsoft.Extensions.DependencyInjection",ReferenceType.Package, ("Version","6.0.0")),
-         new ("Microsoft.EntityFrameworkCore.Analyzers",ReferenceType.Package, ("Version","6.0.5")),
-
-        new ("Microsoft.EntityFrameworkCore.SqlServer",ReferenceType.Package, ("Version","6.0.5")),
-    new ("Microsoft.EntityFrameworkCore.Tools",ReferenceType.Package, ("Version","6.0.5")),
-    new (@$"..\{_configSMF.SOLUTION_NAME}.Application\{_configSMF.SOLUTION_NAME}.Application.csproj",ReferenceType.Project),
-
-    };
-
-    return new(properties, references);
-}
 

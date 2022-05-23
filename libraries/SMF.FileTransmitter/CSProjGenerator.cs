@@ -85,13 +85,13 @@ public class CSProjGenerator
     /// </summary>
     /// <param name="properties">The properties.</param>
     /// <param name="references">The references.</param>
-    public static string Template(string properties, string references)
+    public static string Template(string properties, string references, string version = "net6.0")
     {
         return
 @$"<Project Sdk=""Microsoft.NET.Sdk"">                 
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>{version}</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 

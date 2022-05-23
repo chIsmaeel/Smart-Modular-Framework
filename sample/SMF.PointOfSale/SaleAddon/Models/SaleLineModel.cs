@@ -3,10 +3,6 @@
 // </copyright>
 
 namespace SMF.PointOfSale.SaleAddon.Models;
-
-using MyPointOfSale.Application.Interfaces;
-using MyPointOfSale.Domain.SaleAddon.Entities;
-
 /// <summary>
 /// asdfjasdklfjkasdlfjlad
 /// </summary>

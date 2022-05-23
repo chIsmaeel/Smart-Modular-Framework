@@ -11,6 +11,7 @@ public class ConfigSMF
     private string? _gENERATED_DIR_PATH;
     private string? _sOLUTION_NAME;
     private string? _gENERATOR_PROJECT_NAME;
+    private string? _aPP_VERSION;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConfigSMF"/> class.
@@ -31,6 +32,12 @@ public class ConfigSMF
     /// Gets the base path.
     /// </summary>
     public string BasePath { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// Gets the a p p_ v e r s i o n.
+    /// </summary>
+    public string APP_VERSION => _aPP_VERSION ??= GetValueFromKeyValuesDict(nameof(APP_VERSION), "0.0.0");
+
 
     /// <summary>
     /// Gets the s o l u t i o n_ b a s e_ p a t h.

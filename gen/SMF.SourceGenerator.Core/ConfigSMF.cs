@@ -6,11 +6,13 @@
 public class ConfigSMF
 {
     private readonly string[]? _configFileLines;
+    private string? _aPP_VERSION;
     private string? _dB_NAME;
     private string? _dB_DATA_SOURCE;
     private string? _sOLUTION_NAME;
     private string? _ef_PROJECT_PARENT_PATH;
     private string? _ef_PROJECT_NAME;
+    private string? _sOLUTION_BASE_PATH;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConfigSMF"/> class.
@@ -50,9 +52,20 @@ public class ConfigSMF
     /// Gets the s o l u t i o n_ n a m e.
     /// </summary>
     public string SOLUTION_NAME => _sOLUTION_NAME ??= GetValueFromKeyValuesDict(nameof(SOLUTION_NAME), "SMF");     /// <summary>
-                                                                                                                   /// Gets the e f_ p r o j e c t_ n a m e.
+                                                                                                                   /// <summary>
+                                                                                                                   /// Gets the s o l u t i o n_ b a s e_ p a t h.
+                                                                                                                   /// </summary>
+    public string SOLUTION_BASE_PATH => _sOLUTION_BASE_PATH ??= GetValueFromKeyValuesDict(nameof(SOLUTION_BASE_PATH), @"C:\SmartModularFramework");
+
+    /// <summary>
+    /// Gets the d b_ d a t a_ s o u r c e.
+    /// </summary>
     public string DB_DATA_SOURCE => _dB_DATA_SOURCE ??= GetValueFromKeyValuesDict(nameof(DB_DATA_SOURCE), ".");     /// <summary>
 
+    public string APP_VERSION => _aPP_VERSION ??= GetValueFromKeyValuesDict(nameof(APP_VERSION), "0.0.0");
+    /// <summary>
+    /// Gets the d b_ n a m e.
+    /// </summary>
     public string DB_NAME => _dB_NAME ??= GetValueFromKeyValuesDict(nameof(DB_NAME), "SMF");
     /// <summary>
 

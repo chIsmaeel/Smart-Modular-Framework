@@ -26,7 +26,7 @@
         <ItemGroup>
             <TargetPathWithTargetPlatformMoniker Include="..\..\gen\SMF.SourceGenerator.Core\bin\Debug\netstandard2.0\SMF.SourceGenerator.Core.dll" IncludeRuntimeDependency="false" />
             <TargetPathWithTargetPlatformMoniker Include="..\..\gen\SMF.SourceGenerator.Abstractions\bin\Debug\netstandard2.0\SMF.SourceGenerator.Abstractions.dll" IncludeRuntimeDependency="false" />
-            <TargetPathWithTargetPlatformMoniker Include="..\..\gen\SMF.DomainLayer.SourceGenerator\bin\Debug\netstandard2.0\SMF.DomainLayer.SourceGenerator.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="..\..\gen\SMF.Domain.SourceGenerator\bin\Debug\netstandard2.0\SMF.Domain.SourceGenerator.dll" IncludeRuntimeDependency="false" />
             <TargetPathWithTargetPlatformMoniker Include="..\..\libraries\SMF.ORM\bin\Debug\netstandard2.0\SMF.ORM.dll" IncludeRuntimeDependency="false" />
             <TargetPathWithTargetPlatformMoniker Include="C:\Users\micro\.nuget\packages\microsoft.codeanalysis.csharp.scripting\4.1.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.Scripting.dll" IncludeRuntimeDependency="false" />
             <TargetPathWithTargetPlatformMoniker Include="C:\Users\micro\.nuget\packages\microsoft.codeanalysis.scripting.common\4.1.0\lib\netstandard2.0\Microsoft.CodeAnalysis.Scripting.dll" IncludeRuntimeDependency="false" />
@@ -36,15 +36,15 @@
     </Target>
 
     <ItemGroup>
-        <EditorConfigFiles Remove="..\gen\SMF.ApplicationLayer.SourceGenerator\.editorconfig" />
+        <EditorConfigFiles Remove="..\gen\SMF.Application.SourceGenerator\.editorconfig" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\gen\SMF.ApplicationLayer.SourceGenerator\.editorconfig" />
+        <None Include="..\gen\SMF.Application.SourceGenerator\.editorconfig" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SMF.DomainLayer.SourceGenerator\SMF.DomainLayer.SourceGenerator.csproj" />
+        <ProjectReference Include="..\SMF.Domain.SourceGenerator\SMF.Domain.SourceGenerator.csproj" />
     </ItemGroup>
 
 </Project>

@@ -16,11 +16,6 @@
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" PrivateAssets="all" GeneratePathProperty="true" />
         <!--<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.1.0" GeneratePathProperty="true" />-->
     </ItemGroup>
-
-    <!--<ItemGroup>
-        <ProjectReference Include="..\..\libraries\SMF.ORM\SMF.ORM.csproj" GeneratePathProperty="true" PrivateAssets="all" />
-    </ItemGroup>-->
-
     <ItemGroup>
         <ProjectReference Include="..\SMF.SourceGenerator.Abstractions\SMF.SourceGenerator.Abstractions.csproj" GeneratePathProperty="true" PrivateAssets="all" />
     </ItemGroup>
@@ -41,11 +36,11 @@
     </Target>
 
     <ItemGroup>
-        <EditorConfigFiles Remove="..\gen\SMF.DomainLayer.SourceGenerator\.editorconfig" />
+        <EditorConfigFiles Remove="..\gen\SMF.Domain.SourceGenerator\.editorconfig" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\gen\SMF.DomainLayer.SourceGenerator\.editorconfig" />
+        <None Include="..\gen\SMF.Domain.SourceGenerator\.editorconfig" />
     </ItemGroup>
 
 </Project>
