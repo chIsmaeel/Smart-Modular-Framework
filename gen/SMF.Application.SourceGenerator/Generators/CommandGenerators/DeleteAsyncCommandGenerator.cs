@@ -35,6 +35,16 @@ internal class DeleteAsyncCommands : CommonIncrementalGenerator
             Interfaces = new() { $"MediatR.IRequest<int>" },
         };
 
+        classTypeTemplate.Members.Add(new ConstructorTemplate(classTypeTemplate.IdentifierName)
+        {
+            Parameters = new() { ("int", "id") },
+            Body = (w, _) =>
+            {
+                w.WriteLine("Id = id;");
+            }
+
+        });
+
         classTypeTemplate.Members.Add(new AutoPropertyTemplate("int", "Id"));
 
         ClassTypeTemplate handlerClass = new(classTypeTemplate.IdentifierName + "Handler")

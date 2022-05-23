@@ -8,8 +8,7 @@ StaticMethods.DeleteSMFAddonsSourceGenerator(_configSMF);
 StaticMethods.MoveProjectFiles(_configSMF, "Domain");
 StaticMethods.MoveProjectFiles(_configSMF, "Application");
 StaticMethods.MoveProjectFiles(_configSMF, "Infrastructure");
-//StaticMethods.MoveProjectFiles(_configSMF, "API");
-
+StaticMethods.MoveProjectFiles(_configSMF, "API");
 
 StaticMethods.AddCSProjFileIfNotExist(_configSMF, "Domain", CSProjConfig.DomainCsProjConfig(_configSMF));
 StaticMethods.AddCSProjFileIfNotExist(_configSMF, "Application", CSProjConfig.ApplicationCsProjConfig(_configSMF));
@@ -29,6 +28,8 @@ StaticMethods.WriteFileIfNotExist(
     _configSMF,
     Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".API", "appsettings.json"),
     Templates.AppSettingsTemplate());
+
+StaticMethods.AddMigrationCommand(_configSMF);
 
 StaticMethods.AddSolutionFileIfNotExist(_configSMF);
 

@@ -24,7 +24,7 @@ $$"""
     }
   },
   "profiles": {
-    "TestUI": {
+    "API": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

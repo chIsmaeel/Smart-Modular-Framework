@@ -49,7 +49,7 @@ public partial class SaleLineModel
 
     private partial string? ComputeProductName(ISMFDbContext _context, SaleLine currentObj)
     {
-        throw new NotImplementedException();
+        return "Added " + currentObj.Id;
     }
 
     //private partial byte[]? ComputeDescription(UnitOfWork uow, SaleLine currentObj)

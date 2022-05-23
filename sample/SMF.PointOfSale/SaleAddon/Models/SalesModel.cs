@@ -13,6 +13,7 @@ public partial class SaleModel
     /// </summary>
     public SaleModel()
     {
+
         //DbContextOptionsBuilder
     }
 

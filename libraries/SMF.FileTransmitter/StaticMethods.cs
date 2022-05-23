@@ -50,6 +50,43 @@ internal static class StaticMethods
     }
 
     /// <summary>
+    /// Adds the migration command.
+    /// </summary>
+    /// <param name="_configSMF">The _config s m f.</param>
+    internal static void AddMigrationCommand(ConfigSMF _configSMF)
+    {
+        var migrationDir = new DirectoryInfo(Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", $"{_configSMF.SOLUTION_NAME}.Infrastructure", "Migrations"));
+        if (!migrationDir.Exists) migrationDir.Create();
+        bool foundMigrationFile = false;
+        var filePath = Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "MigrationCommand.bat");
+        foreach (var migrationFile in migrationDir.EnumerateFiles())
+        {
+            if (migrationFile.Name.EndsWith("_SMF." + _configSMF.APP_VERSION + ".cs"))
+            {
+                foundMigrationFile = true;
+                Console.WriteLine("Already found migration file: " + migrationFile.Name);
+                break;
+            }
+        }
+        if (foundMigrationFile) return;
+        var command = $@" cmd /k dotnet ef migrations add SMF.{_configSMF.APP_VERSION} --project {Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", $"{_configSMF.SOLUTION_NAME}.Infrastructure")}";
+
+        Console.WriteLine();
+        var file = new FileInfo(filePath);
+        if (!Directory.Exists(file.Directory!.FullName))
+            Directory.CreateDirectory(file.Directory.FullName);
+        using var fs = file.Create();
+        using var ws = new StreamWriter(fs);
+        ws.Write(command);
+        Console.WriteLine("Created: " + filePath.Replace(Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src"), ""));
+
+        Console.WriteLine("---------------------------------------");
+        Console.WriteLine();
+
+    }
+
+
+    /// <summary>
     /// Moves the project files.
     /// </summary>
     /// <param name="_configSMF">The _config s m f.</param>
@@ -74,12 +111,12 @@ internal static class StaticMethods
             Console.WriteLine("---------------------------------------");
             Console.WriteLine();
         }
-        if (sDirInfo.EnumerateFiles("*.g.cs", SearchOption.AllDirectories).Any())
+        if (sDirInfo.EnumerateFiles("*.g.cs", SearchOption.TopDirectoryOnly).Any())
         {
             Console.WriteLine();
             foreach (var di in dDirInfo.EnumerateDirectories("*", SearchOption.AllDirectories))
             {
-                if (di.Name.Contains("Migrations"))
+                if (di.Name.Contains("Migrations") || di.Name == "obj" || di.Name == "bin")
                     continue;
 
                 di.Delete(true);

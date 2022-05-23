@@ -14,18 +14,25 @@ public class ProgramFileGenerator
         var programFileCode = new APIProgramFileTemplate(configSMF!,
                new()
                {
+
                    "Microsoft.Extensions.DependencyInjection" ,
-               $"{configSMF.SOLUTION_NAME}.Infrastructure"
+                   "Microsoft.AspNetCore.Builder",
+               $"{configSMF.SOLUTION_NAME}.Infrastructure",
+               $"{configSMF.SOLUTION_NAME}.API",
+               "MediatR",
+               "Microsoft.AspNetCore.Mvc",
                },
                new()
                {
                   "AddSMFInfrastructureServices()",
+
                  $"AddMediatR(System.Reflection.Assembly.GetExecutingAssembly(), typeof({configSMF!.SOLUTION_NAME}.Application.Interfaces.ISMFDbContext).Assembly)"
 
                },
                new()
                {
-
+                            "AddSMFMigrations()" ,
+                            "MapSMFAPIs()"  ,
                }).CreateTemplate();
         StaticMethods.WriteFileIfNotExist(configSMF, programFilePath, programFileCode);
     }

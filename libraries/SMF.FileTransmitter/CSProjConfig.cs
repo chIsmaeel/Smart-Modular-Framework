@@ -72,16 +72,19 @@ public record CSProjConfig(List<CSProjProperties> CSProjProperties, List<Referen
     {
         List<CSProjProperties> properties = new()
     {
-        new("RootNamespace",_configSMF.SOLUTION_NAME+".API"),
-        new("AssemblyName",_configSMF.SOLUTION_NAME+".API"),
-        new("NoWarn","CS8669"),
+new("OutputType","exe"),
+        new("RootNamespace", _configSMF.SOLUTION_NAME + ".API"),
+        new("AssemblyName", _configSMF.SOLUTION_NAME + ".API"),
+        new("NoWarn", "CS8669"),
     };
 
         List<References> references = new()
     {
 
     new ("Microsoft.Extensions.DependencyInjection",ReferenceType.Package, ("Version","6.0.0")),
-         new ("Microsoft.EntityFrameworkCore.Analyzers",ReferenceType.Package, ("Version","6.0.5")),
+             new ("MediatR.Extensions.Microsoft.DependencyInjection",ReferenceType.Package, ("Version","10.0.1")),
+
+            new ("Microsoft.EntityFrameworkCore.Analyzers",ReferenceType.Package, ("Version","6.0.5")),
 
         new ("Swashbuckle.AspNetCore",ReferenceType.Package, ("Version","6.3.1")),
         new ("Swashbuckle.AspNetCore.Swagger",ReferenceType.Package, ("Version","6.3.1")),

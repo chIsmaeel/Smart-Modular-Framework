@@ -37,6 +37,16 @@ internal class GetByIdAsyncQueries : CommonIncrementalGenerator
 
         classTypeTemplate.Members.Add(new AutoPropertyTemplate("int", "Id") { SecondAccessor = "set" });
 
+        classTypeTemplate.Members.Add(new ConstructorTemplate(classTypeTemplate.IdentifierName)
+        {
+            Parameters = new() { ("int", "id") },
+            Body = (w, _) =>
+            {
+                w.WriteLine("Id = id;");
+            }
+
+        });
+
         ClassTypeTemplate handlerClass = new(classTypeTemplate.IdentifierName + "Handler")
         {
 

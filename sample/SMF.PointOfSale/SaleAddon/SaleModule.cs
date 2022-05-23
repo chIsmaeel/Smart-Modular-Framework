@@ -3,8 +3,6 @@
 // </copyright>
 
 namespace SMF.PointOfSale.SaleAddon;
-
-
 /// <summary>
 /// Defines the SaleModule classasdfasdfasdf.
 /// </summary>

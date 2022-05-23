@@ -1,7 +1,6 @@
 ﻿namespace API;
 
-using SMF.SourceGenerator.Abstractions;
-using SMF.SourceGenerator.Core;
+using System.Collections.Immutable;
 
 /// <summary>
 /// The model generator.
@@ -14,7 +13,7 @@ internal class APIExtensionMethods : CommonIncrementalGenerator
      /// <param name="context">The context.</param>
     protected override void Execute(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterSourceOutput(ConfigSMF, AddInfrastructureExtensionMethods);
+        context.RegisterSourceOutput(RegisteredModelCTs.Collect(), AddMigrationExtensionMethods);
     }
 
     /// <summary>
@@ -22,32 +21,51 @@ internal class APIExtensionMethods : CommonIncrementalGenerator
     /// </summary>               
     /// <param name="c">The c.</param>
     /// <param name="s">The s.</param>
-    private void AddInfrastructureExtensionMethods(SourceProductionContext c, ConfigSMF? s)
+    private void AddMigrationExtensionMethods(SourceProductionContext c, ImmutableArray<ModelCT> models)
     {
-        var configSMF = s;
-
+        var s = models.FirstOrDefault()?.ConfigSMFAndGlobalOptions.ConfigSMF;
         SMFProductionContext context = new(c);
-        FileScopedNamespaceTemplate fileScopedNamespace = new(configSMF!.SOLUTION_NAME! + ".Infrastructure");
+        FileScopedNamespaceTemplate fileScopedNamespace = new(s!.SOLUTION_NAME! + ".API");
         ClassTypeTemplate classTypeTemplate = new("ExtensionMethods")
         {
             Modifiers = "public static",
-            UsingNamespaces = new() { "Microsoft.EntityFrameworkCore", "Microsoft.Extensions.DependencyInjection" }
+            UsingNamespaces = new() {
+                "Microsoft.AspNetCore.Builder",
+                $"{s.SOLUTION_NAME}.API.EndPoints",
+            "Microsoft.Extensions.DependencyInjection",
+            "Microsoft.EntityFrameworkCore"
+            }
         };
 
-        classTypeTemplate.Members.Add(new TypeMethodTemplate("void", "AddSMFInfrastructureServices")
+
+        classTypeTemplate.Members.Add(new TypeMethodTemplate("void", "AddSMFMigrations")
         {
+
             Modifiers = "public static",
-            Parameters = new() { ("this Microsoft.Extensions.DependencyInjection.IServiceCollection", "services") },
+            Parameters = new() { ("this WebApplication", "app") },
             Body = (writer, parameters, _, fileds) =>
             {
-                writer.WriteLine($@"services.AddDbContext<Application.Interfaces.ISMFDbContext, Data.SMFDbContext>(o => o.UseSqlServer(@""Data Source = {configSMF.DB_DATA_SOURCE}; Initial Catalog = {configSMF.DB_NAME}; Integrated Security = True; Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False""));");
-                writer.WriteLine();
-                foreach (var moduleCT in s)
-                    writer.WriteLine($@" services.AddScoped<{QualifiedNames.GetRegisterModelRepositoryInterface(configSMF, moduleCT)},{QualifiedNames.GetRegisterModelRepository(configSMF, moduleCT)}> ();");
-                writer.WriteLine();
-                writer.WriteLine($@"services.AddScoped<{QualifiedNames.GetIUnitOfWork(configSMF)}, {QualifiedNames.GetUnitOfWork(configSMF)}>();");
+
+                writer.WriteLine(@$"
+using (var scope = app.Services.CreateScope())
+    (scope.ServiceProvider.GetRequiredService<{s.SOLUTION_NAME}.Application.Interfaces.ISMFDbContext>() as DbContext).Database.Migrate();
+");
             }
         });
+
+        classTypeTemplate.Members.Add(new TypeMethodTemplate("void", "MapSMFAPIs")
+        {
+            Modifiers = "public static",
+            Parameters = new() { ("this WebApplication", "app") },
+            Body = (writer, parameters, _, fileds) =>
+            {
+                foreach (var m in models)
+                {
+                    writer.WriteLine($@"app.MapGroup(""/{m.ModuleNameWithoutPostFix}/{m.IdentifierNameWithoutPostFix}"").Map{m.ModuleNameWithoutPostFix}_{m.IdentifierNameWithoutPostFix}Api();");
+                }
+            }
+        });
+
 
 
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);

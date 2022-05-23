@@ -5,6 +5,11 @@
 namespace SMF.PointOfSale.PurchaseAddon;
 public partial class PurchaseModule
 {
+
+    public PurchaseModule()
+    {
+        //Microsoft.AspNetCore.Builder.I
+    }
     //private readonly InheritedType _inheritType = ModuleInheritedTypes.PurchasessModule;
     /// <summary>
     /// Gets or sets the my property.

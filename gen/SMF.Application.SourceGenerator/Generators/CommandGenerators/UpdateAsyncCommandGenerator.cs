@@ -38,7 +38,7 @@ internal class UpdateAsyncCommands : CommonIncrementalGenerator
             Interfaces = new() { $"MediatR.IRequest<int>" },
         };
 
-        classTypeTemplate.Members.Add(new AutoPropertyTemplate("int", "Id"));
+        classTypeTemplate.Members.Add(new AutoPropertyTemplate("int", "Id") { SecondAccessor = "set" });
         var tempModelCT = s;
         while (tempModelCT is not null)
         {
