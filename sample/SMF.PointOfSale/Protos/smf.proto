@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+option csharp_namespace = "SampleApp.Grpc";
+
+import "google/protobuf/timestamp.proto";
+
+package smf;
+
+// The greeting service definition.
+service PurchaseService {
+	rpc GetAllPurchaseLines (Void) returns (stream Purchase_PurchaseLine);
+	rpc GetPurchaseLineById (RequestId) returns (Purchase_PurchaseLine);
+	rpc DeletePurchaseLine (RequestId) returns (ResponseId);
+	rpc AddPurchaseLine (CreatePurchase_PurchaseLineCommand) returns (ResponseId);
+	rpc UpdatePurchaseLine (UpdatePurchase_PurchaseLineCommand) returns (ResponseId);
+
+	rpc GetAllPrices (Void) returns (stream Purchase_Price);
+	rpc GetPriceById (RequestId) returns (Purchase_Price);
+	rpc DeletePrice (RequestId) returns (ResponseId);
+	rpc AddPrice (CreatePurchase_PriceCommand) returns (ResponseId);
+	rpc UpdatePrice (UpdatePurchase_PriceCommand) returns (ResponseId);
+
+}
+service SaleService {
+	rpc GetAllSaleLines (Void) returns (stream Sale_SaleLine);
+	rpc GetSaleLineById (RequestId) returns (Sale_SaleLine);
+	rpc DeleteSaleLine (RequestId) returns (ResponseId);
+	rpc AddSaleLine (CreateSale_SaleLineCommand) returns (ResponseId);
+	rpc UpdateSaleLine (UpdateSale_SaleLineCommand) returns (ResponseId);
+
+}
+
+
+
+message Void { }
+
+message RequestId {
+ int32 id = 1;
+}
+message ResponseId {
+ int32 id = 1;
+}
+
+message Purchase_PurchaseLine {
+	string Name = 1;
+	string Age = 2;
+	string ProductName = 3;
+	int32 ProductPrice = 4;
+	string FullName = 5;
+	bool IsActive = 6;
+}
+
+message CreatePurchase_PurchaseLineCommand {
+	string Name = 1;
+	string Age = 2;
+	string ProductName = 3;
+	int32 ProductPrice = 4;
+	string FullName = 5;
+	bool IsActive = 6;
+}
+
+message UpdatePurchase_PurchaseLineCommand {
+	int32 id = 1;
+	string Name = 1;
+	string Age = 2;
+	string ProductName = 3;
+	int32 ProductPrice = 4;
+	string FullName = 5;
+	bool IsActive = 6;
+}
+
+message Purchase_Price {
+	string Description = 1;
+	int32 Age = 2;
+}
+
+message CreatePurchase_PriceCommand {
+	string Description = 1;
+	int32 Age = 2;
+}
+
+message UpdatePurchase_PriceCommand {
+	int32 id = 1;
+	string Description = 1;
+	int32 Age = 2;
+}
+
+message Sale_SaleLine {
+	string ProductName = 1;
+	int32 ProductPrice = 2;
+	string FullName = 3;
+	bool IsActive = 4;
+}
+
+message CreateSale_SaleLineCommand {
+	string ProductName = 1;
+	int32 ProductPrice = 2;
+	string FullName = 3;
+	bool IsActive = 4;
+}
+
+message UpdateSale_SaleLineCommand {
+	int32 id = 1;
+	string ProductName = 1;
+	int32 ProductPrice = 2;
+	string FullName = 3;
+	bool IsActive = 4;
+}
+
+
+
+
+
+

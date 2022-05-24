@@ -1,4 +1,4 @@
-﻿namespace SMF.FileTransmitter;
+﻿namespace SMF.FileTransmitter.CSProjFile;
 
 using System.Text;
 /// <summary>
@@ -60,9 +60,7 @@ public class CSProjGenerator
             sb.Append('"');
             sb.Append(' ');
             if (extraInfo.Any())
-            {
                 foreach (var (key, value) in extraInfo)
-                {
                     if (key is not null && value is not null)
                     {
                         sb.Append(' ');
@@ -71,8 +69,6 @@ public class CSProjGenerator
                         sb.Append(value);
                         sb.Append('"');
                     }
-                }
-            }
             sb.AppendLine(" />");
 
 
@@ -85,7 +81,7 @@ public class CSProjGenerator
     /// </summary>
     /// <param name="properties">The properties.</param>
     /// <param name="references">The references.</param>
-    public static string Template(string properties, string references, string version = "net6.0")
+    public static string Template(string properties, string references, string version = "net6.0", string? extraInfo = null)
     {
         return
 @$"<Project Sdk=""Microsoft.NET.Sdk"">                 
@@ -100,6 +96,7 @@ public class CSProjGenerator
 
     <ItemGroup>
 {references}
+{extraInfo}
     </ItemGroup>
 
 </Project>

@@ -31,8 +31,6 @@
         <None Include="..\SMF.FileTransmitter\.editorconfig" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Properties\" />
-    </ItemGroup>
+
 
 </Project>

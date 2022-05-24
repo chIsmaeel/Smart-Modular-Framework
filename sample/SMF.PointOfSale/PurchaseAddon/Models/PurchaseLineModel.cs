@@ -11,6 +11,7 @@ public partial class PurchaseLineModel
 {
     public PurchaseLineModel()
     {
+        
         InheritModel = RegisteredModels.Sale_SaleLineModel;
     }
 

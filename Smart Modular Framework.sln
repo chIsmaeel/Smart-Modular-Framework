@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.Domain.SourceGenerator"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.Infrastructure.SourceGenerator", "gen\SMF.Infrastructure.SourceGenerator\SMF.Infrastructure.SourceGenerator.csproj", "{39B6A30E-3B8B-42CC-ABAF-DF282A0F72CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.Grpc.SourceGenerator", "gen\SMF.Grpc.SourceGenerator\SMF.Grpc.SourceGenerator.csproj", "{5AEC0EE4-5C38-4AB3-8D3E-CF9DBDD0C365}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{39B6A30E-3B8B-42CC-ABAF-DF282A0F72CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39B6A30E-3B8B-42CC-ABAF-DF282A0F72CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39B6A30E-3B8B-42CC-ABAF-DF282A0F72CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AEC0EE4-5C38-4AB3-8D3E-CF9DBDD0C365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AEC0EE4-5C38-4AB3-8D3E-CF9DBDD0C365}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AEC0EE4-5C38-4AB3-8D3E-CF9DBDD0C365}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AEC0EE4-5C38-4AB3-8D3E-CF9DBDD0C365}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{55A11592-E231-4F4D-B0FD-00E32A5A2C23} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
 		{70B07DE6-8033-451B-A779-305676AC8BA3} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
 		{39B6A30E-3B8B-42CC-ABAF-DF282A0F72CD} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
+		{5AEC0EE4-5C38-4AB3-8D3E-CF9DBDD0C365} = {721EA9CD-FCA0-4484-9226-F4CD3833959F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4A8507FA-B0E0-4282-81FA-6A3A33A041B2}

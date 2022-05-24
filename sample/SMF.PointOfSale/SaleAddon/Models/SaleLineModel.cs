@@ -13,7 +13,14 @@ public partial class SaleLineModel
     //    throw new NotImplementedException();
     //}
     //public SMFields.Binary? Description { get; } = new() { Compute = true };
-    public SMFields.String? ProductName { get; } = new() { Compute = true };
+    public SMFields.String? ProductName { get; } = new() { };
+
+    public SMFields.Int? ProductPrice { get; } = new() { };
+
+    public SMFields.String? FullName { get; } = new() { IsRequired = true, Index = true, DefaultValue = "Name" };
+
+    public SMFields.Boolean IsActive { get; } = new() { Index = true };
+
 
 
     //public SMFields.O2M O2M => new(RegisteredModels.Purchase_PriceModel);
@@ -46,11 +53,6 @@ public partial class SaleLineModel
     //    throw new NotImplementedException();
     //}
 
-
-    private partial string? ComputeProductName(ISMFDbContext _context, SaleLine currentObj)
-    {
-        return "Added " + currentObj.Id;
-    }
 
     //private partial byte[]? ComputeDescription(UnitOfWork uow, SaleLine currentObj)
     //{

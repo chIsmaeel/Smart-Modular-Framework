@@ -67,4 +67,28 @@ $$"""
 
 """;
     }
+
+    /// <summary>
+    /// Grpcs the lanch settions.
+    /// </summary>
+    /// <returns>A string.</returns>
+    public static string GrpcLanchSettions()
+    {
+        return
+$$"""
+{
+  "profiles": {
+    "GRPC": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5165;https://localhost:7165",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
+""";
+    }
 }

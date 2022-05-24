@@ -248,7 +248,14 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
     /// <param name="analyzerConfigOptionsProvider">The analyzer config options provider.</param>
     protected override void AnalyzerConfigOptionsProvider(IncrementalValueProvider<AnalyzerConfigOptionsProvider> analyzerConfigOptionsProvider)
     {
-        ConfigSMFAndGlobalOptions = ConfigSMF.Combine(analyzerConfigOptionsProvider).Select(static (s, a) => new ConfigSMFAndGlobalOptions(s.Left, s.Right));
+        ConfigSMFAndGlobalOptions = ConfigSMF.Combine(analyzerConfigOptionsProvider).Select(static (s, a) =>
+        {
+            //#if DEBUG
+            //            if (!System.Diagnostics.Debugger.IsAttached)
+            //                System.Diagnostics.Debugger.Launch();
+            //#endif
+            return new ConfigSMFAndGlobalOptions(s.Left, s.Right);
+        });
 
         ModuleCTs =
         ModuleCDSCollection

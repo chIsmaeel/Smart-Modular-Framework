@@ -49,6 +49,11 @@ public partial class PurchaseModel
 
     public SMFields.Binary? Description { get; } = new() { DefaultValue = GetDefaultValue };
 
+
+    /// <summary>
+    /// Gets the is active.
+    /// </summary>
+    public SMFields.Boolean IsActive { get; } = new() { Index = true };
     /// <summary>
     /// Gets the default value.
     /// </summary>

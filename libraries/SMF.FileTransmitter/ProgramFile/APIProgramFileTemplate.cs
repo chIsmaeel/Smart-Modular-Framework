@@ -1,4 +1,4 @@
-﻿namespace SMF.FileTransmitter;
+﻿namespace SMF.FileTransmitter.ProgramFile;
 internal record APIProgramFileTemplate(ConfigSMF Config, List<string> Usings, List<string> Services, List<string> Middlewares)
 {
 
@@ -28,13 +28,10 @@ internal record APIProgramFileTemplate(ConfigSMF Config, List<string> Usings, Li
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 {services}
 
 var app = builder.Build();
 {middlewares}
-app.UseSwagger();
-app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.Run(); ";

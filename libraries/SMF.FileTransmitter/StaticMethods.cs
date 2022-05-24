@@ -1,6 +1,9 @@
 ﻿namespace SMF.FileTransmitter;
+
+using SMF.FileTransmitter.CSProjFile;
 using System;
 using System.Diagnostics;
+using System.Text;
 
 /// <summary>
 /// The static methods.
@@ -85,6 +88,35 @@ internal static class StaticMethods
 
     }
 
+    /// <summary>
+    /// Adds the grpc proto file.
+    /// </summary>
+    /// <param name="_configSMF">The _config s m f.</param>
+    internal static async void AddGrpcProtoFile(ConfigSMF _configSMF)
+    {
+        var generatorProjProtoPath = Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Grpc", "smf.proto.g.cs");
+        var generatorProjProtoFileInfo = new FileInfo(generatorProjProtoPath);
+        if (!generatorProjProtoFileInfo.Exists) return;
+
+        var protoFileText = File.ReadAllLines(generatorProjProtoPath);
+
+        if (protoFileText!.Length == 0) return;
+        var sb = new StringBuilder();
+        for (int i = 2; i < protoFileText.Length - 1; i++)
+        {
+            sb.AppendLine(protoFileText[i]);
+        }
+        var dPath = Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Grpc", "Protos");
+        if (!Directory.Exists(dPath))
+            Directory.CreateDirectory(dPath);
+        using var fs = File.Create(Path.Combine(dPath, "smf.proto"));
+
+        using var ws = new StreamWriter(fs);
+        await ws.WriteAsync(sb.ToString());
+        //if (generatorProjProtoFileInfo.Exists)
+        //generatorProjProtoFileInfo.Delete();
+    }
+
 
     /// <summary>
     /// Moves the project files.
@@ -139,7 +171,7 @@ internal static class StaticMethods
     /// <param name="projectName">The project name.</param>
     /// <param name="properties">The properties.</param>
     /// <param name="references">The references.</param>
-    public static void AddCSProjFileIfNotExist(ConfigSMF configSMF, string projectName, CSProjConfig cSProjConfig, string version = "net6.0")
+    public static void AddCSProjFileIfNotExist(ConfigSMF configSMF, string projectName, CSProjConfig cSProjConfig, string version = "net6.0", string? extraInfo = null)
     {
         Console.WriteLine();
         var (properties, references) = cSProjConfig;
@@ -151,7 +183,7 @@ internal static class StaticMethods
         {
             using var fs = file.OpenWrite();
             using var ws = new StreamWriter(fs);
-            ws.Write(CSProjGenerator.Template(CSProjGenerator.GetProperties(properties), CSProjGenerator.GetReferences(references), version));
+            ws.Write(CSProjGenerator.Template(CSProjGenerator.GetProperties(properties), CSProjGenerator.GetReferences(references), version, extraInfo));
             Console.WriteLine("Created: " + csProjFilePath.Replace(Path.Combine(configSMF.SOLUTION_BASE_PATH, configSMF.SOLUTION_NAME, "src"), ""));
 
         }
