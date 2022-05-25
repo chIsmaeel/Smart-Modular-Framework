@@ -27,6 +27,7 @@ internal class IUnitOfWork : CommonIncrementalGenerator
     /// <param name="s">The s.</param>
     private void AddUnitOfWork(SourceProductionContext c, ImmutableArray<ModelCT> s)
     {
+        if (s.Length == 0) return;
         var configSMF = s.FirstOrDefault()?.ConfigSMFAndGlobalOptions.ConfigSMF;
         SMFProductionContext context = new(c);
         FileScopedNamespaceTemplate fileScopedNamespace = new(configSMF!.SOLUTION_NAME! + ".Application.Interfaces");

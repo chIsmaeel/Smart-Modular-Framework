@@ -65,7 +65,7 @@
 
 
     <ItemGroup>
-        <Folder Include="Protos\" />
+      <Folder Include="InventoryAddon\Models\" />
     </ItemGroup>
 
 

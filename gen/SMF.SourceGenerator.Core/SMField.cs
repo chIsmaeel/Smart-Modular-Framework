@@ -96,6 +96,7 @@ public class SMField
         {
             ORM.Fields.Binary => value.Contains("=>") ? CSharpScript.EvaluateAsync<Func<byte[]>>(value).Result : null,
             ORM.Fields.DateTime => DateTime.Parse(value),
+            ORM.Fields.Boolean => bool.Parse(value),
             ORM.Fields.Decimal => decimal.Parse(value),
             ORM.Fields.Id => int.Parse(value),
             ORM.Fields.Int => int.Parse(value),

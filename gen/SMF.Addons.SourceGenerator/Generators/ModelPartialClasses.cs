@@ -41,10 +41,6 @@ internal class ModelPartialClasses : CommonIncrementalGenerator
         };
         if (s.StringParentType == "ModelBase")
             DefaultPropertiesIfInheritModelIsNotDefined(classTemplate);
-        //#if DEBUG
-        //        if (!System.Diagnostics.Debugger.IsAttached)
-        //            System.Diagnostics.Debugger.Launch();
-        //#endif
         foreach (var property in s.Properties.Where(_ => _!.SMField is not null && _.SMField.Field is not null))
         {
             if ((bool)(property?.SMField?.Field?.Compute)!)

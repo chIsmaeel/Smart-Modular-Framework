@@ -147,10 +147,12 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
         foreach (var moduleWithRegisteredModelCTs in s)
         {
 
-            if (moduleWithRegisteredModelCTs.RegisteredModelCTs?.Count() == 0) return modelCTs;
+            if (moduleWithRegisteredModelCTs.RegisteredModelCTs?.Count() == 0) continue;
 
             foreach (var modelCT in moduleWithRegisteredModelCTs.RegisteredModelCTs!)
             {
+
+
                 List<TypeProperty> typeProperties = new();
                 foreach (var property in modelCT!.Properties)
                 {
@@ -203,6 +205,7 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
         }
         else if (relationalType == RelationshipType.O2M)
         {
+
             containingProperty = new TypeProperty(ClassType.CreateProperty(relationalModelCT.NewQualifiedName!, property.IdentifierName), modelCT);
             relationalModelProperty = (new TypeProperty(ClassType.CreateProperty($"System.Collections.Generic.List<{property.ClassType.NewQualifiedName!}>", modelCT!.IdentifierNameWithoutPostFix!.Pluralize()! + "_" + property.IdentifierName), relationalModelCT));
             forignKey = (new TypeProperty(ClassType.CreateProperty("int", property.IdentifierName + "_" + modelCT.IdentifierNameWithoutPostFix.Pluralize() + "_FK"), modelCT!));

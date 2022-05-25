@@ -93,7 +93,7 @@ $$"""
     {
         var response = await _mediatR.Send(new Create{{ModelCT.IdentifierNameWithoutPostFix}}Command()
         {
-           {{PropertiesMapping(ModelCT, "request", false)}}
+           {{PropertiesMapping(ModelCT, "request")}}
         });
         return new ResponseId
         {
@@ -137,7 +137,7 @@ $$"""
     /// <param name="objName">The obj name.</param>
     /// <param name="includeID">If true, include i d.</param>
     /// <returns>A string.</returns>
-    public static string PropertiesMapping(ModelCT modelCT, string objName, bool includeID = true)
+    public static string PropertiesMapping(ModelCT modelCT, string objName)
     {
         var sb = new StringBuilder();
         var tModelCT = modelCT;
