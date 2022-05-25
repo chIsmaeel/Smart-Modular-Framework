@@ -42,7 +42,9 @@ StaticMethods.WriteFileIfNotExist(
     Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Grpc", "Properties", "launchSettings.json"),
     Templates.GrpcLanchSettions());
 
-StaticMethods.AddGrpcProtoFile(_configSMF);
+await StaticMethods.AddGrpcProtoFileAsync(_configSMF);
+await StaticMethods.AddExtensionMethodsFileAsync(_configSMF);
+await StaticMethods.AddGrpcServicesFilesAsync(_configSMF);
 StaticMethods.AddMigrationCommand(_configSMF);
 
 StaticMethods.AddSolutionFileIfNotExist(_configSMF);

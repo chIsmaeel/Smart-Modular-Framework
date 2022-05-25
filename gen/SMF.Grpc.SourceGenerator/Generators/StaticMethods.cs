@@ -20,11 +20,7 @@ internal class StaticMethods
     public static string? GetProtoType(TypeProperty property)
     {
         string propertyType = property!.Type;
-        bool isNullable = false;
         if (!propertyType.StartsWith("SMFields")) return propertyType;
-
-        propertyType = propertyType.Substring(0, propertyType.Length - 1);
-
         var result = propertyType switch
         {
             "SMFields.String" => "string",
@@ -41,8 +37,8 @@ internal class StaticMethods
             "SMFields.String?" => "google.protobuf.StringValue",
             "SMFields.Decimal?" => "google.protobuf.DecimalValue",
             "SMFields.DateTime?" => "google.protobuf.Timestamp",
-            "SMFields.Boolean" => "bool",
             "SMFields.Boolean?" => "google.protobuf.BoolValue",
+            "SMFields.Boolean" => "bool",
             "SMFields.Binary" => "byte[]",
             "SMFields.ByteString?" => "google.protobuf.BytesValue",
             "SMFields.Double" => "double",
@@ -60,8 +56,7 @@ internal class StaticMethods
             "SMFields.Object" => "object",
             _ => propertyType
         };
-        if (result is null) return "";
-        return isNullable ? $"optional {result}" : $"{result}";
+        return result;
 
     }
     /// <summary>

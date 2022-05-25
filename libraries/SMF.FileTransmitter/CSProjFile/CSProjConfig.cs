@@ -60,8 +60,8 @@ public record CSProjConfig(List<CSProjProperties> CSProjProperties, List<Referen
         List<CSProjProperties> properties = new()
     {
 new("OutputType","exe"),
-        new("RootNamespace", _configSMF.SOLUTION_NAME + ".API"),
-        new("AssemblyName", _configSMF.SOLUTION_NAME + ".API"),
+        new("RootNamespace", _configSMF.SOLUTION_NAME + ".Grpc"),
+        new("AssemblyName", _configSMF.SOLUTION_NAME + ".Grpc"),
         new("NoWarn", "CS8669"),
     };
 

@@ -7,12 +7,12 @@ internal class ProtoServicesGenerator : CommonIncrementalGenerator
 {
     protected override void Execute(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterSourceOutput(RegisteredModelCTs, AddGrpcServices);
+        context.RegisterSourceOutput(ModuleWithRegisteredModelCTs, AddGrpcServices);
     }
 
-    private void AddGrpcServices(SourceProductionContext c, ModelCT s)
+    private void AddGrpcServices(SourceProductionContext c, ModuleWithRegisteredModelCTs s)
     {
         SMFProductionContext context = new(c);
-        context.AddSource(s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix + "Service", ServiceTemplate.GetTemplate(s));
+        context.AddSource(s.RegisteringModule.IdentifierNameWithoutPostFix + "Service", ServiceTemplate.GetTemplate(s));
     }
 }

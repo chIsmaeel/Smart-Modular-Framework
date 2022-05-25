@@ -1,10 +1,13 @@
 ﻿namespace SMF.FileTransmitter.CSProjFile;
 
 using System.Text;
+
+
+public record References(string IncludingReference, ReferenceType ReferenceType, params (string key, string value)[] ExtraInfo);
+public record CSProjProperties(string PropertyName, string PropertyValue);
 /// <summary>
 /// The reference type.
 /// </summary>
-
 public enum ReferenceType
 {
     Project,

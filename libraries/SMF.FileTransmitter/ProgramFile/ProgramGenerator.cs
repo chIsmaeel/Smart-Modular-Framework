@@ -10,7 +10,7 @@ public class ProgramFileGenerator
     /// <param name="configSMF">The config s m f.</param>
     public static void APIGenerate(ConfigSMF configSMF, string programFilePath)
     {
-        var programFileCode = new APIProgramFileTemplate(configSMF!,
+        var programFileCode = new ProgramFileTemplate(configSMF!,
                new()
                {
 
@@ -42,16 +42,15 @@ public class ProgramFileGenerator
 
     public static void GrpcGenerate(ConfigSMF configSMF, string programFilePath)
     {
-        var programFileCode = new APIProgramFileTemplate(configSMF!,
+        var programFileCode = new ProgramFileTemplate(configSMF!,
                new()
                {
 
                    "Microsoft.Extensions.DependencyInjection" ,
                    "Microsoft.AspNetCore.Builder",
                $"{configSMF.SOLUTION_NAME}.Infrastructure",
-               //$"{configSMF.SOLUTION_NAME}.API",
+               $"{configSMF.SOLUTION_NAME}.Grpc",
                "MediatR",
-               "Microsoft.AspNetCore.Mvc",
                },
                new()
                {
@@ -62,8 +61,8 @@ public class ProgramFileGenerator
                },
                new()
                {
-//"AddSMFMigrations()" ,
-//"MapSMFGrpcService()"  ,
+"AddSMFMigrations()" ,
+"MapSMFGrpcServices()"  ,
 $@"MapGet(""/"", () => ""Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909"");" ,
 
                }).CreateTemplate();

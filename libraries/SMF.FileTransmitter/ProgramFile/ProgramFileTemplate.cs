@@ -1,5 +1,5 @@
 ﻿namespace SMF.FileTransmitter.ProgramFile;
-internal record APIProgramFileTemplate(ConfigSMF Config, List<string> Usings, List<string> Services, List<string> Middlewares)
+internal record ProgramFileTemplate(ConfigSMF Config, List<string> Usings, List<string> Services, List<string> Middlewares)
 {
 
     /// <summary>

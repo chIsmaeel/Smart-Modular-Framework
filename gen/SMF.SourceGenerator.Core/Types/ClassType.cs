@@ -28,6 +28,7 @@ public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, Co
     /// </summary>                            
     public string IdentifierName => _identifierName ??= ClassDSs?.FirstOrDefault()?.Identifier.ValueText!;
 
+
     /// <summary>
     /// Gets or sets the parent class type.
     /// </summary>

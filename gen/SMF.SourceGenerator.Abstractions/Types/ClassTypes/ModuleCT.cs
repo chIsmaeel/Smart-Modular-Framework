@@ -10,6 +10,7 @@ public partial record ModuleCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Con
     private IEnumerable<ModelCT?>? _registeredModelCTs;
     private IEnumerable<string?>? _registeredModelNames;
     private TypeField? _registeredModelTypeField;
+    private string? _identifierNameWithoutPostFix;
 
     //private readonly List<string?>? _invalidRegisteredModelCTs = new();
     /// <summary>                                                      
@@ -45,6 +46,12 @@ public partial record ModuleCT(IEnumerable<ClassDeclarationSyntax> ClassDSs, Con
         _registeredModelCTs = registerModelCTs.ToImmutable();
         return _registeredModelCTs;
     }
+
+    /// <summary>
+    /// Gets the identifier name without post fix.
+    /// </summary>
+    public string IdentifierNameWithoutPostFix => _identifierNameWithoutPostFix ??= IdentifierName.Substring(0, IdentifierName.Length - "Module".Length);
+
 
 
     /// <summary>

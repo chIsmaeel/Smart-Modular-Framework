@@ -9,32 +9,52 @@ internal record ServiceTemplate()
     /// Gets the template.
     /// </summary>
     /// <returns>A string.</returns>
-    public static string GetTemplate(ModelCT ModelCT)
+    public static string GetTemplate(ModuleWithRegisteredModelCTs s)
     {
         return
-$$"""
+$$"""                                           
 /*
 
 
-  namespace {{ModelCT.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Grpc.Services;
+  namespace {{s.RegisteringModule.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Grpc.Services;
 
 using Google.Protobuf.WellKnownTypes;
 using MediatR;
-using {{ModelCT.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Application.{{ModelCT.ModuleNameWithoutPostFix}}Addon.Commands;
-using {{ModelCT.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Application.{{ModelCT.ModuleNameWithoutPostFix}}Addon.Queries;
-using {{ModelCT.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Grpc;
+using {{s.RegisteringModule.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Application.{{s.RegisteringModule.IdentifierNameWithoutPostFix}}Addon.Commands;
+using {{s.RegisteringModule.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Application.{{s.RegisteringModule.IdentifierNameWithoutPostFix}}Addon.Queries;
+using {{s.RegisteringModule.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Grpc;
 using System.Threading.Tasks;
 
-internal class {{ModelCT.IdentifierNameWithoutPostFix}}Service : {{ModelCT.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Grpc.{{ModelCT.ModuleNameWithoutPostFix}}Services.{{ModelCT.ModuleNameWithoutPostFix}}ServicesBase
+internal class {{s.RegisteringModule.IdentifierNameWithoutPostFix}}Service : {{s.RegisteringModule.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Grpc.{{s.RegisteringModule.IdentifierNameWithoutPostFix}}Services.{{s.RegisteringModule.IdentifierNameWithoutPostFix}}ServicesBase
 {
     private readonly IMediator _mediatR;
 
-    public {{ModelCT.IdentifierNameWithoutPostFix}}Service(IMediator mediatR)
+    public {{s.RegisteringModule.IdentifierNameWithoutPostFix}}Service(IMediator mediatR)
     {
         _mediatR = mediatR;
     }
+        {{GetCRUDMethods(s)}}
+  
+}
 
-    public override async Task GetAll{{ModelCT.IdentifierNameWithoutPostFix.Pluralize()}}(Void request, global::Grpc.Core.IServerStreamWriter<{{ModelCT.ModuleNameWithoutPostFix}}_{{ModelCT.IdentifierNameWithoutPostFix}}> responseStream, global::Grpc.Core.ServerCallContext context)
+*/
+""";
+
+    }
+
+    /// <summary>
+    /// Gets the c r u d methods.
+    /// </summary>
+    /// <param name="s">The s.</param>
+    /// <returns>A string.</returns>
+    public static string GetCRUDMethods(ModuleWithRegisteredModelCTs s)
+    {
+        var sb = new StringBuilder();
+        foreach (var ModelCT in s.RegisteredModelCTs!)
+        {
+            sb.AppendLine(
+$$"""
+        public override async Task GetAll{{ModelCT!.IdentifierNameWithoutPostFix.Pluralize()}}(Void request, global::Grpc.Core.IServerStreamWriter<{{ModelCT.ModuleNameWithoutPostFix}}_{{ModelCT.IdentifierNameWithoutPostFix}}> responseStream, global::Grpc.Core.ServerCallContext context)
     {
         var response = await _mediatR.Send(new GetAll{{ModelCT.IdentifierNameWithoutPostFix.Pluralize()}}Query());
         foreach (var e in response)
@@ -56,7 +76,7 @@ internal class {{ModelCT.IdentifierNameWithoutPostFix}}Service : {{ModelCT.Confi
     public override async Task<{{ModelCT.ModuleNameWithoutPostFix}}_{{ModelCT.IdentifierNameWithoutPostFix}}> Get{{ModelCT.IdentifierNameWithoutPostFix}}ById(RequestId request, global::Grpc.Core.ServerCallContext context)
     {
         var response = await _mediatR.Send(new Get{{ModelCT.IdentifierNameWithoutPostFix}}ByIdQuery(request.Id));
-
+        if(response is null) return null;
         var cd = DateTime.SpecifyKind(response.CreatedOn, DateTimeKind.Utc);
         var md = DateTime.SpecifyKind(response.LastModifiedOn, DateTimeKind.Utc);
        
@@ -106,11 +126,9 @@ internal class {{ModelCT.IdentifierNameWithoutPostFix}}Service : {{ModelCT.Confi
         };
 
     }
-}
-
-*/
-""";
-
+""");
+        }
+        return sb.ToString();
     }
 
     /// <summary>

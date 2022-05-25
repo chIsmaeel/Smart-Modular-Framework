@@ -89,10 +89,34 @@ internal static class StaticMethods
     }
 
     /// <summary>
+    /// Adds the extension methods file.
+    /// </summary>
+    /// <param name="_configSMF">The _config s m f.</param>
+    /// <returns>A Task.</returns>
+    internal static async Task AddExtensionMethodsFileAsync(ConfigSMF _configSMF)
+    {
+        var extensionMethodPath = Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Grpc", "ExtensionMethods.g.cs");
+        var extensionMethodFileInfo = new FileInfo(extensionMethodPath);
+        if (!extensionMethodFileInfo.Exists) return;
+
+        var emFileAllLines = File.ReadAllLines(extensionMethodPath);
+        if (emFileAllLines!.Length == 0) return;
+        var sb = new StringBuilder();
+        for (int i = 2; i < emFileAllLines.Length - 1; i++)
+            sb.AppendLine(emFileAllLines[i]);
+        using var fs = File.Create(extensionMethodPath);
+        using var ws = new StreamWriter(fs);
+        await ws.WriteAsync(sb.ToString());
+        ws.Dispose();
+        fs.Dispose();
+    }
+
+
+    /// <summary>
     /// Adds the grpc proto file.
     /// </summary>
     /// <param name="_configSMF">The _config s m f.</param>
-    internal static async void AddGrpcProtoFile(ConfigSMF _configSMF)
+    internal static async Task AddGrpcProtoFileAsync(ConfigSMF _configSMF)
     {
         var generatorProjProtoPath = Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Grpc", "smf.proto.g.cs");
         var generatorProjProtoFileInfo = new FileInfo(generatorProjProtoPath);
@@ -113,8 +137,34 @@ internal static class StaticMethods
 
         using var ws = new StreamWriter(fs);
         await ws.WriteAsync(sb.ToString());
-        //if (generatorProjProtoFileInfo.Exists)
-        //generatorProjProtoFileInfo.Delete();
+        if (generatorProjProtoFileInfo.Exists)
+            generatorProjProtoFileInfo.Delete();
+    }
+
+    /// <summary>
+    /// Adds the grpc services files.
+    /// </summary>
+    /// <param name="_configSMF">The _config s m f.</param>
+    internal static async Task AddGrpcServicesFilesAsync(ConfigSMF _configSMF)
+    {
+        var servicesDir = Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Grpc", "Services");
+        var servicesDirInfo = new DirectoryInfo(servicesDir);
+        if (!servicesDirInfo.Exists) return;
+
+        foreach (var serviceFile in servicesDirInfo.EnumerateFiles())
+        {
+            var serviceFileAllLines = File.ReadAllLines(serviceFile.FullName);
+            if (serviceFileAllLines!.Length == 0) return;
+            var sb = new StringBuilder();
+            for (int i = 2; i < serviceFileAllLines.Length - 1; i++)
+                sb.AppendLine(serviceFileAllLines[i]);
+            var dPath = Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Grpc", "Protos");
+            using var fs = File.Create(serviceFile.FullName);
+            using var ws = new StreamWriter(fs);
+            await ws.WriteAsync(sb.ToString());
+            ws.Dispose();
+            fs.Dispose();
+        }
     }
 
 
@@ -263,7 +313,7 @@ internal static class StaticMethods
     $"dotnet sln { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, _configSMF.SOLUTION_NAME)}.sln add { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Application")}",
     $"dotnet sln { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, _configSMF.SOLUTION_NAME)}.sln add { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Infrastructure")}",
   $"dotnet sln { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, _configSMF.SOLUTION_NAME)}.sln add { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".API")}",
-
+ $"dotnet sln { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, _configSMF.SOLUTION_NAME)}.sln add { Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Grpc")}",
 };
 
         for (int i = 0; i < commands.Count; i++)
