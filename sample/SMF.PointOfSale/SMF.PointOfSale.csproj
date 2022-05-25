@@ -64,12 +64,6 @@
 
 
 
-    <ItemGroup>
-      <Folder Include="InventoryAddon\Models\" />
-    </ItemGroup>
-
-
-
 
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">

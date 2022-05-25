@@ -20,26 +20,31 @@ internal class StaticMethods
     public static string? GetProtoType(TypeProperty property)
     {
         string propertyType = property!.Type;
-        if (!propertyType.StartsWith("SMFields")) return propertyType;
+        if (!propertyType.StartsWith("SMFields"))
+        {
+            //if ()
+            return propertyType;
+        }
         var result = propertyType switch
         {
             "SMFields.String" => "string",
             "SMFields.Id" => "int32",
             "SMFields.Int" => "int32",
-            "SMFields.O2O" => property.RelationshipWith!.WithRelationship.ClassType.NewQualifiedName,
-            "SMFields.O2M" => property.RelationshipWith!.WithRelationship.ClassType.NewQualifiedName,
-            "SMFields.M2O" => $"repeated {property.RelationshipWith!.WithRelationship.ClassType.NewQualifiedName}",
-            "SMFields.M2M" => $"repeated {property.RelationshipWith!.WithRelationship.ClassType.NewQualifiedName}",
-            "SMFields.Decimal" => "decimal",
+            "SMFields.O2O" => (property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.ModuleNameWithoutPostFix + "_" + (property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.IdentifierNameWithoutPostFix,
+            "SMFields.O2M" => (property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.ModuleNameWithoutPostFix + "_" + (property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.IdentifierNameWithoutPostFix,
+            "SMFields.M2O" => $"repeated {(property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.ModuleNameWithoutPostFix + "_" + (property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.IdentifierNameWithoutPostFix}",
+            "SMFields.M2M" => $"repeated {(property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.ModuleNameWithoutPostFix + "_" + (property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.IdentifierNameWithoutPostFix}",
             "SMFields.DateTime" => "DateTime",
             "SMFields.Int?" => "google.protobuf.Int32Value",
             "SMFields.Long?" => "google.protobuf.Int64Value",
             "SMFields.String?" => "google.protobuf.StringValue",
-            "SMFields.Decimal?" => "google.protobuf.DecimalValue",
+            "SMFields.Float?" => "google.protobuf.DecimalValue",
             "SMFields.DateTime?" => "google.protobuf.Timestamp",
             "SMFields.Boolean?" => "google.protobuf.BoolValue",
             "SMFields.Boolean" => "bool",
-            "SMFields.Binary" => "byte[]",
+            "SMFields.Binary" => "byte",
+            "SMFields.Binary?" => "google.protobuf.BytesValue",
+
             "SMFields.ByteString?" => "google.protobuf.BytesValue",
             "SMFields.Double" => "double",
             "SMFields.Float" => "float",
@@ -71,7 +76,8 @@ internal class StaticMethods
         {
             var identifer = property!.IdentifierName;
             var type = GetProtoType(property!);
-            if (type!.StartsWith("repeated"))
+            if (type is null) continue;
+            if ((bool)type?.StartsWith("repeated")!)
                 identifer = identifer.Pluralize();
             messages.AppendLine($"\t{type} {identifer} = {i};");
             i++;
@@ -90,6 +96,7 @@ internal class StaticMethods
         {
             var identifer = property!.IdentifierName;
             var type = GetProtoType(property!);
+            if (type is null) return;
             if (type!.StartsWith("repeated"))
                 identifer = identifer.Pluralize();
 
@@ -114,6 +121,7 @@ internal class StaticMethods
         {
             var identifer = property!.IdentifierName;
             var type = GetProtoType(property!);
+            if (type is null) return;
             if (type!.StartsWith("repeated"))
                 identifer = identifer.Pluralize();
 

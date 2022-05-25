@@ -45,7 +45,10 @@ internal class EntitiesGenerator : CommonIncrementalGenerator
             string identifierName = property!.IdentifierName;
             if (property.RelationshipWith is RelationshipWith relationshipWith && relationshipWith.RelationshipType is RelationshipType.M2O or RelationshipType.M2M)
                 identifierName = identifierName.Pluralize();
-            AutoPropertyTemplate p = new(ModelPropertyTypes.GetPropertyType(property!), identifierName)
+            var type = ModelPropertyTypes.GetPropertyType(property!);
+            if (type is null)
+                continue;
+            AutoPropertyTemplate p = new(type, identifierName)
             {
                 Comment = property.Comment,
                 SecondAccessor = "set"

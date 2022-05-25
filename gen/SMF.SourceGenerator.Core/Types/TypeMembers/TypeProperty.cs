@@ -25,7 +25,7 @@ public partial record TypeProperty(PropertyDeclarationSyntax PDS, ClassType Clas
     /// <summary>
     /// Gets or sets the relationship with.
     /// </summary>
-    public RelationshipWith? RelationshipWith { get; set; }
+    public RelationshipWith? RelationshipWith { get; private set; }
 
     /// <summary>
     /// Sets the relationship with.

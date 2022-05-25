@@ -183,7 +183,7 @@ internal partial class ModelEntityConfigurations
             SMF.ORM.Fields.Binary => ((SMF.ORM.Fields.Binary)field).DefaultValue is null ? null : @$"CAST('{Convert.ToBase64String(((SMF.ORM.Fields.Binary)field).DefaultValue!.Invoke())}' AS VARBINARY)",
             SMF.ORM.Fields.Boolean => ((SMF.ORM.Fields.Boolean)field).DefaultValue.ToString(),
             SMF.ORM.Fields.DateTime => ((SMF.ORM.Fields.DateTime)field).DefaultValue.ToString() == default(System.DateTime).ToString() ? null : ((SMF.ORM.Fields.DateTime)field).DefaultValue.ToString(),
-            SMF.ORM.Fields.Decimal => ((SMF.ORM.Fields.Decimal)field).DefaultValue.ToString(),
+            SMF.ORM.Fields.Float => ((SMF.ORM.Fields.Float)field).DefaultValue.ToString(),
             SMF.ORM.Fields.Int => ((SMF.ORM.Fields.Int)field).DefaultValue.ToString(),
             SMF.ORM.Fields.String => ((SMF.ORM.Fields.String)field).DefaultValue.ToString(),
             _ => null,

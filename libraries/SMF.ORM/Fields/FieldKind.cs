@@ -20,14 +20,16 @@ public enum FieldKind
     Integer,
 
     /// <summary>
-    /// Decimal.
+    /// Float.
     /// </summary>
-    Decimal,
+    Float,
 
     /// <summary>
     /// Boolean.
     /// </summary>
     Boolean,
+
+    Double,
 
     /// <summary>
     /// DateTime.

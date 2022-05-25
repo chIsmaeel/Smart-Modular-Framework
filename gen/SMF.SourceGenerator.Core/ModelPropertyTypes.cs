@@ -30,7 +30,6 @@ public class ModelPropertyTypes
             "SMFields.O2M" => property.RelationshipWith?.WithRelationship.ClassType.NewQualifiedName,
             "SMFields.M2O" => $"System.Collections.Generic.List<{property.RelationshipWith!.WithRelationship.ClassType.NewQualifiedName}>",
             "SMFields.M2M" => $"System.Collections.Generic.ICollection<{property.RelationshipWith!.WithRelationship.ClassType.NewQualifiedName}>",
-            "SMFields.Decimal" => "decimal",
             "SMFields.DateTime" => "DateTime",
             "SMFields.Binary" => "byte[]",
             "SMFields.Boolean" => "bool",

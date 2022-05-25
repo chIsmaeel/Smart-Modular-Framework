@@ -97,7 +97,7 @@ public class SMField
             ORM.Fields.Binary => value.Contains("=>") ? CSharpScript.EvaluateAsync<Func<byte[]>>(value).Result : null,
             ORM.Fields.DateTime => DateTime.Parse(value),
             ORM.Fields.Boolean => bool.Parse(value),
-            ORM.Fields.Decimal => decimal.Parse(value),
+            ORM.Fields.Float => decimal.Parse(value),
             ORM.Fields.Id => int.Parse(value),
             ORM.Fields.Int => int.Parse(value),
             _ => value.Substring(1, value.Length - 2)
@@ -117,7 +117,7 @@ public class SMField
         {
             "SMFields.String" => new ORM.Fields.String(),
             "SMFields.Int" => new ORM.Fields.Int(),
-            "SMFields.Decimal" => new ORM.Fields.Decimal(),
+            "SMFields.Float" => new ORM.Fields.Float(),
             "SMFields.DateTime" => new ORM.Fields.DateTime(),
             "SMFields.Boolean" => new ORM.Fields.Boolean(),
             "SMFields.Id" => new ORM.Fields.Id(),

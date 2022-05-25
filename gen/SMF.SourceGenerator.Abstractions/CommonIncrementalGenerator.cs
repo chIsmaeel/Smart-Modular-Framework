@@ -151,16 +151,6 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
 
             foreach (var modelCT in moduleWithRegisteredModelCTs.RegisteredModelCTs!)
             {
-
-
-                List<TypeProperty> typeProperties = new();
-                foreach (var property in modelCT!.Properties)
-                {
-                    if (property!.Type is "SMFields.O2O" or "SMFields.O2M" or "SMFields.M2O" or "SMFields.M2M")
-                        AddRelationalFields(property, modelCT, modelCTs, typeProperties);
-                }
-
-                modelCT.Properties.AddRange(typeProperties);
                 modelCTs.Add(modelCT!);
             }
         }
@@ -174,7 +164,7 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
     /// <param name="modelCT">The model c t.</param>
     /// <param name="modelCTs">The model c ts.</param>
     /// <param name="typeProperties">The type properties.</param>
-    public static void AddRelationalFields(TypeProperty property, ModelCT modelCT, List<ModelCT> modelCTs, List<TypeProperty> typeProperties)
+    public static void AddRelationalFields(TypeProperty property, ModelCT modelCT, IEnumerable<ModelCT> modelCTs, List<TypeProperty> typeProperties)
     {
         var relationalModelName = (property!.PDS.DescendantNodes().OfType<ImplicitObjectCreationExpressionSyntax>().FirstOrDefault().ArgumentList.Arguments[0].Expression as MemberAccessExpressionSyntax)?.Name.Identifier.ValueText;
         var relationalType = property.Type switch
@@ -283,6 +273,14 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
         ModelCTs = ModelCTs.Combine(ModelCTCollection).Select(static (r, _) =>
         {
             r.Left.SetParentClassType(r.Right.FirstOrDefault(_ => _.QualifiedName == r.Left.QualifiedParentName)!);
+            List<TypeProperty> typeProperties = new();
+            foreach (var property in r.Left!.Properties)
+            {
+                if (property!.Type is "SMFields.O2O" or "SMFields.O2M" or "SMFields.M2O" or "SMFields.M2M")
+                    AddRelationalFields(property, r.Left, r.Right, typeProperties);
+            }
+
+            r.Left.Properties.AddRange(typeProperties);
             return r.Left;
         });
     }

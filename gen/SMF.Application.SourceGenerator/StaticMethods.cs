@@ -20,6 +20,7 @@ internal class StaticMethods
         {
             var identifer = property!.IdentifierName;
             var type = ModelPropertyTypes.GetPropertyType(property!);
+            if (type is null) continue;
             if (type.StartsWith("System.Collections.Generic"))
                 identifer = identifer.Pluralize();
 

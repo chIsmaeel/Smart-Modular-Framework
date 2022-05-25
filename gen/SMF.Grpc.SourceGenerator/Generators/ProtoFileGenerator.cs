@@ -4,6 +4,7 @@ using Humanizer;
 using Microsoft.CodeAnalysis;
 using SMF.Grpc.SourceGenerator.Generators;
 using SMF.SourceGenerator.Core;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
 /// <summary>
@@ -19,7 +20,7 @@ internal class ProtoFileGenerator : CommonIncrementalGenerator
     /// <param name="context">The context.</param>
     protected override void Execute(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterSourceOutput(RegisteredModelCTs.Collect(), AddProtoFile);
+        context.RegisterSourceOutput(ModuleWithRegisteredModelCTs.Collect(), AddProtoFile);
     }
 
     /// <summary>
@@ -27,13 +28,18 @@ internal class ProtoFileGenerator : CommonIncrementalGenerator
     /// </summary>
     /// <param name="c">The c.</param>
     /// <param name="s">The s.</param>
-    private void AddProtoFile(SourceProductionContext c, ImmutableArray<ModelCT> s)
+    private void AddProtoFile(SourceProductionContext c, ImmutableArray<ModuleWithRegisteredModelCTs> mwm)
     {
-        SMFProductionContext context = new(c);
+        List<ModelCT> s = new();
         //#if DEBUG
         //        if (!System.Diagnostics.Debugger.IsAttached)
         //            System.Diagnostics.Debugger.Launch();
         //#endif
+        foreach (var mrm in mwm)
+        {
+            s.AddRange(mrm.RegisteredModelCTs!);
+        }
+        SMFProductionContext context = new(c);
         var config = s.FirstOrDefault()?.ConfigSMFAndGlobalOptions.ConfigSMF;
         var generatorProjFile = Path.Combine(s.FirstOrDefault()!.ConfigSMFAndGlobalOptions.GeneratorProjectPath, "Protos", "smf.proto");
         var dProjFile = Path.Combine(config!.SOLUTION_BASE_PATH, config.SOLUTION_NAME, "src", config.SOLUTION_NAME + ".Grpc", "Protos", "smf.proto");
@@ -49,7 +55,7 @@ internal class ProtoFileGenerator : CommonIncrementalGenerator
     /// Protos the template.
     /// </summary>
     /// <returns>A string.</returns>
-    public static string ProtoTemplate(ConfigSMF configSMF, ImmutableArray<ModelCT> s)
+    public static string ProtoTemplate(ConfigSMF configSMF, IEnumerable<ModelCT> s)
     {
         return $$"""
 /*
@@ -83,7 +89,7 @@ message ResponseId {
     /// </summary>
     /// <param name="s">The s.</param>
     /// <returns>A string.</returns>
-    private static string AddMessages(ImmutableArray<ModelCT> s)
+    private static string AddMessages(IEnumerable<ModelCT> s)
     {
         var messages = new StringBuilder();
         foreach (var model in s)
@@ -143,7 +149,7 @@ message ResponseId {
     /// </summary>
     /// <param name="g">The g.</param>
     /// <returns>A string.</returns>
-    private static string GetProtoGrpcService(ImmutableArray<ModelCT> s)
+    private static string GetProtoGrpcService(IEnumerable<ModelCT> s)
     {
         var g = s.GroupBy(_ => _.ModuleNameWithoutPostFix);
         var services = new StringBuilder();

@@ -147,7 +147,25 @@ $$"""
             {
                 if (p!.IdentifierName is "CreatedOn" or "LastModifiedOn")
                     continue;
-                sb.AppendLine($"{p!.IdentifierName} = {objName}.{p.IdentifierName},");
+                if (p.IdentifierName.EndsWith("_FK"))
+                    continue;
+                if (p.Type is "SMFields.Binary" or "SMFields.Binary?")
+                    sb.AppendLine($"{p!.IdentifierName} = Google.Protobuf.ByteString.CopyFrom({objName}.{p.IdentifierName}),");
+                else if (p.RelationshipWith is not null)
+                {
+                    sb.AppendLine(
+$$"""
+    {{p!.IdentifierName}} = new {{(p.RelationshipWith.WithRelationship.ClassType as ModelCT)!.ModuleNameWithoutPostFix}}_{{(p.RelationshipWith.WithRelationship.ClassType as ModelCT)!.IdentifierNameWithoutPostFix}}()
+            {
+                CreatedOn = cd.ToTimestamp(),
+                LastModifiedOn = md.ToTimestamp(),
+                Id = e.Id,
+               {{PropertiesMapping((p.RelationshipWith.WithRelationship.ClassType as ModelCT)!, $"e.{p!.IdentifierName}")}}
+            },
+""");
+                }
+                else
+                    sb.AppendLine($"{p!.IdentifierName} = {objName}.{p.IdentifierName},");
             }
 
             tModelCT = tModelCT.ParentClassType as ModelCT;

@@ -48,6 +48,7 @@ public class ProgramFileGenerator
 
                    "Microsoft.Extensions.DependencyInjection" ,
                    "Microsoft.AspNetCore.Builder",
+
                $"{configSMF.SOLUTION_NAME}.Infrastructure",
                $"{configSMF.SOLUTION_NAME}.Grpc",
                "MediatR",

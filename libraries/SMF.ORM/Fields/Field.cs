@@ -30,7 +30,7 @@ public abstract record Field
         FieldKind.String => $"varchar(max)",
         FieldKind.Integer => "integer",
         FieldKind.Id => "integer",
-        FieldKind.Decimal => "float",
+        FieldKind.Float => "float",
         FieldKind.Money => "money",
         FieldKind.Selection => "selection",
         FieldKind.DateTime => "dateTime",

@@ -53,6 +53,17 @@ internal class SMFDbContext : CommonIncrementalGenerator
         foreach (var modelCT in s)
             classTypeTemplate.Members.Add(new AutoPropertyTemplate($"DbSet<{modelCT.NewQualifiedName}>", $"{modelCT.ModuleNameWithoutPostFix}_{modelCT.IdentifierNameWithoutPostFix.Pluralize()}") { SecondAccessor = "set" });
 
+        classTypeTemplate.StringMembers.Add(
+$$"""
+    /// <summary>
+    /// Ons the model creating.
+    /// </summary>
+    /// <param name="modelBuilder">The model builder.</param>
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());
+    }
+""");
         classTypeTemplate.UsingNamespaces.AddRange(new[] { "Microsoft.EntityFrameworkCore", "Microsoft.EntityFrameworkCore.Metadata.Builders" });
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);
         context.AddSource(fileScopedNamespace);

@@ -2,13 +2,13 @@
 public partial class PriceModel
 {
     public SMFields.O2O Products => new(RegisteredModels.Product_ProductModel) { };
-    public SMFields.Decimal SalePrice => new();
+    public SMFields.Float SalePrice => new();
 
-    public SMFields.Decimal PurchasePrice => new();
+    public SMFields.Float PurchasePrice => new();
 
-    public SMFields.Decimal Profit => new() { Compute = true };
+    public SMFields.Float Profit => new() { Compute = true };
 
-    private partial decimal ComputeProfit(SampleApp.Application.Interfaces.ISMFDbContext _context, SampleApp.Domain.ProductAddon.Entities.Price currentObj)
+    private partial float ComputeProfit(ISMFDbContext _context, Price currentObj)
     {
         return currentObj.SalePrice - currentObj.PurchasePrice;
     }

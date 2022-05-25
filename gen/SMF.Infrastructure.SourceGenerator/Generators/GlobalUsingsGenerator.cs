@@ -39,7 +39,9 @@ public class GlobalUsings : CommonIncrementalGenerator
         {
             foreach (var property in modelCT.Properties.Where(_ => _!.SMField is not null && _.SMField.Field is not null))
             {
-                if ((bool)(property?.SMField?.Field?.Compute)!)
+                if ((bool)(property?.SMField?.Field?.Compute)! && !globalNamespaces.Any(_ => _ == modelCT.NewContainingNamespace))
+
+
                     globalNamespaces.Add(modelCT.NewContainingNamespace);
 
             }
