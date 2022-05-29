@@ -87,6 +87,8 @@ internal class CreateAsyncCommands : CommonIncrementalGenerator
                 var objName = s.IdentifierNameWithoutPostFix.FirstCharToLowerCase();
                 w.WriteLine($"var {objName} = new {s.NewQualifiedName}(); ");
                 w.WriteLine($"{objName}.CreatedOn = System.DateTime.Now;");
+                w.WriteLine($"{objName}.LastModifiedOn = null;");
+
                 var tempModelCT = s;
                 while (tempModelCT is not null)
                 {

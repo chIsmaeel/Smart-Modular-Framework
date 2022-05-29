@@ -57,8 +57,15 @@ internal partial class ModelEntityConfigurations : CommonIncrementalGenerator
     /// </summary>
     /// <param name="s">The s.</param>
     /// <param name="writer">The writer.</param>
-    private static void WriteConfigBody(ModelCT s, IndentedTextWriter writer)
+    private void WriteConfigBody(ModelCT s, IndentedTextWriter writer)
     {
+        if (s.StringParentType == "ModelBase")
+        {
+            writer.Write(@$"builder.Property(e => e.CreatedOn).HasColumnType(""datetime""); ");
+            writer.Write(@$"builder.Property(e => e.LastModifiedOn).HasColumnType(""datetime""); ");
+
+
+        }
         //Debugger.Launch();
         var indexList = new List<string>()
         {
@@ -71,6 +78,11 @@ internal partial class ModelEntityConfigurations : CommonIncrementalGenerator
             SMField? field = property!.SMField;
             if (field!.Field is null) continue;
 
+            if (property.SMField!.Field is not null && property.SMField.Field.Compute)
+            {
+                writer.Write($" builder.Ignore(e => e.{property.IdentifierName});");
+                continue;
+            }
             WritePropertyFluentAPIs(writer, field, property!);
             if (property!.RelationshipWith is not null)
                 AddRelationalFluentAPI(writer, property);
@@ -87,14 +99,15 @@ internal partial class ModelEntityConfigurations : CommonIncrementalGenerator
 
 internal partial class ModelEntityConfigurations
 {
-    /// <summary>
+    /// <summary>                         
     /// Writes the values.
     /// </summary>
     /// <param name="writer">The writer.</param>
     /// <param name="field">The field.</param>
     /// <param name="property">The property.</param>
-    private static void WritePropertyFluentAPIs(IndentedTextWriter writer, SMField field, TypeProperty property)
+    private void WritePropertyFluentAPIs(IndentedTextWriter writer, SMField field, TypeProperty property)
     {
+        if (property.RelationshipWith is not null) return;
         writer.Write("builder.Property(e => e.{0})", property.IdentifierName);
 
         AddPropertyFluentAPI(writer, field, property);
@@ -138,14 +151,19 @@ internal partial class ModelEntityConfigurations
     /// <param name="writer">The writer.</param>
     /// <param name="field">The field.</param>
     /// <param name="property">The property.</param>
-    private static void AddPropertyFluentAPI(IndentedTextWriter writer, SMField field, TypeProperty property)
+    private void AddPropertyFluentAPI(IndentedTextWriter writer, SMField field, TypeProperty property)
     {
         AddFluentAPI(writer, "HasColumnType", field.Field!.DbType);
         AddFluentAPI(writer, "HasComment", property.Comment);
         AddFluentAPI(writer, "HasDefaultValueSql", field.Field!.DefaultValueSql);
-        AddFluentAPI(writer, "HasDefaultValueSql", field.Field!.DefaultValueSql);
-        AddFluentAPI(writer, "HasDefaultValue", GetDefaultValue(field.Field!));
+        var defaultValue = GetDefaultValue(field.Field!);
+        if (field.Field.DbType == "BIT" && defaultValue is "true" or "false")
+            AddFluentAPIWithout(writer, "HasDefaultValue", defaultValue);
+        else
+            AddFluentAPI(writer, "HasDefaultValue", defaultValue);
+
         AddFluentAPIIfValueIsTrue(writer, "IsRequired", field.Field!.IsRequired);
+
     }
 
     /// <summary>
@@ -171,17 +189,23 @@ internal partial class ModelEntityConfigurations
             writer.Write($".{fluentAPIName}(\"{value}\")");
     }
 
+    private static void AddFluentAPIWithout(IndentedTextWriter writer, string fluentAPIName, string? value)
+    {
+        if (!string.IsNullOrEmpty(value))
+            writer.Write($".{fluentAPIName}({value})");
+    }
+
     /// <summary>
     /// Gets the default value.
     /// </summary>
     /// <param name="field">The field.</param>
     /// <returns>A string? .</returns>
-    private static string? GetDefaultValue(SMF.ORM.Fields.Field field)
+    private string? GetDefaultValue(SMF.ORM.Fields.Field field)
     {
         return field switch
         {
-            SMF.ORM.Fields.Binary => ((SMF.ORM.Fields.Binary)field).DefaultValue is null ? null : @$"CAST('{Convert.ToBase64String(((SMF.ORM.Fields.Binary)field).DefaultValue!.Invoke())}' AS VARBINARY)",
-            SMF.ORM.Fields.Boolean => ((SMF.ORM.Fields.Boolean)field).DefaultValue.ToString(),
+            // SMF.ORM.Fields.Binary => ((SMF.ORM.Fields.Binary)field).DefaultValue is null ? null : @$"CAST('{Convert.ToBase64String(((SMF.ORM.Fields.Binary)field).DefaultValue!.Invoke())}' AS VARBINARY)",
+            SMF.ORM.Fields.Boolean => ((SMF.ORM.Fields.Boolean)field).DefaultValue is false ? $"false" : $"true",
             SMF.ORM.Fields.DateTime => ((SMF.ORM.Fields.DateTime)field).DefaultValue.ToString() == default(System.DateTime).ToString() ? null : ((SMF.ORM.Fields.DateTime)field).DefaultValue.ToString(),
             SMF.ORM.Fields.Float => ((SMF.ORM.Fields.Float)field).DefaultValue.ToString(),
             SMF.ORM.Fields.Int => ((SMF.ORM.Fields.Int)field).DefaultValue.ToString(),

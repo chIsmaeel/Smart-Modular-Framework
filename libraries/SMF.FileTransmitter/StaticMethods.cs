@@ -88,6 +88,27 @@ internal static class StaticMethods
 
     }
 
+    internal static async Task AddGrpcConversionFilesAsync(ConfigSMF _configSMF)
+    {
+        var servicesDir = Path.Combine(_configSMF.SOLUTION_BASE_PATH, _configSMF.SOLUTION_NAME, "src", _configSMF.SOLUTION_NAME + ".Grpc", "Conversions");
+        var servicesDirInfo = new DirectoryInfo(servicesDir);
+        if (!servicesDirInfo.Exists) return;
+
+        foreach (var serviceFile in servicesDirInfo.EnumerateFiles())
+        {
+            var serviceFileAllLines = File.ReadAllLines(serviceFile.FullName);
+            if (serviceFileAllLines!.Length == 0) return;
+            var sb = new StringBuilder();
+            for (int i = 2; i < serviceFileAllLines.Length - 1; i++)
+                sb.AppendLine(serviceFileAllLines[i]);
+            using var fs = File.Create(serviceFile.FullName);
+            using var ws = new StreamWriter(fs);
+            await ws.WriteAsync(sb.ToString());
+            ws.Dispose();
+            fs.Dispose();
+        }
+    }
+
     /// <summary>
     /// Adds the extension methods file.
     /// </summary>

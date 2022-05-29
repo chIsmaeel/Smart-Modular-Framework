@@ -26,7 +26,7 @@ public abstract record Field
 
     public virtual string? DbType => FieldKind switch
     {
-        FieldKind.Boolean => "boolean",
+        FieldKind.Boolean => "BIT",
         FieldKind.String => $"varchar(max)",
         FieldKind.Integer => "integer",
         FieldKind.Id => "integer",
@@ -38,7 +38,7 @@ public abstract record Field
         //FieldKind.Char => "char",
         FieldKind.Html => "html",
         FieldKind.Date => "date",
-        FieldKind.Binary => "binary",
+        FieldKind.Binary => "VARBINARY",
         FieldKind.Image => "image",
         FieldKind.Many2one => "many2one",
         FieldKind.One2many => "one2many",

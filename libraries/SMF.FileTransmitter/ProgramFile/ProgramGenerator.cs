@@ -56,8 +56,7 @@ public class ProgramFileGenerator
                new()
                {
                   "AddSMFInfrastructureServices()",
-
-                 $"AddMediatR(System.Reflection.Assembly.GetExecutingAssembly(), typeof({configSMF!.SOLUTION_NAME}.Application.Interfaces.ISMFDbContext).Assembly)",
+                              $"AddMediatR(System.AppDomain.CurrentDomain.GetAssemblies())",
                      "AddGrpc()",
                },
                new()

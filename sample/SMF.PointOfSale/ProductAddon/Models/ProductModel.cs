@@ -11,12 +11,22 @@ public partial class ProductModel
         IsRequired = true,
         Index = true,
         Length = 60,
+        DefaultValue = "Product 1",
     };
 
     public SMFields.String Description { get; } = new();
 
-    public SMFields.Boolean IsActive => new() { DefaultValue = true };
+    public SMFields.Boolean? IsActive => new() { DefaultValue = true };
 
+    public SMFields.O2M PriceO2M => new(RegisteredModels.Product_PriceModel);
+
+    public SMFields.O2O StockO2O => new(RegisteredModels.Inventory_ProductStockModel);
+
+
+    //public SMFields.M2O PriceM2M => new(RegisteredModels.Inventory_ProductStockModel) { };
+
+
+    //public SMFields.M2M StockM2M => new(RegisteredModels.Product_PriceModel) { };
 
     public SMFields.Binary? ProductImage => new()
     {

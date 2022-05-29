@@ -68,7 +68,7 @@ internal class EntitiesGenerator : CommonIncrementalGenerator
     private static void AddDefaultProperties(ClassTypeTemplate classTypeTemplate)
     {
         classTypeTemplate.Members.Add(new AutoPropertyTemplate("int", "Id") { SecondAccessor = "set" });
-        classTypeTemplate.Members.Add(new AutoPropertyTemplate("System.DateTime", "CreatedOn") { SecondAccessor = "set" });
-        classTypeTemplate.Members.Add(new AutoPropertyTemplate("System.DateTime", "LastModifiedOn") { SecondAccessor = "set" });
+        classTypeTemplate.Members.Add(new AutoPropertyTemplate("System.DateTime?", "CreatedOn") { SecondAccessor = "set" });
+        classTypeTemplate.Members.Add(new AutoPropertyTemplate("System.DateTime?", "LastModifiedOn") { SecondAccessor = "set" });
     }
 }

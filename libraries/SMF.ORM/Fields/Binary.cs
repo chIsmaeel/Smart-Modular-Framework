@@ -2,6 +2,6 @@
 
 public partial record Binary : Field
 {
-    public Func<byte[]>? DefaultValue { get; init; }
+    // public Func<byte[]>? DefaultValue { get; init; }
     protected override FieldKind FieldKind => FieldKind.Binary;
 }

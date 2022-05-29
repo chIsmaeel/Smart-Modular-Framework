@@ -2,7 +2,7 @@
 
 using Humanizer;
 using Microsoft.CodeAnalysis;
-using SMF.Grpc.SourceGenerator.Generators;
+using SMF.Grpc.SourceGenerator;
 using SMF.SourceGenerator.Core;
 using System.Collections.Generic;
 using System.Collections.Immutable;

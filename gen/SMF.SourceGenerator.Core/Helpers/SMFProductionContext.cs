@@ -37,6 +37,23 @@ public class SMFProductionContext
     }
 
     /// <summary>
+    /// Adds the source in comment.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="sourceCode">The source code.</param>
+    public void AddSourceInComment(string fileName, string sourceCode)
+    {
+        var diagnostics = CSharpSyntaxTree.ParseText(sourceCode).GetDiagnostics();
+        foreach (var diagnostic in diagnostics)
+        {
+            ReportDiagnostic(diagnostic);
+        }
+        sourceCode = CSharpSyntaxTree.ParseText(sourceCode).GetRoot().NormalizeWhitespace().SyntaxTree.GetText().ToString();
+
+        _ctx.AddSource(fileName + ".g.cs", "/*\n\n" + sourceCode + "\n\n*/");
+    }
+
+    /// <summary>
     /// Adds the source.
     /// </summary>
     /// <param name="fileScopedNamespaceTemplate">The file scoped namespace template.</param>

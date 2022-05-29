@@ -45,6 +45,8 @@ StaticMethods.WriteFileIfNotExist(
 await StaticMethods.AddGrpcProtoFileAsync(_configSMF);
 await StaticMethods.AddExtensionMethodsFileAsync(_configSMF);
 await StaticMethods.AddGrpcServicesFilesAsync(_configSMF);
+
+await StaticMethods.AddGrpcConversionFilesAsync(_configSMF);
 StaticMethods.AddMigrationCommand(_configSMF);
 
 StaticMethods.AddSolutionFileIfNotExist(_configSMF);

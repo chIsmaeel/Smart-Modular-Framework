@@ -29,7 +29,9 @@
 			<TargetPathWithTargetPlatformMoniker Include="..\..\gen\SMF.SourceGenerator.Core\bin\Debug\netstandard2.0\SMF.SourceGenerator.Core.dll" IncludeRuntimeDependency="false" />
 			<TargetPathWithTargetPlatformMoniker Include="..\..\gen\SMF.SourceGenerator.Abstractions\bin\Debug\netstandard2.0\SMF.SourceGenerator.Abstractions.dll" IncludeRuntimeDependency="false" />
 			<TargetPathWithTargetPlatformMoniker Include="..\..\libraries\SMF.ORM\bin\Debug\netstandard2.0\SMF.ORM.dll" IncludeRuntimeDependency="false" />
+      <TargetPathWithTargetPlatformMoniker Include="C:\Users\micro\.nuget\packages\humanizer.core\2.14.1\lib\netstandard2.0\Humanizer.dll" IncludeRuntimeDependency="false" />
 
+     
 		</ItemGroup>
 	</Target>
 

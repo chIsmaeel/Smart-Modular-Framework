@@ -1,6 +1,5 @@
 ﻿namespace SMF.SourceGenerator.Core;
 
-using Microsoft.CodeAnalysis.CSharp.Scripting;
 using SMF.ORM.Models;
 using SMF.SourceGenerator.Core.Types.TypeMembers;
 
@@ -94,7 +93,7 @@ public class SMField
         if (value is null) return null;
         return Field switch
         {
-            ORM.Fields.Binary => value.Contains("=>") ? CSharpScript.EvaluateAsync<Func<byte[]>>(value).Result : null,
+            // ORM.Fields.Binary => value.Contains("=>") ? CSharpScript.EvaluateAsync<Func<byte[]>>(value).Result : null,
             ORM.Fields.DateTime => DateTime.Parse(value),
             ORM.Fields.Boolean => bool.Parse(value),
             ORM.Fields.Float => decimal.Parse(value),

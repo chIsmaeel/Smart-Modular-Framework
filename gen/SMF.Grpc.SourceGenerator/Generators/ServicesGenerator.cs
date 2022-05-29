@@ -1,9 +1,10 @@
 ﻿namespace Grpc.Services;
 
 using Microsoft.CodeAnalysis;
+using SMF.Grpc.SourceGenerator;
 
 [Generator]
-internal class ProtoServicesGenerator : CommonIncrementalGenerator
+internal class ServicesGenerator : CommonIncrementalGenerator
 {
     protected override void Execute(IncrementalGeneratorInitializationContext context)
     {
@@ -13,6 +14,6 @@ internal class ProtoServicesGenerator : CommonIncrementalGenerator
     private void AddGrpcServices(SourceProductionContext c, ModuleWithRegisteredModelCTs s)
     {
         SMFProductionContext context = new(c);
-        context.AddSource(s.RegisteringModule.IdentifierNameWithoutPostFix + "Service", ServiceTemplate.GetTemplate(s));
+        context.AddSourceInComment(s.RegisteringModule.IdentifierNameWithoutPostFix + "Service", ServiceTemplate.GetTemplate(s));
     }
 }

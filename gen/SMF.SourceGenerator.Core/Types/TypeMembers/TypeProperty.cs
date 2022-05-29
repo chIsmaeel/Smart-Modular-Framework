@@ -2,6 +2,9 @@
 
 using Microsoft.CodeAnalysis.CSharp;
 
+public record HasRelationship(TypeProperty HasRelation, RelationshipType RelationshipType);
+
+
 /// <summary>
 /// The property Class Type.
 /// </summary>
@@ -17,6 +20,19 @@ public partial record TypeProperty(PropertyDeclarationSyntax PDS, ClassType Clas
     private string? _comment;
     private SMField? _sMField;
 
+    /// <summary>
+    /// Gets or sets the has relationship.
+    /// </summary>
+    public HasRelationship? HasRelation { get; private set; }
+
+    /// <summary>
+    /// Sets the has relationship.            
+    /// </summary>
+    /// <param name="hasRelationship">The has relationship.</param>
+    public void SetHasRelationship(HasRelationship hasRelationship)
+    {
+        HasRelation = hasRelationship;
+    }
 
     /// <summary>
     /// Gets the s m field.

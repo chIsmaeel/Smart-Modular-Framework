@@ -1,6 +1,5 @@
 ﻿namespace SMF.PointOfSale.CustomerAddon;
-public class CustomerModule
+internal class CustomerModule
 {
-    private readonly RegisterModel<Models.CustomerModel>? _registerModel;
-
+    private readonly RegisterModel<Models.CustomerModel> _registerModel;
 }

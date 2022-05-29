@@ -2,6 +2,7 @@
 
 using Humanizer;
 using SMF.InfrastructureLayer.SourceGenerator;
+using System.Text;
 
 /// <summary>
 /// This class is responsible to generate the source code for the repositories.
@@ -66,9 +67,10 @@ internal class RepositorGenerator : CommonIncrementalGenerator
         {
             Modifiers = "public async",
             UsingNamespaces = new() { "Microsoft.EntityFrameworkCore" },
+            Parameters = new() { ($"Func<{s.NewQualifiedName}, bool>", "where = null") },
             Body = (_writer, parameters, genericParamerters, privateFields) =>
             {
-                _writer.WriteLine("var response = _context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".ToList()" + s.OrderByString + ";");
+                _writer.WriteLine("var response = _context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + GetInclude(s) + ".Where(where ?? (_ => true))" + s.OrderByString + ";");
                 var hasComputedValue = false;
                 var tempModelCTForComputedValues = s;
                 while (tempModelCTForComputedValues is not null)
@@ -95,14 +97,16 @@ internal class RepositorGenerator : CommonIncrementalGenerator
             }
         });
 
-        classTypeTemplate.Members.Add(new TypeMethodTemplate($"Task<{s.NewQualifiedName}>", "GetByIdAsync")
+        classTypeTemplate.Members.Add(new TypeMethodTemplate($"Task<{s.NewQualifiedName}?>", "GetByIdAsync")
         {
             Modifiers = "public async",
             Parameters = new() { ("int", "id") },
             Body = (_writer, parameters, genericParamerters, privateFields) =>
 {
 
-    _writer.WriteLine("var response = _context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".Where(x => x.Id == id).FirstOrDefault(); ");
+    _writer.WriteLine("var response = _context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + GetInclude(s) + ".Where(x => x.Id == id).FirstOrDefault(); ");
+    _writer.WriteLine("if (response is null) return null;");
+
     var tempModelCTForComputedValues = s;
     while (tempModelCTForComputedValues is not null)
     {
@@ -193,6 +197,16 @@ internal class RepositorGenerator : CommonIncrementalGenerator
             tempModelCTForMethods = tempModelCTForMethods.ParentClassType as ModelCT;
         }
 
+    }
+
+    private static string GetInclude(ModelCT s)
+    {
+        StringBuilder sb = new();
+        foreach (var p in s.Properties.Where(_ => _.RelationshipWith is not null))
+        {
+            sb.Append($".Include(_=>_.{p.IdentifierName})");
+        }
+        return sb.ToString();
     }
 
 

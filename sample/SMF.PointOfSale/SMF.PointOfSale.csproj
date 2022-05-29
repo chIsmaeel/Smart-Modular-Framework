@@ -9,7 +9,7 @@
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
         <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
 
-        <NoWarn>$(NoWarn);CS8669;CS0169;IDE0051;CS0414;ClassDocumentationHeader;IDE0052</NoWarn>
+        <NoWarn>$(NoWarn);CS8669;CS8618;CS0169;IDE0051;CS0414;ClassDocumentationHeader;IDE0052</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

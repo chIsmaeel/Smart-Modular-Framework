@@ -74,8 +74,8 @@ new("OutputType","exe"),
             new ("Microsoft.EntityFrameworkCore.Analyzers",ReferenceType.Package, ("Version","6.0.5")),
 
         new ("Grpc.AspNetCore",ReferenceType.Package, ("Version","2.43.0")),
-
-
+        //        new ("AutoMapper",ReferenceType.Package, ("Version","11.0.1")),
+        //     new ("AutoMapper.Extensions.Microsoft.DependencyInjection",ReferenceType.Package, ("Version","11.0.0")),
         new ("Microsoft.EntityFrameworkCore.SqlServer",ReferenceType.Package, ("Version","6.0.5")),
     new ("Microsoft.EntityFrameworkCore.Tools",ReferenceType.Package, ("Version","6.0.5")),
     new (@$"..\{_configSMF.SOLUTION_NAME}.Application\{_configSMF.SOLUTION_NAME}.Application.csproj",ReferenceType.Project),

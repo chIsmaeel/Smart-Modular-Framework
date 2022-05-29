@@ -38,6 +38,16 @@ internal class GetByAllAsyncQueries : CommonIncrementalGenerator
             Interfaces = new() { $"MediatR.IRequest<IEnumerable<{s.NewQualifiedName}>>" },
         };
 
+        classTypeTemplate.Members.Add(new AutoPropertyTemplate($"Func<{s.NewQualifiedName}, bool>", "Where"));
+
+        classTypeTemplate.Members.Add(new ConstructorTemplate(classTypeTemplate.IdentifierName)
+        {
+            Parameters = new(){
+                new($"Func<{s.NewQualifiedName}, bool>", "where = null")
+            },
+            Body = (w, _) => { w.WriteLine("Where= where;"); }
+        });
+
         ClassTypeTemplate handlerClass = new(classTypeTemplate.IdentifierName + "Handler")
         {
 
@@ -68,7 +78,7 @@ internal class GetByAllAsyncQueries : CommonIncrementalGenerator
             Parameters = new() { (classTypeTemplate.IdentifierName, "query"), ("System.Threading.CancellationToken", "cancellationToken") },
             Body = (w, p, gp, _) =>
             {
-                w.WriteLine($"var response = await _uow.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository.GetAllAsync();");
+                w.WriteLine($"var response = await _uow.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Repository.GetAllAsync(query.Where);");
                 w.WriteLine($"if(response is null) return null;");
                 w.WriteLine("return await Task.FromResult(response);");
             }
