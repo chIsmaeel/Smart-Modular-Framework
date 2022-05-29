@@ -1,6 +1,8 @@
 ﻿namespace SMF.Grpc.SourceGenerator;
 
 using Humanizer;
+using System.Text;
+
 /// <summary>
 /// The service templates.
 /// </summary>
@@ -22,6 +24,7 @@ internal class ServiceTemplates
         {        
             var obj = new {{modelCT.ModuleNameWithoutPostFix}}_{{modelCT.IdentifierNameWithoutPostFix}}();
             obj = response;
+             {{AddReseveRelation(modelCT, "response")}}
             await responseStream.WriteAsync(obj);
         }
     }
@@ -37,9 +40,25 @@ internal class ServiceTemplates
         if(response is null) return null;
         var obj = new {{modelCT.ModuleNameWithoutPostFix}}_{{modelCT.IdentifierNameWithoutPostFix}}(); 
         obj = response;
+         {{AddReseveRelation(modelCT, "request")}}
         return obj;
     }
 """;
+    }
+
+    private static string AddReseveRelation(ModelCT modelCT, string obj)
+    {
+        StringBuilder sb = new();
+        foreach (var p in modelCT.Properties.Where(_ => _!.HasRelation is not null && _.Type.StartsWith("System.Collections.Generic.List")))
+        {
+            sb.AppendLine($$"""
+  foreach (var o in await _mediatR.Send(new {{modelCT.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Application.{{(p.HasRelation!.HasRelation.ClassType as ModelCT)!.ContainingModuleName}}.Queries.GetAll{{(p.HasRelation!.HasRelation.ClassType as ModelCT)!.IdentifierNameWithoutPostFix.Pluralize()}}Query(_ => _.{{p.HasRelation.HasRelation.IdentifierName}}_{{(p.HasRelation.HasRelation.ClassType as ModelCT)!.IdentifierNameWithoutPostFix.Pluralize()}}_FK == {{obj}}.Id)))
+        {
+            obj.{{p.IdentifierName.Replace("_", "").Pluralize()}}.Add(o);
+        }
+""");
+        }
+        return sb.ToString();
     }
 
     public static string Add(ModelCT modelCT)

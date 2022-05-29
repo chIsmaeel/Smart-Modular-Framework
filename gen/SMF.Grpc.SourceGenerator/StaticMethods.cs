@@ -198,6 +198,22 @@ internal class StaticMethods
                     sb.AppendLine($"}}}}");
                     continue;
                 }
+                //                else if (property.Type is not null && property.Type!.StartsWith("System.Collections.Generic") && property.HasRelation is not null)
+                //                {
+                //                    sb.AppendLine($"if({objName}.{identifer.Replace("_", "").Pluralize()}?.Count > 0){{");
+                //                    sb.AppendLine($"resultObj.{identifer} = new List<{(property.HasRelation.HasRelation.ClassType as ModelCT)!.NewQualifiedName}>();");
+                //                    sb.AppendLine(@$"foreach (var ro in {objName}.{identifer.Replace("_", "").Pluralize()})
+                //                                            {{
+                //{(property.HasRelation.HasRelation.ClassType as ModelCT)!.NewQualifiedName} tempObj = ro;
+                //");
+                //                    if (addCreatedOn)
+                //                        sb.AppendLine($"tempObj.CreatedOn = DateTime.Now;");
+                //                    if (addLastModifiedOn)
+                //                        sb.AppendLine($"tempObj.LastModifiedOn = DateTime.Now;");
+                //                    sb.AppendLine($" resultObj.{identifer}.Add(tempObj);");
+                //                    sb.AppendLine($"}}}}");
+                //                    continue;
+                //                }
                 var type = GetProtoType(property!);
                 if (type is null) continue;
                 sb.AppendLine($"\t\t\tresultObj.{identifer} = {objName}.{identifer};");
@@ -246,6 +262,21 @@ internal class StaticMethods
                     sb.AppendLine($"}}}}");
                     continue;
                 }
+                //                else if (property.Type is not null && property.Type!.StartsWith("System.Collections.Generic") && property.HasRelation is not null)
+                //                {
+                //                    sb.AppendLine($"if({objName}.{identifer}?.Count > 0){{");
+                //                    sb.AppendLine(@$"foreach (var ro in {objName}.{identifer})
+                //                                            {{
+                //{(property.HasRelation.HasRelation.ClassType as ModelCT)!.NewQualifiedName} tempObj = ro;
+                //");
+                //                    if (addCreatedOn)
+                //                        sb.AppendLine($"tempObj.CreatedOn = DateTime.Now;");
+                //                    if (addLastModifiedOn)
+                //                        sb.AppendLine($"tempObj.LastModifiedOn = DateTime.Now;");
+                //                    sb.AppendLine($" resultObj.{identifer.Replace("_", "").Pluralize()}.Add(tempObj);");
+                //                    sb.AppendLine($"}}}}");
+                //                    continue;
+                //                }
 
                 var type = GetProtoType(property!);
                 if (type is null) continue;

@@ -171,7 +171,7 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
         {
             "SMFields.O2O" => RelationshipType.O2O,
             "SMFields.O2M" => RelationshipType.O2M,
-            "SMFields.M2O" => RelationshipType.M2O,
+            //"SMFields.M2O" => RelationshipType.M2O,
             "SMFields.M2M" => RelationshipType.M2M,
             _ => RelationshipType.O2O,
         };

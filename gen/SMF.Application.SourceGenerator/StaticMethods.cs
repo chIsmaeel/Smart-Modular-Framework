@@ -86,6 +86,7 @@ internal class StaticMethods
             if (property.Type is "SMFields.M2O" or "SMFields.M2M")
             {
                 w.WriteLine($$"""
+                 {{objName}}.{{property!.IdentifierName}} = new List<{{(property.RelationshipWith!.WithRelationship.ClassType as ModelCT)!.NewQualifiedName}}>();
   foreach (var id in command.{{property!.IdentifierName}}_IDs)
             {
                 var obj = await _uow.{{(property.RelationshipWith!.WithRelationship.ClassType as ModelCT)!.ModuleNameWithoutPostFix}}_{{(property.RelationshipWith!.WithRelationship.ClassType as ModelCT)!.IdentifierNameWithoutPostFix}}Repository.GetByIdAsync(id);

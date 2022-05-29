@@ -6,7 +6,7 @@ public partial class ProductModel
 
     }
 
-    public SMFields.String Title => new()
+    public SMFields.String? Title => new()
     {
         IsRequired = true,
         Index = true,
@@ -23,7 +23,7 @@ public partial class ProductModel
     public SMFields.O2O StockO2O => new(RegisteredModels.Inventory_ProductStockModel);
 
 
-    //public SMFields.M2O PriceM2M => new(RegisteredModels.Inventory_ProductStockModel) { };
+    public SMFields.M2M PriceM2M => new(RegisteredModels.Inventory_ProductStockModel) { };
 
 
     //public SMFields.M2M StockM2M => new(RegisteredModels.Product_PriceModel) { };
