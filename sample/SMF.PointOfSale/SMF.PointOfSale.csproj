@@ -13,6 +13,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="CustomerAddon\**" />
+      <Compile Remove="InventoryAddon\**" />
+      <EmbeddedResource Remove="CustomerAddon\**" />
+      <EmbeddedResource Remove="InventoryAddon\**" />
+      <None Remove="CustomerAddon\**" />
+      <None Remove="InventoryAddon\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\..\gen\SMF.Grpc.SourceGenerator\SMF.Grpc.SourceGenerator.csproj" GeneratePathProperty="true" OutputItemType="Analyzer" ReferenceOutputAssembly="True" />
     </ItemGroup>
 
@@ -40,6 +49,13 @@
 
     <ItemGroup>
         <EditorConfigFiles Remove="..\sample\SMF.PointOfSale\.editorconfig" />
+    </ItemGroup>
+
+
+
+    <ItemGroup>
+      <Compile Include="CustomerAddon\CustomerModule.cs" />
+      <Compile Include="CustomerAddon\Models\CustomerInfoModel.cs" />
     </ItemGroup>
 
     <ItemGroup>

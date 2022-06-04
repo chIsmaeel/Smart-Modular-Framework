@@ -4,5 +4,9 @@
 indent_style = space
 
 # Xml files
+
+# Default severity for analyzer diagnostics with category 'DocumentationHeader'
+dotnet_analyzer_diagnostic.category-DocumentationHeader.severity = none
+
 [*.xml]
 indent_size = 2

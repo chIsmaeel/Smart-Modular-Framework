@@ -1,5 +1,6 @@
 ﻿namespace SMF.PointOfSale.ProductAddon;
-public partial class ProductModule
+internal class ProductModule
 {
-    private readonly RegisterModel<Models.ProductModel, Models.PriceModel>? _registerModel;
+    private readonly RegisterModel<Models.ProductDetailModel> _registerModel;
+
 }
