@@ -78,11 +78,11 @@ internal partial class ModelEntityConfigurations : CommonIncrementalGenerator
             SMField? field = property!.SMField;
             if (field!.Field is null) continue;
 
-            if (property.SMField!.Field is not null && property.SMField.Field.Compute)
-            {
-                writer.Write($" builder.Ignore(e => e.{property.IdentifierName});");
-                continue;
-            }
+            //if (property.SMField!.Field is not null && property.SMField.Field.Compute)
+            //{
+            //    writer.Write($" builder.Ignore(e => e.{property.IdentifierName});");
+            //    continue;
+            //}
             WritePropertyFluentAPIs(writer, field, property!);
             if (property!.RelationshipWith is not null)
                 AddRelationalFluentAPI(writer, property);

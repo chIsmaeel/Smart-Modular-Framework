@@ -34,7 +34,7 @@ internal class StaticMethods
             "SMFields.O2M" => (property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.ModuleNameWithoutPostFix + "_" + (property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.IdentifierNameWithoutPostFix,
             "SMFields.M2O" => $"repeated {(property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.ModuleNameWithoutPostFix + "_" + (property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.IdentifierNameWithoutPostFix}",
             "SMFields.M2M" => $"repeated {(property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.ModuleNameWithoutPostFix + "_" + (property.RelationshipWith?.WithRelationship.ClassType as ModelCT)!.IdentifierNameWithoutPostFix}",
-            "SMFields.DateTime" => "DateTime",
+            "SMFields.DateTime" => "google.protobuf.Timestamp",
             "SMFields.Int?" => "google.protobuf.Int32Value",
             "SMFields.Long?" => "google.protobuf.Int64Value",
             "SMFields.String?" => "google.protobuf.StringValue",
@@ -102,7 +102,17 @@ internal class StaticMethods
                 }
                 var type = GetProtoType(property!);
                 if (type is null) continue;
-                sb.AppendLine($"\t\t\tresultObj.{identifer} = {objName}.{identifer};");
+                if (type is "google.protobuf.Timestamp")
+                    sb.AppendLine($"resultObj.{identifer} = {objName}.{identifer} is not null ? {objName}.{identifer}.ToDateTime() : default" +
+                        $"" +
+                        $"" +
+                        $"" +
+                        $"" +
+                        $"" +
+                        $"" +
+                        $";");
+                else
+                    sb.AppendLine($"resultObj.{identifer} = {objName}.{identifer};");
             }
             tempModelCT = tempModelCT.ParentClassType as ModelCT;
         }
@@ -150,7 +160,10 @@ internal class StaticMethods
 
                 var type = GetProtoType(property!);
                 if (type is null) continue;
-                sb.AppendLine($"\t\t\tresultObj.{identifer} = {objName}.{identifer};");
+                if (type is "google.protobuf.Timestamp")
+                    sb.AppendLine($"resultObj.{identifer} = {objName}.{identifer} is System.DateTime ? DateTime.SpecifyKind((System.DateTime) {objName}.{identifer}, DateTimeKind.Utc).ToTimestamp() : null;");
+                else
+                    sb.AppendLine($"\t\t\tresultObj.{identifer} = {objName}.{identifer};");
             }
             tempModelCT = tempModelCT.ParentClassType as ModelCT;
         }
@@ -216,7 +229,10 @@ internal class StaticMethods
                 //                }
                 var type = GetProtoType(property!);
                 if (type is null) continue;
-                sb.AppendLine($"\t\t\tresultObj.{identifer} = {objName}.{identifer};");
+                if (type is "google.protobuf.Timestamp")
+                    sb.AppendLine($"resultObj.{identifer} = {objName}.{identifer} is not null ? {objName}.{identifer}.ToDateTime() : default;");
+                else
+                    sb.AppendLine($"resultObj.{identifer} = {objName}.{identifer};");
             }
             tempModelCT = tempModelCT.ParentClassType as ModelCT;
         }
@@ -280,7 +296,10 @@ internal class StaticMethods
 
                 var type = GetProtoType(property!);
                 if (type is null) continue;
-                sb.AppendLine($"\t\t\tresultObj.{identifer} = {objName}.{identifer};");
+                if (type is "google.protobuf.Timestamp")
+                    sb.AppendLine($"resultObj.{identifer} = {objName}.{identifer} is System.DateTime ? DateTime.SpecifyKind((System.DateTime) {objName}.{identifer}, DateTimeKind.Utc).ToTimestamp() : null;");
+                else
+                    sb.AppendLine($"\t\t\tresultObj.{identifer} = {objName}.{identifer};");
             }
             tempModelCT = tempModelCT.ParentClassType as ModelCT;
         }

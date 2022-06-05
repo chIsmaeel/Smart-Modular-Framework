@@ -171,7 +171,7 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
         {
             "SMFields.O2O" => RelationshipType.O2O,
             "SMFields.O2M" => RelationshipType.O2M,
-            //"SMFields.M2O" => RelationshipType.M2O,
+            "SMFields.M2O" => RelationshipType.M2O,
             "SMFields.M2M" => RelationshipType.M2M,
             _ => RelationshipType.O2O,
         };
@@ -212,13 +212,13 @@ public abstract class CommonIncrementalGenerator : IncrementalGenerator
         {
             containingProperty = (new TypeProperty(ClassType.CreateProperty($"System.Collections.Generic.ICollection<{relationalModelCT.NewQualifiedName!}>", property.IdentifierName!.Pluralize()), modelCT));
             relationalModelProperty = (new TypeProperty(ClassType.CreateProperty(property.ClassType.NewQualifiedName!, modelCT!.IdentifierNameWithoutPostFix! + "_" + property.IdentifierName!), relationalModelCT));
-            forignKey = (new TypeProperty(ClassType.CreateProperty("int", modelCT.IdentifierNameWithoutPostFix + "_" + property.IdentifierName.Pluralize() + "_FK"), relationalModelCT!));
+            //forignKey = (new TypeProperty(ClassType.CreateProperty("int", modelCT.IdentifierNameWithoutPostFix + "_" + property.IdentifierName.Pluralize() + "_FK"), relationalModelCT!));
             property.IdentifierName = property.IdentifierName.Pluralize();
             relationalModelProperty.SetHasRelationship(new(containingProperty, RelationshipType.O2M));
-            property.SetRelationshipWith(new(containingProperty, relationalModelProperty, RelationshipType.M2O, forignKey));
+            property.SetRelationshipWith(new(containingProperty, relationalModelProperty, RelationshipType.M2O, null));
 
             relationalModelCT.Properties.Add(relationalModelProperty);
-            relationalModelCT.Properties.Add(forignKey);
+
 
         }
         else

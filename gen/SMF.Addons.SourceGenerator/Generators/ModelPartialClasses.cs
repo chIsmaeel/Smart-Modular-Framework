@@ -28,6 +28,7 @@ internal class ModelPartialClasses : CommonIncrementalGenerator
     /// <param name="s">The s.</param>
     private void AddModelPartialClasses(SourceProductionContext c, ModelCT s)
     {
+
         SMFProductionContext context = new(c);
         //if (s.IdentifierName == "PurchaseLineModel")
 

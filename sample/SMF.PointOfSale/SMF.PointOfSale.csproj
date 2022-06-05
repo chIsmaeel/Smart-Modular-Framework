@@ -14,11 +14,8 @@
 
     <ItemGroup>
       <Compile Remove="CustomerAddon\**" />
-      <Compile Remove="InventoryAddon\**" />
       <EmbeddedResource Remove="CustomerAddon\**" />
-      <EmbeddedResource Remove="InventoryAddon\**" />
       <None Remove="CustomerAddon\**" />
-      <None Remove="InventoryAddon\**" />
     </ItemGroup>
 
     <ItemGroup>

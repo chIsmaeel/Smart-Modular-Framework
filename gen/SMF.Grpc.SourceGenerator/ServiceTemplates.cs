@@ -49,13 +49,20 @@ internal class ServiceTemplates
     private static string AddReseveRelation(ModelCT modelCT, string obj)
     {
         StringBuilder sb = new();
+        //        foreach (var p in modelCT.Properties.Where(_ => _!.RelationshipWith is not null && _.RelationshipWith.RelationshipType == SMF.SourceGenerator.Core.Types.RelationshipType.O2O))
+        //        {
+        //            sb.AppendLine($$"""
+        // obj.{{p.IdentifierName}} = await _mediatR.Send(new {{modelCT.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Application.{{(p.RelationshipWith!.WithRelationship.ClassType as ModelCT)!.ContainingModuleName}}.Queries.Get{{(p.RelationshipWith!.WithRelationship.ClassType as ModelCT)!.IdentifierNameWithoutPostFix}}ByIdQuery(response.{{p.IdentifierName}}_{{(p.ClassType as ModelCT)!.IdentifierNameWithoutPostFix}}_FK));
+
+        //""");
+        //        }
         foreach (var p in modelCT.Properties.Where(_ => _!.HasRelation is not null && _.Type.StartsWith("System.Collections.Generic.List")))
         {
             sb.AppendLine($$"""
   foreach (var o in await _mediatR.Send(new {{modelCT.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Application.{{(p.HasRelation!.HasRelation.ClassType as ModelCT)!.ContainingModuleName}}.Queries.GetAll{{(p.HasRelation!.HasRelation.ClassType as ModelCT)!.IdentifierNameWithoutPostFix.Pluralize()}}Query(_ => _.{{p.HasRelation.HasRelation.IdentifierName}}_{{(p.HasRelation.HasRelation.ClassType as ModelCT)!.IdentifierNameWithoutPostFix.Pluralize()}}_FK == {{obj}}.Id)))
         {
             obj.{{p.IdentifierName.Replace("_", "").Pluralize()}}.Add(o);
-        }
+        }                               
 """);
         }
         return sb.ToString();

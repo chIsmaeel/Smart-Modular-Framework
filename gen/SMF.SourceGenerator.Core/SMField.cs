@@ -123,7 +123,7 @@ public class SMField
             "SMFields.Binary" => new ORM.Fields.Binary(),
             "SMFields.O2O" => new ORM.Fields.O2O(new RegisteredModel("")),
             "SMFields.O2M" => new ORM.Fields.O2M(new RegisteredModel("")),
-            //"SMFields.M2O" => new ORM.Fields.M2O(new RegisteredModel("")),
+            "SMFields.M2O" => new ORM.Fields.M2O(new RegisteredModel("")),
             "SMFields.M2M" => new ORM.Fields.M2M(new RegisteredModel("")),
             _ => null
         };

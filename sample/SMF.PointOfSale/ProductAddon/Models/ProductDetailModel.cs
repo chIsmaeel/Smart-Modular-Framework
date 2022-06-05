@@ -1,6 +1,5 @@
 ﻿namespace SMF.PointOfSale.ProductAddon.Models;
 
-using MNSUAPOS.Application.Interfaces;
 using MNSUAPOS.Domain.ProductAddon.Entities;
 
 public partial class ProductDetailModel
@@ -24,7 +23,7 @@ public partial class ProductDetailModel
 
     private partial float ComputeProfitPercentage(ISMFDbContext _context, ProductDetail currentObj)
     {
-        return (currentObj.PurchasePrice / currentObj.SalePrice) * 100;
+        return ((currentObj.SalePrice - currentObj.PurchasePrice) / currentObj.PurchasePrice) * 100;
     }
 
 }

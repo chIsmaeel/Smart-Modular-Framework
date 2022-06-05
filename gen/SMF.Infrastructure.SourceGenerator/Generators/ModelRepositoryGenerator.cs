@@ -80,18 +80,12 @@ internal class RepositorGenerator : CommonIncrementalGenerator
                     tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
                 }
 
-                if (hasComputedValue)
-                {
-                    _writer.WriteLine($"foreach (var entity in response)");
-                    _writer.WriteLine("{");
-                    tempModelCTForComputedValues = s;
-                    while (tempModelCTForComputedValues is not null)
-                    {
-                        AssignComputedProperties(_writer, tempModelCTForComputedValues.Properties.Where(_ => _!.SMField is not null)!);
-                        tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
-                    }
-                    _writer.WriteLine("}");
-                }
+                //if (hasComputedValue)
+                //{
+                //    _writer.WriteLine($"foreach (var entity in response)");
+                //    _writer.WriteLine("{");
+                //     _writer.WriteLine("}");
+                //}
 
                 _writer.WriteLine("return await Task.FromResult(response);");
             }
@@ -107,12 +101,12 @@ internal class RepositorGenerator : CommonIncrementalGenerator
     _writer.WriteLine("var response = _context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + GetInclude(s) + ".Where(x => x.Id == id).FirstOrDefault(); ");
     _writer.WriteLine("if (response is null) return null;");
 
-    var tempModelCTForComputedValues = s;
-    while (tempModelCTForComputedValues is not null)
-    {
-        AddComputedValues(tempModelCTForComputedValues, _writer);
-        tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
-    }
+    //var tempModelCTForComputedValues = s;
+    //while (tempModelCTForComputedValues is not null)
+    //{
+    //    AddComputedValues(tempModelCTForComputedValues, _writer);
+    //    tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
+    //}
     _writer.WriteLine("return await Task.FromResult(response);");
 }
         });
@@ -127,7 +121,24 @@ internal class RepositorGenerator : CommonIncrementalGenerator
                 _writer.WriteLine("{");
                 _writer.Indent++;
                 _writer.WriteLine("_context." + s.ModuleNameWithoutPostFix + "_" + s.IdentifierNameWithoutPostFix.Pluralize() + ".Add(entity);");
+
                 _writer.WriteLine($"await (_context as Microsoft.EntityFrameworkCore.DbContext).SaveChangesAsync();");
+                _writer.WriteLine($"entity = _context.{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix.Pluralize()}.Find(entity.Id);");
+
+                var tempModelCTForComputedValues = s;
+                while (tempModelCTForComputedValues is not null)
+                {
+                    AssignComputedProperties("entity", _writer, tempModelCTForComputedValues.Properties.Where(_ => _!.SMField is not null)!);
+                    tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
+                }
+
+                _writer.WriteLine($"await (_context as Microsoft.EntityFrameworkCore.DbContext).SaveChangesAsync();");
+
+
+                //  entity = _context.Invoice_SaleInvoiceProductDetails.Find(entity.Id);
+                //  entity.TotalPrice = ComputeTotalPrice(_context, entity);
+                //  await(_context as Microsoft.EntityFrameworkCore.DbContext).SaveChangesAsync();
+
                 _writer.Indent--;
                 _writer.WriteLine("}");
                 _writer.WriteLine("catch (Exception ex)");
@@ -159,6 +170,14 @@ internal class RepositorGenerator : CommonIncrementalGenerator
                     tempModelCT = (ModelCT)tempModelCT.ParentClassType;
                 }
                 AddProperties(s, _writer);
+
+                var tempModelCTForComputedValues = s;
+                while (tempModelCTForComputedValues is not null)
+                {
+                    AssignComputedProperties("tempEntity", _writer, tempModelCTForComputedValues.Properties.Where(_ => _!.SMField is not null)!);
+                    tempModelCTForComputedValues = tempModelCTForComputedValues.ParentClassType as ModelCT;
+                }
+
 
                 //_writer.WriteLine("_context.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;");
                 _writer.WriteLine($"await (_context as Microsoft.EntityFrameworkCore.DbContext).SaveChangesAsync();");
@@ -216,12 +235,12 @@ internal class RepositorGenerator : CommonIncrementalGenerator
     /// </summary>
     /// <param name="w">The w.</param>
     /// <param name="smFields">The sm fields.</param>
-    private static void AssignComputedProperties(IndentedTextWriter w, IEnumerable<TypeProperty> smFields)
+    private static void AssignComputedProperties(string obj, IndentedTextWriter w, IEnumerable<TypeProperty> smFields)
     {
         foreach (var property in smFields)
             if (property!.SMField!.Field is not null && property.SMField.Field.Compute)
             {
-                w.WriteLine($"entity.{property!.IdentifierName} = Compute{property.IdentifierName}(_context,entity);");
+                w.WriteLine($"{obj}.{property!.IdentifierName} = Compute{property.IdentifierName}(_context,entity);");
                 continue;
             }
     }
