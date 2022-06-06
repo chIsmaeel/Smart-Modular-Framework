@@ -1,7 +1,6 @@
 ﻿namespace API.Endpoints;
 
 using Humanizer;
-using SMF.SourceGenerator.Abstractions;
 
 /// <summary>
 /// The model generator.
@@ -36,7 +35,7 @@ internal class MapGroupsExtensionMethods : CommonIncrementalGenerator
         ClassTypeTemplate classTypeTemplate = new($"Map{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Group")
         {
             Modifiers = "public static",
-            UsingNamespaces = new() { "Microsoft.AspNetCore.Builder", "Microsoft.AspNetCore.Routing", "Microsoft.AspNetCore.Http.HttpResults", "Microsoft.AspNetCore.Http", "Microsoft.AspNetCore.Mvc", "MediatR" }
+            UsingNamespaces = new() { config.SOLUTION_NAME! + $".Domain.{s.ModuleNameWithoutPostFix}Addon.Entities", config.SOLUTION_NAME! + ".API.Services", "Microsoft.AspNetCore.Builder", "Microsoft.AspNetCore.Routing", "Microsoft.AspNetCore.Http.HttpResults", "Microsoft.AspNetCore.Http", "Microsoft.AspNetCore.Mvc", "MediatR" }
         };
 
         classTypeTemplate.Members.Add(new TypeMethodTemplate("Microsoft.AspNetCore.Routing.GroupRouteBuilder", $"Map{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Api")
@@ -77,7 +76,7 @@ internal class MapGroupsExtensionMethods : CommonIncrementalGenerator
         return @$"
  public static async Task<Ok<int>> Delete{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}(int id, [FromServices] IMediator m)
     {{ 
-       var response = await m.Send(new {QualifiedNames.GetDeleteCommand(s)}(id));
+       var response = await new {s.ModuleNameWithoutPostFix}Service(m).Delete{s.IdentifierNameWithoutPostFix}(id);
        return TypedResults.Ok(response);
     }}";
     }
@@ -90,10 +89,11 @@ internal class MapGroupsExtensionMethods : CommonIncrementalGenerator
     private string Update(ModelCT s)
     {
         return @$"
- public static async Task<Results<NoContent, NotFound>> Update{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}(int id, {QualifiedNames.GetUpdateCommand(s)} command, [FromServices] IMediator m)
+ public static async Task<Results<NoContent, NotFound>> Update{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}(int id, Update{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Command command, [FromServices] IMediator m)
     {{ 
-         command.Id = id;
-         var response = await m.Send(command);
+if(id != command.Id)
+        return  TypedResults.NotFound();
+         var response = await new {s.ModuleNameWithoutPostFix}Service(m).Update{s.IdentifierNameWithoutPostFix}(command);
          return response == id ? TypedResults.NoContent() : TypedResults.NotFound();
     }}";
     }
@@ -106,9 +106,9 @@ internal class MapGroupsExtensionMethods : CommonIncrementalGenerator
     private string Add(ModelCT s)
     {
         return @$"
- public static async Task<Created<int>> Add{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}({QualifiedNames.GetCreateCommand(s)} command, [FromServices] IMediator m)
+ public static async Task<Created<int>> Add{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}(Create{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}Command command, [FromServices] IMediator m)
     {{ 
-       var response = await m.Send(command);
+       var response = await new {s.ModuleNameWithoutPostFix}Service(m).Add{s.IdentifierNameWithoutPostFix}(command);
         return TypedResults.Created($""/{{response}}"", response);
     }}";
     }
@@ -121,9 +121,9 @@ internal class MapGroupsExtensionMethods : CommonIncrementalGenerator
     private string GetById(ModelCT s)
     {
         return @$"
- public static async Task<Results<Ok<{s.NewQualifiedName}>, NotFound>> Get{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}ById(int id, [FromServices] IMediator m)
+ public static async Task<Results<Ok<{s.NewQualifiedName}Dto>, NotFound>> Get{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix}ById(int id, [FromServices] IMediator m)
     {{
-        return await m.Send(new {QualifiedNames.GetByIdQuery(s)}(id)) is {s.NewQualifiedName} e
+        return await new {s.ModuleNameWithoutPostFix}Service(m).Get{s.IdentifierNameWithoutPostFix}ById(id) is {s.NewQualifiedName}Dto e
             ? TypedResults.Ok(e)
             : TypedResults.NotFound();
     }}
@@ -137,9 +137,9 @@ internal class MapGroupsExtensionMethods : CommonIncrementalGenerator
     private string GetAll(ModelCT s)
     {
         return $@" 
-public static async Task<Ok<IEnumerable<{s.NewQualifiedName}>>> GetAll{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix.Pluralize()}([FromServices] IMediator m)
+public static async Task<Ok<IEnumerable<{s.NewQualifiedName}Dto>>> GetAll{s.ModuleNameWithoutPostFix}_{s.IdentifierNameWithoutPostFix.Pluralize()}([FromServices] IMediator m)
 {{
-  var response = await m.Send(new {QualifiedNames.GetAllQuery(s)}());
+  var response = await new {s.ModuleNameWithoutPostFix}Service(m).GetAll{s.IdentifierNameWithoutPostFix.Pluralize()}();
    return TypedResults.Ok(response);
 }}";
     }
