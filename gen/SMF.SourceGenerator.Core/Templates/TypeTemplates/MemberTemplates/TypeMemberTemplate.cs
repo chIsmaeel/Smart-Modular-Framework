@@ -23,7 +23,7 @@ public abstract record TypeMemberTemplate(string IdentifierName) : ITypeMemberTe
     /// <summary>
     /// Gets the attributes.
     /// </summary>
-    public List<string>? Attributes { get; init; }
+    public List<string>? Attributes { get; init; } = new();
 
     /// <summary>
     /// Gets the using namespaces.

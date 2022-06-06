@@ -53,6 +53,8 @@ internal class EntitiesGenerator : CommonIncrementalGenerator
                 Comment = property.Comment,
                 SecondAccessor = "set"
             };
+            if (property.HasRelation is not null)
+                p.Attributes!.Add("System.Text.Json.Serialization.JsonIgnore");
             classTypeTemplate.Members.Add(p);
         }
         fileScopedNamespace.TypeTemplates.Add(classTypeTemplate);

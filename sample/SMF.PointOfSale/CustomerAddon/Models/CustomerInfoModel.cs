@@ -5,6 +5,7 @@ using MNSUAPOS.Domain.CustomerAddon.Entities;
 
 public partial class CustomerInfoModel
 {
+
     public SMFields.String FirstName => new();
 
     public SMFields.String LastName => new();

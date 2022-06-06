@@ -42,7 +42,7 @@ internal class StaticMethods
             "SMFields.DateTime?" => "google.protobuf.Timestamp",
             "SMFields.Boolean?" => "google.protobuf.BoolValue",
             "SMFields.Boolean" => "bool",
-            "SMFields.Binary" => "byte",
+            "SMFields.Binary" => "bytes",
             "SMFields.Binary?" => "google.protobuf.BytesValue",
 
             "SMFields.ByteString?" => "google.protobuf.BytesValue",
