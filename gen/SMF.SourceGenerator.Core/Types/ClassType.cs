@@ -1,4 +1,5 @@
 ﻿namespace SMF.SourceGenerator.Core.Types;
+
 using System.Collections.Immutable;
 
 /// <summary>
@@ -274,10 +275,19 @@ public partial record ClassType(IEnumerable<ClassDeclarationSyntax> ClassDSs, Co
     public virtual void ReportDiagnostics(SMFProductionContext context)
     {
         ReportDiagnosticIfMoreThanOneCommentAreAvailable(context);
+        ReportDiagnosticIfNothavePropertyComment(context);
+    }
+
+    private void ReportDiagnosticIfNothavePropertyComment(SMFProductionContext context)
+    {
+        var declaredCommentPDSs = ClassDSs.SelectMany(_ => _.DescendantNodes().OfType<PropertyDeclarationSyntax>()).Where(_ => string.IsNullOrEmpty(_!.GetLeadingTrivia().ToString().Trim()));
+        foreach (var pds in declaredCommentPDSs!)
+            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.MusthavePropertyComment, pds!.GetLeadingTrivia().FirstOrDefault().GetLocation(), pds.Identifier.ValueText));
+
     }
 
     /// <summary>
-    /// Reports the diagnostic if more than one comment are available.
+    /// Reports the diagnostic if more than one comment are available.                
     /// </summary>
     /// <param name="context">The context.</param>
     /// <param name="partialClasses">The partial classes.</param>                                           

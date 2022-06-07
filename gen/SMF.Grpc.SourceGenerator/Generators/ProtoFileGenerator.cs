@@ -65,7 +65,6 @@ syntax = "proto3";
 option csharp_namespace = "{{configSMF.SOLUTION_NAME}}.Grpc";
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/wrappers.proto";
 
 package smf;
 

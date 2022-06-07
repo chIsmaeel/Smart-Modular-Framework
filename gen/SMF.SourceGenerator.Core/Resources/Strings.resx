@@ -129,6 +129,12 @@
   <data name="InvalidSMFModelInRegisteredModelFieldInModuleTypeTitle" xml:space="preserve">
     <value>Invalid Type in _registeredModel</value>
   </data>
+  <data name="MusthavePropertyCommentMessage" xml:space="preserve">
+    <value>Should Have Comment in SMF Fields in '{0}' SMF Model Class.</value>
+  </data>
+  <data name="MusthavePropertyCommentTitle" xml:space="preserve">
+    <value>Must have Comment.</value>
+  </data>
   <data name="MustHaveSMFModelTypeMessage" xml:space="preserve">
     <value>'{0}' is not SMF Model. Must have SMF Model Type in _registerModel Field in '{1}' Class</value>
   </data>

@@ -1,4 +1,7 @@
 ﻿namespace SMF.PointOfSale.InventoryAddon.Models;
+/// <summary>
+/// Product Stock Model
+/// </summary>
 public partial class ProductStockModel
 {
     public SMFields.O2O ProductDetail => new(RegisteredModels.Product_ProductDetailModel);

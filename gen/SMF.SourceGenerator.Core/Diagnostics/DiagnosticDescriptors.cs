@@ -54,6 +54,12 @@ public partial record DiagnosticDescriptors
    messageFormat: CreateLocalizableString(nameof(SR.ShouldHaveCommentInAtleastOneSMFTypeMessage)),
    severity: DiagnosticSeverity.Warning);
 
+    public static DiagnosticDescriptor MusthavePropertyComment { get; } = CreateDiagnosticDescriptor(
+  id: "SMF007",
+  title: CreateLocalizableString(nameof(SR.MusthavePropertyCommentTitle)),
+  messageFormat: CreateLocalizableString(nameof(SR.MusthavePropertyCommentMessage)),
+  severity: DiagnosticSeverity.Warning);
+
     /// <summary>
     /// Gets the invalid s m f model in registered model field in module type.
     /// </summary>

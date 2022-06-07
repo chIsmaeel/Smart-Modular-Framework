@@ -1,11 +1,21 @@
 ﻿namespace SMF.PointOfSale.CustomerAddon.Models;
 
 using MNS_PoS.Application.Interfaces;
+/// <summary>
+/// Add Customer Info.
+/// </summary>
 
 public partial class CustomerInfoModel
 {
 
+    /// <summary>
+    /// First Name.
+    /// </summary>
     public SMFields.String FirstName => new();
+
+    /// <summary>
+    /// Last Name.
+    /// </summary>
 
     public SMFields.String LastName => new();
 
@@ -37,5 +47,4 @@ public partial class CustomerInfoModel
         return $"{currentObj.FirstName} {currentObj.LastName}";
     }
 }
-
 

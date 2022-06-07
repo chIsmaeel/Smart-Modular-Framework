@@ -74,4 +74,7 @@ public partial record SR
     /// </summary>
     public static string InvalidSMFModelInRegisteredModelFieldInModuleTypeMessage => GetResourceString(nameof(InvalidSMFModelInRegisteredModelFieldInModuleTypeMessage));
 
+    public static string MusthavePropertyCommentTitle => GetResourceString(nameof(MusthavePropertyCommentTitle));
+    public static string MusthavePropertyCommentMessage => GetResourceString(nameof(MusthavePropertyCommentMessage));
+
 }

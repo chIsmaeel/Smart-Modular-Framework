@@ -17,19 +17,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.FileTransmitter", "libr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.ORM", "libraries\SMF.ORM\SMF.ORM.csproj", "{68BB24DC-D74F-4FCF-A838-D1747F0AE4C7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{BF6E921C-B890-4F0E-91CD-BCB060D906E5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BF6E921C-B890-4F0E-91CD-BCB060D906E5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.PointOfSale", "sample\SMF.PointOfSale\SMF.PointOfSale.csproj", "{BD7C0D87-3E13-489C-A92F-D367AEFEFA72}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.API.SourceGenerator", "gen\SMF.API.SourceGenerator\SMF.API.SourceGenerator.csproj", "{C0553BFF-23F5-4F6C-90A8-46C0EADCD0F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.Application.SourceGenerator", "gen\SMF.Application.SourceGenerator\SMF.Application.SourceGenerator.csproj", "{55A11592-E231-4F4D-B0FD-00E32A5A2C23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.Application.SourceGenerator", "gen\SMF.Application.SourceGenerator\SMF.Application.SourceGenerator.csproj", "{55A11592-E231-4F4D-B0FD-00E32A5A2C23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.Domain.SourceGenerator", "gen\SMF.Domain.SourceGenerator\SMF.Domain.SourceGenerator.csproj", "{70B07DE6-8033-451B-A779-305676AC8BA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.Domain.SourceGenerator", "gen\SMF.Domain.SourceGenerator\SMF.Domain.SourceGenerator.csproj", "{70B07DE6-8033-451B-A779-305676AC8BA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.Infrastructure.SourceGenerator", "gen\SMF.Infrastructure.SourceGenerator\SMF.Infrastructure.SourceGenerator.csproj", "{39B6A30E-3B8B-42CC-ABAF-DF282A0F72CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.Infrastructure.SourceGenerator", "gen\SMF.Infrastructure.SourceGenerator\SMF.Infrastructure.SourceGenerator.csproj", "{39B6A30E-3B8B-42CC-ABAF-DF282A0F72CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMF.Grpc.SourceGenerator", "gen\SMF.Grpc.SourceGenerator\SMF.Grpc.SourceGenerator.csproj", "{5AEC0EE4-5C38-4AB3-8D3E-CF9DBDD0C365}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMF.Grpc.SourceGenerator", "gen\SMF.Grpc.SourceGenerator\SMF.Grpc.SourceGenerator.csproj", "{5AEC0EE4-5C38-4AB3-8D3E-CF9DBDD0C365}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

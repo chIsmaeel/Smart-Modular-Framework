@@ -62,7 +62,7 @@ public record CSProjConfig(List<CSProjProperties> CSProjProperties, List<Referen
 new("OutputType","exe"),
         new("RootNamespace", _configSMF.SOLUTION_NAME + ".Grpc"),
         new("AssemblyName", _configSMF.SOLUTION_NAME + ".Grpc"),
-        new("NoWarn", "CS8669"),
+        new("NoWarn", "CS8669;CS0183"),
     };
 
         List<References> references = new()
