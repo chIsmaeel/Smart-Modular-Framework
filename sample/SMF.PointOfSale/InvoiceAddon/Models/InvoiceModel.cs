@@ -1,6 +1,6 @@
 ﻿namespace SMF.PointOfSale.InvoiceAddon.Models;
 
-using MNSUAPOS.Domain.InvoiceAddon.Entities;
+using MNS_PoS.Domain.InvoiceAddon.Entities;
 
 public partial class InvoiceModel
 {
@@ -10,7 +10,7 @@ public partial class InvoiceModel
 
     public SMFields.Float TotalPrice => new() { Compute = true };
 
-    private partial float ComputeTotalPrice(MNSUAPOS.Application.Interfaces.ISMFDbContext _context, Invoice currentObj)
+    private partial float ComputeTotalPrice(MNS_PoS.Application.Interfaces.ISMFDbContext _context, Invoice currentObj)
     {
         float totalPrice = 0.0f;
         foreach (var pd in currentObj.SaleInvoiceProductDetails)

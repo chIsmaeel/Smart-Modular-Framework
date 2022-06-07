@@ -8,5 +8,11 @@ indent_style = space
 # Default severity for analyzer diagnostics with category 'DocumentationHeader'
 dotnet_analyzer_diagnostic.category-DocumentationHeader.severity = none
 
+# CA1822: Mark members as static
+dotnet_diagnostic.CA1822.severity = none
+
+# IDE0060: Remove unused parameter
+dotnet_diagnostic.IDE0060.severity = none
+
 [*.xml]
 indent_size = 2

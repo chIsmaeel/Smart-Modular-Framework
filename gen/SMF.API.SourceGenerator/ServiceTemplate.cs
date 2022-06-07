@@ -73,7 +73,7 @@ internal class {{s.RegisteringModule.IdentifierNameWithoutPostFix}}Service
     private static string Delete(ModuleWithRegisteredModelCTs s)
     {
         var sb = new StringBuilder();
-        foreach (var modelCT in s.RegisteredModelCTs)
+        foreach (var modelCT in s.RegisteredModelCTs!)
             sb.AppendLine(ServiceTemplates.Delete(modelCT!));
         return sb.ToString();
     }

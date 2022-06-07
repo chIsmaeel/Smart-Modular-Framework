@@ -2,7 +2,6 @@
 
 using Microsoft.CodeAnalysis;
 using SMF.Grpc.SourceGenerator;
-using SMF.SourceGenerator.Core;
 using System.Text;
 /// <summary>
 /// The proto file generator.
@@ -30,7 +29,7 @@ internal class DTOClassGenerator : CommonIncrementalGenerator
 
         SMFProductionContext context = new(c);
         var config = s.ConfigSMFAndGlobalOptions.ConfigSMF;
-        var code = DTOClass(config, s);
+        var code = DTOClass(s);
         //#if DEBUG
         //        if (!System.Diagnostics.Debugger.IsAttached)
         //            System.Diagnostics.Debugger.Launch();
@@ -43,7 +42,7 @@ internal class DTOClassGenerator : CommonIncrementalGenerator
     /// Protos the template.
     /// </summary>
     /// <returns>A string.</returns>
-    public static string DTOClass(ConfigSMF configSMF, ModelCT s)
+    public static string DTOClass(ModelCT s)
     {
         return $$"""                                                         
 

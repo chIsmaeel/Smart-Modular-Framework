@@ -1,6 +1,6 @@
 ﻿namespace SMF.PointOfSale.ProductAddon.Models;
 
-using MNSUAPOS.Domain.ProductAddon.Entities;
+using MNS_PoS.Domain.ProductAddon.Entities;
 
 public partial class ProductDetailModel
 {

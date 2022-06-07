@@ -1,7 +1,6 @@
 ﻿namespace SMF.PointOfSale.CustomerAddon.Models;
 
-using MNSUAPOS.Application.Interfaces;
-using MNSUAPOS.Domain.CustomerAddon.Entities;
+using MNS_PoS.Application.Interfaces;
 
 public partial class CustomerInfoModel
 {
@@ -11,6 +10,8 @@ public partial class CustomerInfoModel
     public SMFields.String LastName => new();
 
     public SMFields.String Email => new();
+
+    public SMFields.String Address => new();
 
     public SMFields.DateTime DoB => new();
 

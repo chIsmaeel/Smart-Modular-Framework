@@ -221,9 +221,9 @@ internal class RepositorGenerator : CommonIncrementalGenerator
     private static string GetInclude(ModelCT s)
     {
         StringBuilder sb = new();
-        foreach (var p in s.Properties.Where(_ => _.RelationshipWith is not null))
+        foreach (var p in s.Properties.Where(_ => _!.RelationshipWith is not null))
         {
-            sb.Append($".Include(_=>_.{p.IdentifierName})");
+            sb.Append($".Include(_=>_.{p!.IdentifierName})");
         }
         return sb.ToString();
     }

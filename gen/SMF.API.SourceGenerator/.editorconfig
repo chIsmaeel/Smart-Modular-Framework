@@ -4,5 +4,9 @@
 indent_style = space
 
 # Xml files
+
+# IDE0060: Remove unused parameter
+dotnet_diagnostic.IDE0060.severity = none
+
 [*.xml]
 indent_size = 2

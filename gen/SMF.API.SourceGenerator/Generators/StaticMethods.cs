@@ -354,7 +354,7 @@ internal class StaticMethods
     {
         foreach (var property in tempModelCT.Properties!)
         {
-            if (property.IdentifierName.EndsWith("_FK"))
+            if (property!.IdentifierName.EndsWith("_FK"))
                 continue;
             var identifer = property!.IdentifierName;
             if (property.Type is "SMFields.O2O" or "SMFields.O2M")
@@ -390,7 +390,7 @@ internal class StaticMethods
     {
         foreach (var property in tempModelCT.Properties!)
         {
-            if (property.IdentifierName.EndsWith("_FK"))
+            if (property!.IdentifierName.EndsWith("_FK"))
                 continue;
             var identifer = property!.IdentifierName;
             if (property.Type is "SMFields.O2O" or "SMFields.O2M")

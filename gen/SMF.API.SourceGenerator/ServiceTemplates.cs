@@ -62,7 +62,7 @@ list.Add(obj);
         foreach (var p in modelCT.Properties.Where(_ => _!.HasRelation is not null && _.Type.StartsWith("System.Collections.Generic.List")))
         {
             sb.AppendLine($$"""
- obj.{{p.IdentifierName.Pluralize()}} = new();
+ obj.{{p!.IdentifierName.Pluralize()}} = new();
   foreach (var o in await _mediatR.Send(new {{modelCT.ConfigSMFAndGlobalOptions.ConfigSMF!.SOLUTION_NAME}}.Application.{{(p.HasRelation!.HasRelation.ClassType as ModelCT)!.ContainingModuleName}}.Queries.GetAll{{(p.HasRelation!.HasRelation.ClassType as ModelCT)!.IdentifierNameWithoutPostFix.Pluralize()}}Query(_ => _.{{p.HasRelation.HasRelation.IdentifierName}}_{{(p.HasRelation.HasRelation.ClassType as ModelCT)!.IdentifierNameWithoutPostFix.Pluralize()}}_FK == {{obj}})))
         {
             obj.{{p.IdentifierName.Pluralize()}}.Add(o);

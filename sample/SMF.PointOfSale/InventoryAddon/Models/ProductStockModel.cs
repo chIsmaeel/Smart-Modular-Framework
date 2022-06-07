@@ -6,7 +6,7 @@ public partial class ProductStockModel
     public SMFields.Int LowStockAlert => new();
     public SMFields.Boolean HasLowStock => new() { Compute = true };
 
-    private partial bool ComputeHasLowStock(ISMFDbContext _context, MNSUAPOS.Domain.InventoryAddon.Entities.ProductStock currentObj)
+    private partial bool ComputeHasLowStock(ISMFDbContext _context, MNS_PoS.Domain.InventoryAddon.Entities.ProductStock currentObj)
     {
         if (currentObj.AvailableQuantity < currentObj.LowStockAlert)
         {
